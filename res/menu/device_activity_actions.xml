@@ -1,0 +1,32 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" 
+      xmlns:BleSensorTag="http://schemas.android.com/apk/res-auto" >
+
+    <item
+        android:id="@+id/opt_conn"
+        android:title="@string/conn"
+        android:showAsAction="ifRoom"
+        android:enabled="false"/>
+    <item
+        android:id="@+id/opt_hist"
+        android:title="@string/hist"
+        android:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/opt_about"
+        android:title="@string/about"/>
+    <item
+        android:id="@+id/opt_x"
+        android:title="@string/x_axis"/>
+    <item
+        android:id="@+id/opt_y"
+        android:title="@string/y_axis"/>
+    <item
+        android:id="@+id/opt_z"
+        android:title="@string/z_axis"/>
+    <item
+        android:id="@+id/opt_tot"
+        android:title="@string/tot_axis"/>
+    <item
+        android:id="@+id/opt_filesize"
+        android:title="@string/file_size" />
+
+</menu>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <TextView android:id="@+id/histInstr"
+        	android:text="@string/hist_instr"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:paddingBottom="25dp"
+        	android:layout_alignParentTop="true" />
+    
+    <Spinner android:id="@+id/start_years_spinner"
+		    android:layout_width="100dp"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@+id/histInstr"
+		    android:layout_alignParentLeft="true" />
+    
+    <Spinner
+        android:id="@+id/start_months_spinner"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/start_years_spinner"
+        android:layout_toRightOf="@+id/start_years_spinner" />
+    
+    <EditText android:id="@+id/startDay"
+            android:visibility="visible"
+            android:hint="@string/start_date"
+            android:layout_width="wrap_content"	
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/start_months_spinner" />
+    
+    <EditText
+        android:id="@+id/startTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/end_years_spinner"
+        android:layout_toRightOf="@+id/startDay"
+        android:ems="10"
+        android:hint="@string/start_time"
+        android:inputType="time"
+        android:visibility="visible" />
+    
+    <Spinner android:id="@+id/end_years_spinner"
+		    android:layout_width="100dp"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@+id/startDay"
+		    android:layout_alignParentLeft="true" />
+    
+    <Spinner android:id="@+id/end_months_spinner"
+		    android:layout_width="100dp"
+		    android:layout_height="wrap_content"
+		    android:layout_alignTop="@+id/end_years_spinner"
+		    android:layout_toRightOf="@+id/end_years_spinner" />
+    
+    <EditText android:id="@+id/endDay"
+            android:visibility="visible"
+            android:hint="@string/end_date"
+            android:layout_width="wrap_content"	
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/end_months_spinner" />
+
+    <EditText
+        android:id="@+id/endTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/end_months_spinner"
+        android:layout_toRightOf="@+id/endDay"
+        android:ems="10"
+        android:hint="@string/end_time"
+        android:inputType="time"
+        android:visibility="visible" >
+
+        <requestFocus />
+    </EditText>
+    <Button android:id="@+id/submitTime"
+        	android:text="@string/submit_time"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:layout_below="@+id/endDay" />
+</RelativeLayout>

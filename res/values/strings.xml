@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Main activity -->
+    <string name="app_name">WBAN</string>
+    <string name="button_scan">Scan</string>
+    <string name="title_device_list">Device List</string>
+    <string name="device">Device</string>
+    <string name="header">Available Sensors</string>
+    <string name="disconnected">Device is not connected</string>
+    <string name="control">Done</string>
+    <string name="bt_not_supported">Bluetooth is not supported</string>
+    <string name="ble_not_supported">BLE is not supported</string>
+    <string name="bt_on">Bluetooth was turned  on</string>
+    <string name="bt_not_on">Bluetooth was not turned on</string>
+    <string name="app_closing">Exiting Sensor app</string>
+    <string-array name="device_filter"><item>SensorTag</item></string-array>
+    <string name="nodevice">No Devices</string>
+    <string name="scan_advice">The Android device is not scanning. Please tap \'Scan\' to scan for SensorTags.</string>
+    
+    <!-- Options menu -->
+    <string name="conn">Plot</string>
+    <string name="hist">History</string>
+    <string name="x_axis">Toggle X</string>
+    <string name="y_axis">Toggle Y</string>
+    <string name="z_axis">Toggle Z</string>
+    <string name="tot_axis">Toggle Total</string>
+    <string name="file_size">Check Save File Size</string>
+    <string name="bt">Bluetooth Adapter</string>
+    <string name="sthome">SensorTag Home</string>
+    <string name="about">About</string>
+    <string name="exit">Exit</string>
+
+    <!-- Device activity -->
+    <string name="dev_addr">Device address</string>
+    <string name="image">Image</string>
+    
+    <!-- History activity -->
+    <string name="hist_instr">Enter the start and end dates of the plot you would like to view.</string>
+    <string name="start_date">Start Date</string>
+    <string name="start_time">Start Time</string>
+    <string name="end_date">End Date</string>
+    <string name="end_time">End Time</string>
+    <string name="submit_time">Submit</string>
+    
+    <string-array name="years_array">
+        <item>2010</item>
+        <item>2011</item>
+        <item>2012</item>
+        <item>2013</item>
+        <item>2014</item>
+        <item>2015</item>
+        <item>2016</item>
+        <item>2017</item>
+        <item>2018</item>
+    </string-array>
+    
+    <string-array name="months_array">
+        <item>01</item>
+        <item>02</item>
+        <item>03</item>
+        <item>04</item>
+        <item>05</item>
+        <item>06</item>
+        <item>07</item>
+        <item>08</item>
+        <item>09</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+    </string-array>
+    
+    <!-- Sensor names-->
+    <string name="keys">Keys</string>
+    <string name="acc">Accelerometer</string>
+    <string name="mag">Magnetometer</string>
+    <string name="gyro">Gyroscope</string>
+    <string name="hum">Humidity</string>
+    <string name="bar">Barometer</string>
+    <string name="tAmb">Ambience Temperature</string>
+    <string name="tObj">Object Temperature</string>
+    
+    <!-- Sensor misc. -->
+    <string name="xyz3">x:\ny:\nz:\n</string>
+    <string name="empty3">*\n*\n*\n</string>
+    <string name="unitDegSec3">deg/s\ndeg/s\ndeg/s\n</string>
+    <string name="unitG3">g\ng\ng\n</string>
+    <string name="unitT3">uT\nuT\nuT\n</string>
+    
+    <string name="empty1">*\n</string>
+    <string name="unitDeg">deg/C\n</string>
+    <string name="unitRH">%rH\n</string>
+    <string name="unitPA_Meter">nPA\nmeter</string>
+
+    <!-- FWUpdate activity -->
+    <string name="title_oad">Firmware update (OAD)</string>
+    <string name="start_prog">Start programming</string>
+    <string name="cancel">Cancel</string>
+    <string name="prog_ogoing">NB! Not permitted to close this view during OAD transfer</string>
+    <string name="load_image_a">Image A</string>
+    <string name="load_image_b">Image B</string>
+    <string name="load_image_c">Custom</string>
+    <string name="no_image">Not an OAD image</string>
+    <string name="no_image_sel">No image selected</string>
+    <string name="new_image">New image:</string>
+    <string name="cur_image">Current image:</string>
+    <string name="idle">idle</string>
+    <string name="btn_txt_confirm">Confirm</string>
+
+</resources>
