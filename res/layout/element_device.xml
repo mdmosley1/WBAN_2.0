@@ -15,6 +15,7 @@
         android:contentDescription="image"
         android:focusable="false"
         android:paddingRight="15dp"
+        android:paddingLeft="15dp"
         android:src="@drawable/sensortag" />
 
     <TextView
