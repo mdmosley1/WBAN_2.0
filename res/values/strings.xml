@@ -17,6 +17,7 @@
     <string-array name="device_filter"><item>SensorTag</item></string-array>
     <string name="nodevice">No Devices</string>
     <string name="scan_advice">The Android device is not scanning. Please tap \'Scan\' to scan for SensorTags.</string>
+    <string name="debug">true</string>
     
     <!-- Options menu -->
     <string name="conn">Plot</string>
