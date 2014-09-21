@@ -18,8 +18,8 @@
         android:required="true" />
 
     <uses-sdk
-        android:minSdkVersion="18"
-        android:targetSdkVersion="18" />
+        android:minSdkVersion="11"
+        android:targetSdkVersion="21" />
     <uses-feature
         android:name="android.hardware.bluetooth.ble"
         android:required="true" />
