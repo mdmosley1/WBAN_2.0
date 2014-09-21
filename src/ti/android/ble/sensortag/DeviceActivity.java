@@ -124,11 +124,6 @@ public class DeviceActivity extends Activity {
   private int buff_count;
   private boolean isBeginning = false;
   
-  
-  public DeviceActivity() {
-  }
-
-
   @Override
   public void onCreate(Bundle savedInstanceState) {
     requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
