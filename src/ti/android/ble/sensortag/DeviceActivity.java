@@ -84,6 +84,7 @@ public class DeviceActivity extends Activity {
 	private final UUID dataUuid = UUID.fromString("f000aa11-0451-4000-b000-000000000000");
 	private final UUID confUuid = UUID.fromString("f000aa12-0451-4000-b000-000000000000");
 	private final UUID perUUID = UUID.fromString("f000aa13-0451-4000-b000-000000000000"); // Period in tens of milliseconds
+	// Try putting in uuid info for gyro
 
   // BLE
   private BluetoothLeService mBtLeService = null;
