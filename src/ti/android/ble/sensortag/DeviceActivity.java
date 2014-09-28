@@ -158,7 +158,7 @@ public class DeviceActivity extends Activity {
     accLevelsSeries.useImplicitXVals();
     
     // freeze the range boundaries:
-    SensorPlot.setRangeBoundaries(-4, 4, BoundaryMode.FIXED);
+    SensorPlot.setRangeBoundaries(-10, 10, BoundaryMode.FIXED);
     SensorPlot.setDomainBoundaries(0, SERIES_SIZE, BoundaryMode.FIXED);
     SensorPlot.setRangeStep(XYStepMode.INCREMENT_BY_VAL, 1);
     SensorPlot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 5);
@@ -714,7 +714,7 @@ public class DeviceActivity extends Activity {
 	// Updates the plot with new data obtained from the service notification
 	void updatePlot(String uuidStr, byte[] rawValue, String[] t) {
 		Point3D v; 
-  		v = Sensor.ACCELEROMETER.convert(rawValue);
+  		v = Sensor.GYROSCOPE.convert(rawValue);
 	  	byte[][] coords = new byte[3][4];
   		
   		float x = (float) v.x;
