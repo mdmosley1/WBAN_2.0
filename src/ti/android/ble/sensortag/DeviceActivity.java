@@ -80,10 +80,10 @@ public class DeviceActivity extends Activity {
 	private static final int HIST_ACT_REQ = 0;
 	public static final byte ENABLE_SENSOR_CODE = 1;
 	public static final byte ACC_PERIOD = 10;		// [ACC_PERIOD]*10ms = Accelerometer's period
-	private final UUID servUuid = UUID.fromString("f000aa10-0451-4000-b000-000000000000");
-	private final UUID dataUuid = UUID.fromString("f000aa11-0451-4000-b000-000000000000");
-	private final UUID confUuid = UUID.fromString("f000aa12-0451-4000-b000-000000000000");
-	private final UUID perUUID = UUID.fromString("f000aa13-0451-4000-b000-000000000000"); // Period in tens of milliseconds
+	private final UUID servUuid = UUID.fromString("f000aa50-0451-4000-b000-000000000000");
+	private final UUID dataUuid = UUID.fromString("f000aa51-0451-4000-b000-000000000000");
+	private final UUID confUuid = UUID.fromString("f000aa52-0451-4000-b000-000000000000");
+	private final UUID perUUID = UUID.fromString("f000aa53-0451-4000-b000-000000000000"); // Period in tens of milliseconds
 	// Try putting in uuid info for gyro
 
   // BLE
