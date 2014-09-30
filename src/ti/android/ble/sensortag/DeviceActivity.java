@@ -78,7 +78,8 @@ public class DeviceActivity extends Activity {
 	// Activity
 	public static final String EXTRA_DEVICE = "EXTRA_DEVICE";
 	private static final int HIST_ACT_REQ = 0;
-	public static final byte ENABLE_SENSOR_CODE = 1;
+	public static final byte ENABLE_SENSOR_CODE = 7;
+// need to change period
 	public static final byte ACC_PERIOD = 10;		// [ACC_PERIOD]*10ms = Accelerometer's period
 	private final UUID servUuid = UUID.fromString("f000aa50-0451-4000-b000-000000000000");
 	private final UUID dataUuid = UUID.fromString("f000aa51-0451-4000-b000-000000000000");
@@ -158,7 +159,7 @@ public class DeviceActivity extends Activity {
     accLevelsSeries.useImplicitXVals();
     
     // freeze the range boundaries:
-    SensorPlot.setRangeBoundaries(-10, 10, BoundaryMode.FIXED);
+    SensorPlot.setRangeBoundaries(-300, 300, BoundaryMode.FIXED);
     SensorPlot.setDomainBoundaries(0, SERIES_SIZE, BoundaryMode.FIXED);
     SensorPlot.setRangeStep(XYStepMode.INCREMENT_BY_VAL, 1);
     SensorPlot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 5);
@@ -426,14 +427,17 @@ public class DeviceActivity extends Activity {
 
   // Allows the app to receive notifications from the device. Notifications are used to tell
   // the app that there is data available to be received.
-  private void enableNotifications(boolean enable) {
+    private void enableNotifications(boolean enable) {
   		BluetoothGattService serv = mBtGatt.getService(servUuid);
   		BluetoothGattCharacteristic charac = serv.getCharacteristic(dataUuid);
   		BluetoothGattCharacteristic period = serv.getCharacteristic(perUUID);
   		
   		mBtLeService.setCharacteristicNotification(charac,enable);
 		mBtLeService.waitIdle(GATT_TIMEOUT);
+// if uuid = acc
 		mBtLeService.writeCharacteristic(period,ACC_PERIOD);
+// else if uuid = gyro
+// 		mBtLeService.writeCharacteristic(period,GYRO_PERIOD);
   }
 
   // Activity result handling
