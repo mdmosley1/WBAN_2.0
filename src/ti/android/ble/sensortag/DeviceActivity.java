@@ -1,3 +1,4 @@
+// made a change to b2
 // This activity handles the device communication while also plotting data from the sensor.
 // It also handles data forwarding to the database and saving data to a file if there is 
 // no network connection.
@@ -79,12 +80,23 @@ public class DeviceActivity extends Activity {
 	public static final String EXTRA_DEVICE = "EXTRA_DEVICE";
 	private static final int HIST_ACT_REQ = 0;
 	public static final byte ENABLE_SENSOR_CODE = 7;
+
+// THIS IS UUID INFO FOR GYRO
 // need to change period
+
 	public static final byte ACC_PERIOD = 10;		// [ACC_PERIOD]*10ms = Accelerometer's period
 	private final UUID servUuid = UUID.fromString("f000aa00-0451-4000-b000-000000000000");
 	private final UUID dataUuid = UUID.fromString("f000aa01-0451-4000-b000-000000000000");
 	private final UUID confUuid = UUID.fromString("f000aa02-0451-4000-b000-000000000000");
 	private final UUID perUUID = UUID.fromString("f000aa03-0451-4000-b000-000000000000"); // Period in tens of milliseconds
+
+	// public static final byte GYR_PERIOD = 10;		// [GYR_PERIOD]*10ms = Gyro's period
+	// private final UUID servUuid = UUID.fromString("f000aa50-0451-4000-b000-000000000000");
+	// private final UUID dataUuid = UUID.fromString("f000aa51-0451-4000-b000-000000000000");
+	// private final UUID confUuid = UUID.fromString("f000aa52-0451-4000-b000-000000000000");
+	// private final UUID perUUID = UUID.fromString("f000aa53-0451-4000-b000-000000000000"); // Period  in tens of milliseconds
+
+
 
   // BLE
   private BluetoothLeService mBtLeService = null;
@@ -433,7 +445,13 @@ public class DeviceActivity extends Activity {
   		
   		mBtLeService.setCharacteristicNotification(charac,enable);
 		mBtLeService.waitIdle(GATT_TIMEOUT);
+
 		mBtLeService.writeCharacteristic(period,ACC_PERIOD);
+// if uuid = acc
+//		mBtLeService.writeCharacteristic(period,ACC_PERIOD);
+// else if uuid = gyro
+// 		mBtLeService.writeCharacteristic(period,GYRO_PERIOD);
+
   }
 
   // Activity result handling
