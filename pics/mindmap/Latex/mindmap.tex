@@ -1,0 +1,43 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{tikz}
+\usetikzlibrary{mindmap}
+
+\pagestyle{empty}
+\begin{document}
+
+\begin{tikzpicture}[mindmap, grow cyclic, every node/.style=concept, concept color=orange!40,
+    level 1/.append style={level distance=5cm,sibling angle=120},
+    level 2/.append style={level distance=3cm,sibling angle=45}]
+
+\node{WBAN APP}
+    child [concept color=blue!30] { node {View}
+        child { node {dialog\_about}}
+        child { node {element\_characteristic}}
+        child { node {element\_device}}
+        child { node {element\_file}}
+        child { node {fragment\_help}}
+        child { node {fragment\_pager}}
+        % child { node {fragment_scan}}
+        % child { node {history}}
+        % child { node {plot}}
+        % child { node {services_browser}}
+    }
+    child [concept color=yellow!30] { node {Model}
+        child { node {Device Activity (plot.xml)}}
+        child { node {NA}}
+        child { node {NA}}
+        child { node {NA}}
+        child { node {NA}}
+    }
+    child [concept color=teal!40] { node {Controller}
+        child { node {Main Activity}}
+        child { node {NA}}
+        child { node {NA}}
+        child { node {NA}}
+        child { node {NA}}
+    };
+
+\end{tikzpicture}
+
+\end{document}
