@@ -79,16 +79,19 @@ public class DeviceActivity extends Activity {
 	// Activity
 	public static final String EXTRA_DEVICE = "EXTRA_DEVICE";
 	private static final int HIST_ACT_REQ = 0;
-	public static final byte ENABLE_SENSOR_CODE = 7;
+	public static final byte ENABLE_SENSOR_CODE = 1;
+//	public static final byte ENABLE_SENSOR_CODE = 7; // sensorcode = 7 with accelerometer uuid makes it show the gyro...
+//	this is strange
+
 
 // THIS IS UUID INFO FOR GYRO
 // need to change period
 
 	public static final byte ACC_PERIOD = 10;		// [ACC_PERIOD]*10ms = Accelerometer's period
-	private final UUID servUuid = UUID.fromString("f000aa00-0451-4000-b000-000000000000");
-	private final UUID dataUuid = UUID.fromString("f000aa01-0451-4000-b000-000000000000");
-	private final UUID confUuid = UUID.fromString("f000aa02-0451-4000-b000-000000000000");
-	private final UUID perUUID = UUID.fromString("f000aa03-0451-4000-b000-000000000000"); // Period in tens of milliseconds
+	private final UUID servUuid = UUID.fromString("f000aa10-0451-4000-b000-000000000000");
+	private final UUID dataUuid = UUID.fromString("f000aa11-0451-4000-b000-000000000000");
+	private final UUID confUuid = UUID.fromString("f000aa12-0451-4000-b000-000000000000");
+	private final UUID perUUID = UUID.fromString("f000aa13-0451-4000-b000-000000000000"); // Period in tens of milliseconds
 
 	// public static final byte GYR_PERIOD = 10;		// [GYR_PERIOD]*10ms = Gyro's period
 	// private final UUID servUuid = UUID.fromString("f000aa50-0451-4000-b000-000000000000");
@@ -170,7 +173,8 @@ public class DeviceActivity extends Activity {
     accLevelsSeries.useImplicitXVals();
     
     // freeze the range boundaries:
-    SensorPlot.setRangeBoundaries(-300, 300, BoundaryMode.FIXED);
+    SensorPlot.setRangeBoundaries(-4, 4, BoundaryMode.FIXED);
+    // SensorPlot.setRangeBoundaries(-300, 300, BoundaryMode.FIXED);
     SensorPlot.setDomainBoundaries(0, SERIES_SIZE, BoundaryMode.FIXED);
     SensorPlot.setRangeStep(XYStepMode.INCREMENT_BY_VAL, 1);
     SensorPlot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 5);
@@ -733,6 +737,7 @@ public class DeviceActivity extends Activity {
 	void updatePlot(String uuidStr, byte[] rawValue, String[] t) {
 		Point3D v; 
   		v = Sensor.ACCELEROMETER.convert(rawValue);
+  		// v = Sensor.GYROSCOPE.convert(rawValue);
 	  	byte[][] coords = new byte[3][4];
   		
   		float x = (float) v.x;
