@@ -48,20 +48,26 @@
 
 \node (HP) [model, below of=DA] {HistoryPlot.java};
 \node (history) [view, below of=HP] {history.xml};
+\node (sensor) [model, right of=HP,xshift=2cm] {Sensor.java};
 
 \node (VPA) [model, left of=HP, xshift=-4cm] {ViewPager.java};
 \node (fragpage) [view, below of=VPA] {mResourceFragmentPager.xml}; 
 
-\draw [arrow] (main) to [bend right=20] node[anchor=west] {fragment} (VPA);
-\draw [arrow] (VPA) -- node[anchor=east] {setContentView()} (fragpage);
+%% main to *
+\draw [arrow] (main) to [bend right=20] node[anchor=west] {fragment} (VPA); 
 \draw [arrow] (main) -- (DA);
 \draw [arrow] (main) to [bend right=10] node[anchor=east] {startService()} (BLE);
 
+% DA to * 
 \draw [arrow] (DA) -- node[anchor=east] {startActivity()} (HP);
 \draw [arrow] (DA) -- node[anchor=south] {setContentView()} (plot);
+\draw [arrow] (DA) to [bend left=15] node[anchor=west] {convert()} (sensor);
+\draw [arrow] (sensor) to [bend left=15] (DA);
+
 
 \draw [arrow] (HP) -- node[anchor=east] {setContentView()} (history);
 
+\draw [arrow] (VPA) -- node[anchor=east] {setContentView()} (fragpage);
 %%\path[every node/.style={font=\sffamily\small}]
 
 %%% second legend
