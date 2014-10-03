@@ -41,6 +41,7 @@
 
 
 \node (main) [process] {MainActivity.java};
+\node (BLE) [model, left of=main, xshift=-4cm, yshift=-1cm] {BluetoothLeService.java};
 
 \node (DA) [model, below of=main] {DeviceActivity.java};
 \node (plot) [view, right of=DA, xshift=3.5cm] {plot.xml};
@@ -49,15 +50,16 @@
 \node (history) [view, below of=HP] {history.xml};
 
 \node (VPA) [model, left of=HP, xshift=-4cm] {ViewPager.java};
-\draw [arrow] (DA) to [bend right=20] (VPA);
-
 \node (fragpage) [view, below of=VPA] {mResourceFragmentPager.xml}; 
 
-
+\draw [arrow] (main) to [bend right=20] node[anchor=west] {fragment} (VPA);
 \draw [arrow] (VPA) -- node[anchor=east] {setContentView()} (fragpage);
 \draw [arrow] (main) -- (DA);
+\draw [arrow] (main) to [bend right=10] node[anchor=east] {startService()} (BLE);
+
 \draw [arrow] (DA) -- node[anchor=east] {startActivity()} (HP);
 \draw [arrow] (DA) -- node[anchor=south] {setContentView()} (plot);
+
 \draw [arrow] (HP) -- node[anchor=east] {setContentView()} (history);
 
 %%\path[every node/.style={font=\sffamily\small}]
