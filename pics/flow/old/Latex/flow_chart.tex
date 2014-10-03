@@ -40,18 +40,18 @@
 \begin{tikzpicture}[node distance=2cm]
 
 
-\node (main) [process] {MainActivity.java};
-\node (BLE) [model, left of=main, xshift=-4cm, yshift=-1cm] {BluetoothLeService.java};
+\node (main) [process]                                     {MainActivity.java};
+\node (BLE) [model, left of=main, xshift=-4cm, yshift=-1cm]{BluetoothLeService.java};
 
-\node (DA) [model, below of=main] {DeviceActivity.java};
-\node (plot) [view, right of=DA, xshift=3.5cm] {plot.xml};
+\node (DA) [model, below of=main]                          {DeviceActivity.java};
+\node (plot) [view, right of=DA, xshift=3.5cm]             {plot.xml};
 
-\node (HP) [model, below of=DA] {HistoryPlot.java};
-\node (history) [view, below of=HP] {history.xml};
-\node (sensor) [model, right of=HP,xshift=2cm] {Sensor.java};
+\node (HP) [model, below of=DA]                            {HistoryPlot.java};
+\node (history) [view, below of=HP]                        {history.xml};
+\node (sensor) [model, right of=HP,xshift=3cm,yshift=-1cm] {Sensor.java};
 
-\node (VPA) [model, left of=HP, xshift=-4cm] {ViewPager.java};
-\node (fragpage) [view, below of=VPA] {mResourceFragmentPager.xml}; 
+\node (VPA) [model, left of=HP, xshift=-4cm]               {ViewPager.java};
+\node (fragpage) [view, below of=VPA]                      {mResourceFragmentPager.xml}; 
 
 %% main to *
 \draw [arrow] (main) to [bend right=20] node[anchor=west] {fragment} (VPA); 
@@ -61,8 +61,8 @@
 % DA to * 
 \draw [arrow] (DA) -- node[anchor=east] {startActivity()} (HP);
 \draw [arrow] (DA) -- node[anchor=south] {setContentView()} (plot);
-\draw [arrow] (DA) to [bend left=15] node[anchor=west] {convert()} (sensor);
-\draw [arrow] (sensor) to [bend left=15] (DA);
+\draw [arrow] (DA) to [bend left=20] node[anchor=west] {convert(rawValue)} (sensor);
+\draw [arrow] (sensor) to [bend left=20] node[anchor=west] {new Point3D} (DA);
 
 
 \draw [arrow] (HP) -- node[anchor=east] {setContentView()} (history);
