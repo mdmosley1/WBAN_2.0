@@ -107,5 +107,16 @@
     <string name="cur_image">Current image:</string>
     <string name="idle">idle</string>
     <string name="btn_txt_confirm">Confirm</string>
+    
+    <!-- plot.xml -->
+    <string name="motion_data">Accelerometer</string>
+    <string name="time">Seconds</string>
+    <string name="accel">G\'s</string>
+    
+    <dimen name="title_font_size">20dp</dimen>
+    <dimen name="domain_label_font_size">13dp</dimen>
+    <dimen name="range_label_font_size">13dp</dimen>
+    <dimen name="legend_text_font_size">20dp</dimen>
+    
 
 </resources>

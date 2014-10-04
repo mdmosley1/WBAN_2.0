@@ -10,13 +10,20 @@
             android:id="@+id/SensorPlot"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            androidPlot.title="Motion Data"
-            androidPlot.domainLabel="Time"
-            androidPlot.rangeLabel="Acceleration"
+            
+            androidPlot.title="@string/motion_data"
+            androidPlot.domainLabel="@string/time"
+            androidPlot.rangeLabel="@string/accel"
+            androidPlot.titleWidget.labelPaint.textSize="@dimen/title_font_size"
+            androidPlot.domainLabelWidget.labelPaint.textSize="@dimen/domain_label_font_size"
+            androidPlot.rangeLabelWidget.labelPaint.textSize="@dimen/range_label_font_size"
+            
             androidPlot.graphWidget.marginTop="20dp"
             androidPlot.graphWidget.marginLeft="15dp"
             androidPlot.graphWidget.marginBottom="100dp"
             androidPlot.graphWidget.marginRight="10dp"
+            
+            androidPlot.legendWidget.textPaint.textSize="@dimen/legend_text_font_size"
             androidPlot.legendWidget.iconSizeMetrics.heightMetric.value="15dp"
             androidPlot.legendWidget.iconSizeMetrics.widthMetric.value="15dp"
             androidPlot.legendWidget.heightMetric.value="25dp"

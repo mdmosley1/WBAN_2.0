@@ -93,12 +93,6 @@ public class DeviceActivity extends Activity {
 	private final UUID confUuid = UUID.fromString("f000aa12-0451-4000-b000-000000000000");
 	private final UUID perUUID = UUID.fromString("f000aa13-0451-4000-b000-000000000000"); // Period in tens of milliseconds
 
-	// public static final byte GYR_PERIOD = 10;		// [GYR_PERIOD]*10ms = Gyro's period
-	// private final UUID servUuid = UUID.fromString("f000aa50-0451-4000-b000-000000000000");
-	// private final UUID dataUuid = UUID.fromString("f000aa51-0451-4000-b000-000000000000");
-	// private final UUID confUuid = UUID.fromString("f000aa52-0451-4000-b000-000000000000");
-	// private final UUID perUUID = UUID.fromString("f000aa53-0451-4000-b000-000000000000"); // Period  in tens of milliseconds
-
 
 
   // BLE
@@ -161,11 +155,11 @@ public class DeviceActivity extends Activity {
     // Plot variables. Creates a plot and instantiates the series for each axis of acceleration
     SensorPlot = (XYPlot) findViewById(R.id.SensorPlot);
     
-    xHistorySeries = new SimpleXYSeries("X Axis");
+    xHistorySeries = new SimpleXYSeries("X");
     xHistorySeries.useImplicitXVals();
-    yHistorySeries = new SimpleXYSeries("Y Axis");
+    yHistorySeries = new SimpleXYSeries("Y");
     yHistorySeries.useImplicitXVals();
-    zHistorySeries = new SimpleXYSeries("Z Axis");
+    zHistorySeries = new SimpleXYSeries("Z");
     zHistorySeries.useImplicitXVals();
     totHistorySeries = new SimpleXYSeries("Total Acc.");
     totHistorySeries.useImplicitXVals();

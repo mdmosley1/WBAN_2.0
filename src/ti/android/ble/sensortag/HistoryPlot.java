@@ -163,11 +163,11 @@ public class HistoryPlot extends Activity {
 		
 		HistoryPlot = (XYPlot) findViewById(R.id.SensorPlot);
 	    
-	    xHistorySeries = new SimpleXYSeries("X Axis");
+	    xHistorySeries = new SimpleXYSeries("X");
 	    xHistorySeries.useImplicitXVals();
-	    yHistorySeries = new SimpleXYSeries("Y Axis");
+	    yHistorySeries = new SimpleXYSeries("Y");
 	    yHistorySeries.useImplicitXVals();
-	    zHistorySeries = new SimpleXYSeries("Z Axis");
+	    zHistorySeries = new SimpleXYSeries("Z");
 	    zHistorySeries.useImplicitXVals();
 	    totHistorySeries = new SimpleXYSeries("Total Acc.");
 	    totHistorySeries.useImplicitXVals();
