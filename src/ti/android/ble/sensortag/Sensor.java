@@ -63,12 +63,6 @@ public enum Sensor {
     return (upperByte << 8) + lowerByte;
   }
 
-  private static Integer shortUnsignedAtOffset(byte[] c, int offset) {
-    Integer lowerByte = (int) c[offset] & 0xFF; 
-    Integer upperByte = (int) c[offset+1] & 0xFF; // // Interpret MSB as signed
-    return (upperByte << 8) + lowerByte;
-  }
-
   public void onCharacteristicChanged(BluetoothGattCharacteristic c) {
     throw new UnsupportedOperationException("Programmer error, the individual enum classes are supposed to override this method.");
   }
@@ -104,9 +98,6 @@ public enum Sensor {
     this.enableCode = ENABLE_SENSOR_CODE; // This is the sensor enable code for all sensors except the gyroscope
   }
 
-  /**
-   * @return the code which, when written to the configuration characteristic, turns on the sensor.
-   * */
   public byte getEnableSensorCode() {
     return enableCode;
   }
