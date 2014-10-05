@@ -245,13 +245,13 @@ public class MainActivity extends ViewPagerActivity {
   
   // Starts the activity that displays the accelerometer data. Called when the phone
   // connects with a device.
-  private void startDeviceActivity() {
+  public void startDeviceActivity() {
     mDeviceIntent = new Intent(this, DeviceActivity.class);
     mDeviceIntent.putExtra(DeviceActivity.EXTRA_DEVICE, mBluetoothDevice);
     startActivityForResult(mDeviceIntent, REQ_DEVICE_ACT);
   }
 
-  private void stopDeviceActivity() {
+  public void stopDeviceActivity() {
     finishActivity(REQ_DEVICE_ACT);
   }
 
