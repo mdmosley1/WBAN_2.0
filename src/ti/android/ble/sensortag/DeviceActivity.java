@@ -80,20 +80,12 @@ public class DeviceActivity extends Activity {
 	public static final String EXTRA_DEVICE = "EXTRA_DEVICE";
 	private static final int HIST_ACT_REQ = 0;
 	public static final byte ENABLE_SENSOR_CODE = 1;
-//	public static final byte ENABLE_SENSOR_CODE = 7; // sensorcode = 7 with accelerometer uuid makes it show the gyro...
-//	this is strange
-
-
-// THIS IS UUID INFO FOR GYRO
-// need to change period
 
 	public static final byte ACC_PERIOD = 10;		// [ACC_PERIOD]*10ms = Accelerometer's period
-	private final UUID servUuid = UUID.fromString("f000aa10-0451-4000-b000-000000000000");
-	private final UUID dataUuid = UUID.fromString("f000aa11-0451-4000-b000-000000000000");
-	private final UUID confUuid = UUID.fromString("f000aa12-0451-4000-b000-000000000000");
-	private final UUID perUUID = UUID.fromString("f000aa13-0451-4000-b000-000000000000"); // Period in tens of milliseconds
-
-
+	private final UUID servUuid = SensorTag.UUID_ACC_SERV;
+	private final UUID dataUuid = SensorTag.UUID_ACC_DATA;
+	private final UUID confUuid = SensorTag.UUID_ACC_CONF;
+	private final UUID perUUID = SensorTag.UUID_ACC_PERI; // Period in tens of milliseconds
 
   // BLE
   private BluetoothLeService mBtLeService = null;
