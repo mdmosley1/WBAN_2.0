@@ -46,11 +46,6 @@
             android:name="DeviceActivity"
             android:parentActivityName="MainActivity"/>
         <activity
-            android:name="PreferencesActivity"
-            android:parentActivityName="DeviceActivity"
-            android:screenOrientation="portrait"
-            android:label="Preferences"/>
-        <activity
             android:name="HistoryPlot"
             android:parentActivityName="DeviceActivity"
             android:screenOrientation="portrait"
