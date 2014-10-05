@@ -62,6 +62,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.androidplot.util.PlotStatistics;
@@ -72,6 +73,10 @@ import com.androidplot.xy.XYPlot;
 import com.androidplot.xy.XYStepMode;
 
 public class DeviceActivity extends Activity {
+	
+	private Button mAButton;
+	private Button mGButton;
+
   // Log
   private static String TAG = "DeviceActivity";
   private static String NET = "NetworkConnectivity";
@@ -79,13 +84,17 @@ public class DeviceActivity extends Activity {
 	// Activity
 	public static final String EXTRA_DEVICE = "EXTRA_DEVICE";
 	private static final int HIST_ACT_REQ = 0;
-	public static final byte ENABLE_SENSOR_CODE = 1;
+	public static final byte ENABLE_SENSOR_CODE = 7;
 
 	public static final byte ACC_PERIOD = 10;		// [ACC_PERIOD]*10ms = Accelerometer's period
-	private final UUID servUuid = SensorTag.UUID_ACC_SERV;
-	private final UUID dataUuid = SensorTag.UUID_ACC_DATA;
-	private final UUID confUuid = SensorTag.UUID_ACC_CONF;
-	private final UUID perUUID = SensorTag.UUID_ACC_PERI; // Period in tens of milliseconds
+	
+	// set condition here
+	private UUID servUuid = SensorTag.UUID_ACC_SERV;
+	private UUID dataUuid = SensorTag.UUID_ACC_DATA;
+	private UUID confUuid = SensorTag.UUID_ACC_CONF;
+	private UUID perUUID = SensorTag.UUID_ACC_PERI; 
+	
+	
 
   // BLE
   private BluetoothLeService mBtLeService = null;
@@ -132,6 +141,35 @@ public class DeviceActivity extends Activity {
     super.onCreate(savedInstanceState);
     Intent intent = getIntent();
     setContentView(R.layout.plot);
+    
+    mAButton = (Button) findViewById(R.id.aButton);
+    mAButton.setOnClickListener(new View.OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			servUuid = SensorTag.UUID_ACC_SERV;
+			dataUuid = SensorTag.UUID_ACC_DATA;
+			confUuid = SensorTag.UUID_ACC_CONF;
+			perUUID = SensorTag.UUID_ACC_PERI;
+			Intent i = new Intent (DeviceActivity.this, DeviceActivity.class);
+			i.putExtra(name, value);
+			startActivity(i);
+		}
+	});
+    
+    mGButton = (Button) findViewById(R.id.gButton);
+    mGButton.setOnClickListener(new View.OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			servUuid = SensorTag.UUID_GYR_SERV;
+			dataUuid = SensorTag.UUID_GYR_DATA;
+			confUuid = SensorTag.UUID_GYR_CONF;
+			perUUID = SensorTag.UUID_GYR_PERI;
+		}
+	});
     
     // Used only for debugging purposes. On app start, this boolean will be used to clear the data save file.
     // isBeginning = true;
@@ -722,8 +760,8 @@ public class DeviceActivity extends Activity {
 	// Updates the plot with new data obtained from the service notification
 	void updatePlot(String uuidStr, byte[] rawValue, String[] t) {
 		Point3D v; 
+		
   		v = Sensor.ACCELEROMETER.convert(rawValue);
-  		// v = Sensor.GYROSCOPE.convert(rawValue);
 	  	byte[][] coords = new byte[3][4];
   		
   		float x = (float) v.x;
