@@ -58,6 +58,7 @@ fill=red!30]
 
 \node (DA) [activity, below of=main]                          {DeviceActivity.java};
 \node (plot) [view, right of=DA, xshift=3.5cm]             {plot.xml};
+\node (motiondata) [below of = plot,yshift=-1.5cm] {\includegraphics[width=3cm]{pics/motion_data.png}}; 
 
 \node (HP) [activity, below of=DA]                            {HistoryPlot.java};
 \node (history) [view, below of=HP]                        {history.xml};
@@ -76,7 +77,6 @@ fill=red!30]
 \node (fragscan) [view, below of=scanview] {fragment\_scan.xml};
 \node (svpic) [below of=fragscan,yshift=-1.5cm] {\includegraphics[width=3cm]{pics/device_found.png}};
 
-%\node (point3d) []
 
 %% main to *
 \draw [arrow] (main) to [bend right=20] node[anchor=west] {fragment} (VPA); 
@@ -90,6 +90,12 @@ fill=red!30]
 \draw [arrow] (HP) -- node[anchor=east] {setContentView()} (history);
 
 \draw [arrow] (VPA) -- node[anchor=east] {setContentView()} (fragpage);
+\draw [arrow] (plot) -- (motiondata);
+
+% scanview
+\draw [arrow] (scanview) -- node[anchor=west] {setContentView()} (fragscan);
+\draw [arrow] (fragscan) -- (svpic);
+
 
 %%% second legend
 %%% http://tex.stackexchange.com/questviewns/54794/using-a-pgfplots-style-legend-in-a-plain-old-tikzpicture 
@@ -104,5 +110,6 @@ fill=red!30]
 \end{customlegend}
 
 \end{tikzpicture}
+
 
 \end{document}
