@@ -5,7 +5,3 @@ WBAN Application Notes Overview: The application handles communication between t
 
 
 ![flow chart](https://github.com/mdmosley1/WBAN_2.0/blob/master/pics/flow/old/Latex/flow_chart.jpg)
-
-
-
-
