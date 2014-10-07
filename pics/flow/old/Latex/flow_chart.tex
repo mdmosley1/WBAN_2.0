@@ -4,15 +4,29 @@
 \usepackage[utf8]{inputenc}
 \usepackage{tikz}
 \usepackage{pgfplots}
+\usetikzlibrary{shapes.multipart}
 \usetikzlibrary{shapes.geometric, arrows}
 
-\tikzstyle{model} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm,text centered, draw=black, fill=green!30]
+\tikzstyle{activity} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm,text centered, draw=black, fill=green!30]
 
 \tikzstyle{view} = [rectangle, rounded corners, minimum width=1cm, minimum height=1cm, text centered,  draw=black, fill=blue!30] 
 
-\tikzstyle{process} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, text width=3cm, draw=black, fill=orange!30]
+\tikzstyle{process} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm, text centered, text width=3cm, draw=black,
+fill=orange!30]
 
-\tikzstyle{decisviewn} = [diamond, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=green!30]
+\tikzstyle{service} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm, text centered, text width=4cm, draw=black,
+fill=red!30]
+
+ \tikzstyle{class} = [rectangle split, rectangle split parts=2, rounded corners, minimum width=3cm, minimum
+ height=1cm, text width=3cm, draw=black, text centered,
+ fill=brown!30] 
+
+ \tikzstyle{enum} = [rectangle split, rectangle split parts=2, rounded corners, minimum width=3cm, minimum
+ height=1cm, text width=3cm, draw=black, text centered,
+ fill=purple!40] 
+
+ \tikzstyle{fragment} = [rectangle split, rectangle split parts=2, rounded corners, minimum width=3cm, minimum height=1cm, text width=3cm, draw=black,
+ fill=black!30!green] 
 
 \tikzstyle{arrow} = [thick,->,>=stealth]
 
@@ -39,19 +53,30 @@
 
 \begin{tikzpicture}[node distance=2cm]
 
+\node (main) [activity]                                     {MainActivity.java};
+\node (BLE) [service, left of=main, xshift=-4cm, yshift=-1cm]{BluetoothLeService.java};
 
-\node (main) [process]                                     {MainActivity.java};
-\node (BLE) [model, left of=main, xshift=-4cm, yshift=-1cm]{BluetoothLeService.java};
-
-\node (DA) [model, below of=main]                          {DeviceActivity.java};
+\node (DA) [activity, below of=main]                          {DeviceActivity.java};
 \node (plot) [view, right of=DA, xshift=3.5cm]             {plot.xml};
 
-\node (HP) [model, below of=DA]                            {HistoryPlot.java};
+\node (HP) [activity, below of=DA]                            {HistoryPlot.java};
 \node (history) [view, below of=HP]                        {history.xml};
-\node (sensor) [model, right of=HP,xshift=3cm,yshift=-1cm] {Sensor.java};
 
-\node (VPA) [model, left of=HP, xshift=-4cm]               {ViewPager.java};
-\node (fragpage) [view, below of=VPA]                      {mResourceFragmentPager.xml}; 
+\node (VPA) [activity, left of=HP, xshift=-4cm]               {ViewPagerActivity.java};
+\node (fragpage) [view, below of=VPA]                      {fragment\_pager.xml}; 
+
+\node (sensor) [class, below of=fragpage,yshift=-1cm] {Sensor.java 
+\nodepart[align=left]{second} Accelerometer\{ \\ convert(RawData)\} \vspace{1 mm}\\ Gyroscope\{ \\convert(RawData)\}};
+
+\node (point3d) [class, right of=sensor,xshift=3cm] {Point3D.java 
+\nodepart[align=left]{second} double x \\ double y \\ double z};
+
+\node (scanview) [fragment, right of=point3d,xshift=3cm] {ScanView.java \nodepart{second} null};
+
+\node (fragscan) [view, below of=scanview] {fragment\_scan.xml};
+\node (svpic) [below of=fragscan,yshift=-1.5cm] {\includegraphics[width=3cm]{pics/device_found.png}};
+
+%\node (point3d) []
 
 %% main to *
 \draw [arrow] (main) to [bend right=20] node[anchor=west] {fragment} (VPA); 
@@ -61,22 +86,21 @@
 % DA to * 
 \draw [arrow] (DA) -- node[anchor=east] {startActivity()} (HP);
 \draw [arrow] (DA) -- node[anchor=south] {setContentView()} (plot);
-\draw [arrow] (DA) to [bend left=20] node[anchor=west] {convert(rawValue)} (sensor);
-\draw [arrow] (sensor) to [bend left=20] node[anchor=west] {new Point3D} (DA);
-
 
 \draw [arrow] (HP) -- node[anchor=east] {setContentView()} (history);
 
 \draw [arrow] (VPA) -- node[anchor=east] {setContentView()} (fragpage);
-%%\path[every node/.style={font=\sffamily\small}]
 
 %%% second legend
 %%% http://tex.stackexchange.com/questviewns/54794/using-a-pgfplots-style-legend-in-a-plain-old-tikzpicture 
 
-\begin{customlegend}[legend entries={Model,View,Controller}, legend style={at={(5,0.5)},anchor=center}]
+\begin{customlegend}[legend entries={Activity,View,Class,Fragment,Service}, legend style={at={(5,0.5)},anchor=center}]
   \addlegendimage{black,fill=green!30,area legend}
   \addlegendimage{black,fill=blue!30,area legend}
-  \addlegendimage{black,fill=orange!30,area legend}
+  \addlegendimage{black,fill=brown!30,area legend}
+  \addlegendimage{black,fill=black!30!green,area legend}
+  \addlegendimage{black,fill=red!30,area legend}
+
 \end{customlegend}
 
 \end{tikzpicture}

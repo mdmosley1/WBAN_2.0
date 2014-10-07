@@ -153,7 +153,6 @@ public class DeviceActivity extends Activity {
 			confUuid = SensorTag.UUID_ACC_CONF;
 			perUUID = SensorTag.UUID_ACC_PERI;
 			Intent i = new Intent (DeviceActivity.this, DeviceActivity.class);
-			i.putExtra(name, value);
 			startActivity(i);
 		}
 	});
