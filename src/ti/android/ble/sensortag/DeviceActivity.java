@@ -79,12 +79,18 @@ public class DeviceActivity extends Activity {
 	// Activity
 	public static final String EXTRA_DEVICE = "EXTRA_DEVICE";
 	private static final int HIST_ACT_REQ = 0;
-	public static final byte ENABLE_SENSOR_CODE = 1;
+	public static final byte ENABLE_SENSOR_CODE = 7;
 	public static final byte ACC_PERIOD = 10;		// [ACC_PERIOD]*10ms = Accelerometer's period
-	private final UUID servUuid = UUID.fromString("f000aa10-0451-4000-b000-000000000000");
-	private final UUID dataUuid = UUID.fromString("f000aa11-0451-4000-b000-000000000000");
-	private final UUID confUuid = UUID.fromString("f000aa12-0451-4000-b000-000000000000");
-	private final UUID perUUID = UUID.fromString("f000aa13-0451-4000-b000-000000000000"); // Period in tens of milliseconds
+//	private UUID servUuid = SensorTag.UUID_ACC_SERV;
+//	private UUID dataUuid = SensorTag.UUID_ACC_DATA;
+//	private UUID confUuid = SensorTag.UUID_ACC_CONF;
+//	private UUID perUUID = SensorTag.UUID_ACC_PERI; 
+	
+	private UUID servUuid = SensorTag.UUID_GYR_SERV;
+	private UUID dataUuid = SensorTag.UUID_GYR_DATA;
+	private UUID confUuid = SensorTag.UUID_GYR_CONF;
+	private UUID perUUID = SensorTag.UUID_GYR_PERI; 
+
 
   // BLE
   private BluetoothLeService mBtLeService = null;
@@ -492,6 +498,7 @@ public class DeviceActivity extends Activity {
   		} else if (BluetoothLeService.ACTION_DATA_NOTIFY.equals(action)) {
   			// Notification - get the time that the data was received and update the plot
   			byte[] value = intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
+  			// TODO When getting gryo data, value is [70 0 0 0 0 0]. There should be more than one nonzero value for the gyro sensors 
   			String uuidStr = intent.getStringExtra(BluetoothLeService.EXTRA_UUID);
   			Log.i(TAG,"Data discovered.");
   			String[] time = getTimeStamp();
@@ -740,7 +747,8 @@ public class DeviceActivity extends Activity {
 	// Updates the plot with new data obtained from the service notification
 	void updatePlot(String uuidStr, byte[] rawValue, String[] t) {
 		Point3D v; 
-  		v = Sensor.ACCELEROMETER.convert(rawValue);
+//  		v = Sensor.ACCELEROMETER.convert(rawValue);
+		v = Sensor.GYROSCOPE.convert(rawValue);
 	  	byte[][] coords = new byte[3][4];
   		
   		float x = (float) v.x;

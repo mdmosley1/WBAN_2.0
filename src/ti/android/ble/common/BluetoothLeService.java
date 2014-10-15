@@ -91,6 +91,7 @@ public class BluetoothLeService extends Service {
     @Override
     public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
     	broadcastUpdate(ACTION_DATA_READ,characteristic,status);
+    	// TODO this is where we get our data from.
     }
 
     @Override
@@ -123,6 +124,7 @@ public class BluetoothLeService extends Service {
 	  final Intent intent = new Intent(action);
 	  intent.putExtra(EXTRA_UUID, characteristic.getUuid().toString());
 		intent.putExtra(EXTRA_DATA, characteristic.getValue());
+		// TODO this is where we get our data from.
 		intent.putExtra(EXTRA_STATUS, status);
 	  sendBroadcast(intent);
     mBusy = false;
