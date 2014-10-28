@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
+
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -61,6 +62,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.Toast;
@@ -73,10 +75,6 @@ import com.androidplot.xy.XYPlot;
 import com.androidplot.xy.XYStepMode;
 
 public class DeviceActivity extends Activity {
-	
-	private Button mAButton;
-	private Button mGButton;
-
   // Log
   private static String TAG = "DeviceActivity";
   private static String NET = "NetworkConnectivity";
@@ -84,17 +82,27 @@ public class DeviceActivity extends Activity {
 	// Activity
 	public static final String EXTRA_DEVICE = "EXTRA_DEVICE";
 	private static final int HIST_ACT_REQ = 0;
-	public static final byte ENABLE_SENSOR_CODE = 7;
+	public static final byte ENABLE_SENSOR_CODE = 1;
+//	public static final byte ENABLE_SENSOR_CODE = 7; // sensorcode = 7 with accelerometer uuid makes it show the gyro...
+//	this is strange
+
+
+// THIS IS UUID INFO FOR GYRO
+// need to change period
 
 	public static final byte ACC_PERIOD = 10;		// [ACC_PERIOD]*10ms = Accelerometer's period
-	
-	// set condition here
-	private UUID servUuid = SensorTag.UUID_ACC_SERV;
-	private UUID dataUuid = SensorTag.UUID_ACC_DATA;
-	private UUID confUuid = SensorTag.UUID_ACC_CONF;
-	private UUID perUUID = SensorTag.UUID_ACC_PERI; 
-	
-	
+	private final UUID servUuid = UUID.fromString("f000aa10-0451-4000-b000-000000000000");
+	private final UUID dataUuid = UUID.fromString("f000aa11-0451-4000-b000-000000000000");
+	private final UUID confUuid = UUID.fromString("f000aa12-0451-4000-b000-000000000000");
+	private final UUID perUUID = UUID.fromString("f000aa13-0451-4000-b000-000000000000"); // Period in tens of milliseconds
+
+	// public static final byte GYR_PERIOD = 10;		// [GYR_PERIOD]*10ms = Gyro's period
+	// private final UUID servUuid = UUID.fromString("f000aa50-0451-4000-b000-000000000000");
+	// private final UUID dataUuid = UUID.fromString("f000aa51-0451-4000-b000-000000000000");
+	// private final UUID confUuid = UUID.fromString("f000aa52-0451-4000-b000-000000000000");
+	// private final UUID perUUID = UUID.fromString("f000aa53-0451-4000-b000-000000000000"); // Period  in tens of milliseconds
+
+
 
   // BLE
   private BluetoothLeService mBtLeService = null;
@@ -135,6 +143,10 @@ public class DeviceActivity extends Activity {
   private int buff_count;
   private boolean isBeginning = false;
   
+  Button apButton, astbutton, aetbutton, aButton;
+  Button gpButton, gstbutton, getbutton, gButton;
+  Button backbutton;
+  
   @Override
   public void onCreate(Bundle savedInstanceState) {
     requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
@@ -142,33 +154,20 @@ public class DeviceActivity extends Activity {
     Intent intent = getIntent();
     setContentView(R.layout.plot);
     
-    mAButton = (Button) findViewById(R.id.aButton);
-    mAButton.setOnClickListener(new View.OnClickListener() {
-		
-		@Override
-		public void onClick(View v) {
-			// TODO Auto-generated method stub
-			servUuid = SensorTag.UUID_ACC_SERV;
-			dataUuid = SensorTag.UUID_ACC_DATA;
-			confUuid = SensorTag.UUID_ACC_CONF;
-			perUUID = SensorTag.UUID_ACC_PERI;
-			Intent i = new Intent (DeviceActivity.this, DeviceActivity.class);
-			startActivity(i);
-		}
-	});
+    apButton = (Button) findViewById(R.id.apButton);
+    astbutton = (Button) findViewById(R.id.astbutton);
+    aetbutton = (Button) findViewById(R.id.aetbutton);
+    aButton = (Button) findViewById(R.id.aButton);
+    gpButton = (Button) findViewById(R.id.gpButton);
+    gstbutton = (Button) findViewById(R.id.gstbutton);
+    getbutton = (Button) findViewById(R.id.getbutton);
+    gButton = (Button) findViewById(R.id.gButton);
+    backbutton = (Button) findViewById(R.id.backbutton);
     
-    mGButton = (Button) findViewById(R.id.gButton);
-    mGButton.setOnClickListener(new View.OnClickListener() {
-		
-		@Override
-		public void onClick(View v) {
-			// TODO Auto-generated method stub
-			servUuid = SensorTag.UUID_GYR_SERV;
-			dataUuid = SensorTag.UUID_GYR_DATA;
-			confUuid = SensorTag.UUID_GYR_CONF;
-			perUUID = SensorTag.UUID_GYR_PERI;
-		}
-	});
+    
+    apButton();
+    gpButton();
+    backbutton();
     
     // Used only for debugging purposes. On app start, this boolean will be used to clear the data save file.
     // isBeginning = true;
@@ -184,11 +183,11 @@ public class DeviceActivity extends Activity {
     // Plot variables. Creates a plot and instantiates the series for each axis of acceleration
     SensorPlot = (XYPlot) findViewById(R.id.SensorPlot);
     
-    xHistorySeries = new SimpleXYSeries("X");
+    xHistorySeries = new SimpleXYSeries("X Axis");
     xHistorySeries.useImplicitXVals();
-    yHistorySeries = new SimpleXYSeries("Y");
+    yHistorySeries = new SimpleXYSeries("Y Axis");
     yHistorySeries.useImplicitXVals();
-    zHistorySeries = new SimpleXYSeries("Z");
+    zHistorySeries = new SimpleXYSeries("Z Axis");
     zHistorySeries.useImplicitXVals();
     totHistorySeries = new SimpleXYSeries("Total Acc.");
     totHistorySeries.useImplicitXVals();
@@ -650,6 +649,72 @@ public class DeviceActivity extends Activity {
 		}
 	}
 	
+//------------------------------------------------------------------------------------------------
+	private void apButton() {
+		// TODO Auto-generated method stub
+		
+		// 1. Get a reference to the button.
+//		Button button1 = (Button) findViewById(R.id.button1);
+		
+		// 2. Set the click listener to run my code
+		apButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				
+					SensorPlot.setVisibility(View.VISIBLE);					
+				
+			}
+		});
+	}
+	
+	
+	private void gpButton() {
+		// TODO Auto-generated method stub
+		
+		// 1. Get a reference to the button.
+//		Button button2 = (Button) findViewById(R.id.button2);
+		
+		// 2. Set the click listener to run my code
+		gpButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+//				button1.setVisibility(View.VISIBLE);
+
+					SensorPlot.setVisibility(View.VISIBLE);
+				
+
+
+			}
+		});
+	}
+	
+	private void backbutton() {
+		// TODO Auto-generated method stub
+		
+
+		// 2. Set the click listener to run my code
+		backbutton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+//				button1.setVisibility(View.VISIBLE);
+
+					SensorPlot.setVisibility(View.INVISIBLE);
+				
+
+
+			}
+		});
+	}
+
+//------------------------------------------------------------------------------------------------
+	
+	
 	// Reads a file to a byte array. NOT USED
 	public static byte[] readFileToByteArray(File file) throws IOException {
         InputStream in = null;
@@ -759,8 +824,8 @@ public class DeviceActivity extends Activity {
 	// Updates the plot with new data obtained from the service notification
 	void updatePlot(String uuidStr, byte[] rawValue, String[] t) {
 		Point3D v; 
-		
   		v = Sensor.ACCELEROMETER.convert(rawValue);
+  		// v = Sensor.GYROSCOPE.convert(rawValue);
 	  	byte[][] coords = new byte[3][4];
   		
   		float x = (float) v.x;
