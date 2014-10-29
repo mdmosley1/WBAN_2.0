@@ -24,6 +24,11 @@ import java.util.Locale;
 import java.util.UUID;
 
 
+
+
+
+
+
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -38,6 +43,7 @@ import ti.android.ble.common.BluetoothLeService;
 import ti.android.ble.common.GattInfo;
 import ti.android.util.Point3D;
 import android.app.Activity;
+import android.app.TimePickerDialog;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
@@ -65,6 +71,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.androidplot.util.PlotStatistics;
@@ -110,6 +118,7 @@ public class DeviceActivity extends Activity {
   
   //Plot Stuff
   private XYPlot SensorPlot;
+  private XYPlot hPlot;
   private SimpleXYSeries xHistorySeries = null;
   private SimpleXYSeries yHistorySeries = null;
   private SimpleXYSeries zHistorySeries = null;
@@ -141,6 +150,28 @@ public class DeviceActivity extends Activity {
   Button gpButton, gstbutton, getbutton, gButton;
   Button backbutton;
   
+  // Time Picker Dialog and display
+	TimePicker time_picker;
+	static final int dialog_id = 0;
+	
+	// Accel Variables
+	int ashour, asminute;
+	int ashour2;
+	int aehour, aeminute;
+	int aehour2;
+	
+	TextView astlabel;
+	TextView aetlabel;
+	
+	//Gyro Variables
+	int gshour, gsminute;
+	int gshour2;
+	int gehour, geminute;
+	int gehour2;	
+	
+	TextView gstlabel;
+	TextView getlabel;
+  
   @Override
   public void onCreate(Bundle savedInstanceState) {
     requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
@@ -158,10 +189,22 @@ public class DeviceActivity extends Activity {
     gButton = (Button) findViewById(R.id.gButton);
     backbutton = (Button) findViewById(R.id.backbutton);
     
-    
     apButton();
+	astbutton();
+	aetbutton();
+	aButton();
     gpButton();
+	gstbutton();
+	getbutton();
+	gButton();
     backbutton();
+    
+	showDialog(dialog_id);
+	astlabel=(TextView)findViewById(R.id.asttextView);
+	aetlabel=(TextView)findViewById(R.id.aettextView);
+	gstlabel=(TextView)findViewById(R.id.gsttextView);
+	getlabel=(TextView)findViewById(R.id.gettextView);	
+
     
     // Used only for debugging purposes. On app start, this boolean will be used to clear the data save file.
     // isBeginning = true;
@@ -176,6 +219,7 @@ public class DeviceActivity extends Activity {
 
     // Plot variables. Creates a plot and instantiates the series for each axis of acceleration
     SensorPlot = (XYPlot) findViewById(R.id.SensorPlot);
+    hPlot = (XYPlot) findViewById(R.id.hPlot);
     
     xHistorySeries = new SimpleXYSeries("X Axis");
     xHistorySeries.useImplicitXVals();
@@ -251,6 +295,519 @@ public class DeviceActivity extends Activity {
     // Initialize sensor list
     // updateSensorList();
   }
+  
+  
+  //------------------------------------------------------------------------------------------  
+  // Dialog Implementation and Storing User Input  
+    
+    
+    // Display user input accelerometer start time
+	public void updateAccelStartTime()
+	{
+		if (ashour == 0)
+		{
+			ashour2 = ashour+12;
+			if (asminute < 10)
+			{
+				astlabel.setText(ashour2+":0"+asminute+" AM");
+			}
+			else
+			{
+				astlabel.setText(ashour2+":"+asminute+" AM");
+			}
+		}
+		else if (ashour-12 < 0)
+		{
+			if (asminute < 10)
+			{
+				astlabel.setText(ashour+":0"+asminute+" AM");
+			}
+			else
+			{
+				astlabel.setText(ashour+":"+asminute+" AM");
+			}
+		}
+		else if (ashour-12 == 0)
+		{
+			if (asminute < 10)
+			{
+				astlabel.setText(ashour+":0"+asminute+" PM");
+			}
+			else
+			{
+				astlabel.setText(ashour+":"+asminute+" PM");
+			}
+		}
+		else if (ashour > 12)
+		{
+			ashour2 = ashour-12;
+			if (asminute < 10)
+			{
+				astlabel.setText(ashour2+":0"+asminute+" PM");
+			}
+			else
+			{
+				astlabel.setText(ashour2+":"+asminute+" PM");
+			}
+		}
+	}
+  
+	// Display user input accelerometer end time
+	public void updateAccelEndTime()
+	{
+		if (aehour == 0)
+		{
+			aehour2 = aehour+12;
+			if (aeminute < 10)
+			{
+				aetlabel.setText(aehour2+":0"+aeminute+" AM");
+			}
+			else
+			{
+				aetlabel.setText(aehour2+":"+aeminute+" AM");
+			}
+		}
+		else if (aehour-12 < 0)
+		{
+			if (aeminute < 10)
+			{
+				aetlabel.setText(aehour+":0"+aeminute+" AM");
+			}
+			else
+			{
+				aetlabel.setText(aehour+":"+aeminute+" AM");
+			}
+		}
+		else if (aehour-12 == 0)
+		{
+			if (aeminute < 10)
+			{
+				aetlabel.setText(aehour+":0"+aeminute+" PM");
+			}
+			else
+			{
+				aetlabel.setText(aehour+":"+aeminute+" PM");
+			}
+		}
+		else if (aehour > 12)
+		{
+			aehour2 = aehour-12;
+			if (aeminute < 10)
+			{
+				aetlabel.setText(aehour2+":0"+aeminute+" PM");
+			}
+			else
+			{
+				aetlabel.setText(aehour2+":"+aeminute+" PM");
+			}
+		}
+
+    }	
+	
+	// Display user input gyroscope start time
+	public void updateGyroStartTime()
+	{
+		if (gshour == 0)
+		{
+			gshour2 = gshour+12;
+			if (gsminute < 10)
+			{
+				gstlabel.setText(gshour2+":0"+gsminute+" AM");
+			}
+			else
+			{
+				gstlabel.setText(gshour2+":"+gsminute+" AM");
+			}
+		}
+		else if (gshour-12 < 0)
+		{
+			if (gsminute < 10)
+			{
+				gstlabel.setText(gshour+":0"+gsminute+" AM");
+			}
+			else
+			{
+				gstlabel.setText(gshour+":"+gsminute+" AM");
+			}
+		}
+		else if (gshour-12 == 0)
+		{
+			if (gsminute < 10)
+			{
+				gstlabel.setText(gshour+":0"+gsminute+" PM");
+			}
+			else
+			{
+				gstlabel.setText(gshour+":"+gsminute+" PM");
+			}
+		}
+		else if (gshour > 12)
+		{
+			gshour2 = gshour-12;
+			if (gsminute < 10)
+			{
+				gstlabel.setText(gshour2+":0"+gsminute+" PM");
+			}
+			else
+			{
+				gstlabel.setText(gshour2+":"+gsminute+" PM");
+			}
+		}
+	}
+	
+	// Display user input gyroscope end time
+	public void updateGyroEndTime()
+	{
+		if (gehour == 0)
+		{
+			gehour2 = gehour+12;
+			if (geminute < 10)
+			{
+				getlabel.setText(gehour2+":0"+geminute+" AM");
+			}
+			else
+			{
+				getlabel.setText(gehour2+":"+geminute+" AM");
+			}
+		}
+		else if (gehour-12 < 0)
+		{
+			if (geminute < 10)
+			{
+				getlabel.setText(gehour+":0"+geminute+" AM");
+			}
+			else
+			{
+				getlabel.setText(gehour+":"+geminute+" AM");
+			}
+		}
+		else if (gehour-12 == 0)
+		{
+			if (geminute < 10)
+			{
+				getlabel.setText(gehour+":0"+geminute+" PM");
+			}
+			else
+			{
+				getlabel.setText(gehour+":"+geminute+" PM");
+			}
+		}
+		else if (gehour > 12)
+		{
+			gehour2 = gehour-12;
+			if (geminute < 10)
+			{
+				getlabel.setText(gehour2+":0"+geminute+" PM");
+			}
+			else
+			{
+				getlabel.setText(gehour2+":"+geminute+" PM");
+			}
+		}
+	}
+	
+	// Accelerometer Start Time Dialog
+	private TimePickerDialog.OnTimeSetListener asTimeSetListener =
+			new TimePickerDialog.OnTimeSetListener() {
+					
+		
+				@Override
+				public void onTimeSet(TimePicker view, int hourOfDay, int hour_minute) {
+					// TODO Auto-generated method stub
+					
+						ashour = hourOfDay;
+						asminute = hour_minute;
+						updateAccelStartTime();
+				}
+					
+			};
+			
+	// Accelerometer End Time Dialog	
+	private TimePickerDialog.OnTimeSetListener aeTimeSetListener =
+			new TimePickerDialog.OnTimeSetListener() {
+						
+				@Override
+				public void onTimeSet(TimePicker view, int hourOfDay, int hour_minute) {
+					// TODO Auto-generated method stub		
+
+						aehour = hourOfDay;
+						aeminute = hour_minute;
+						updateAccelEndTime();
+				        
+				}
+					
+			};	
+			
+	// Gyroscope Start Time Dialog
+	private TimePickerDialog.OnTimeSetListener gsTimeSetListener =
+			new TimePickerDialog.OnTimeSetListener() {
+					
+		
+				@Override
+				public void onTimeSet(TimePicker view, int hourOfDay, int hour_minute) {
+					// TODO Auto-generated method stub
+					
+						gshour = hourOfDay;
+						gsminute = hour_minute;
+						updateGyroStartTime();
+				}
+				
+
+					
+			};			
+	
+	// Gyroscope End Time Dialog
+	private TimePickerDialog.OnTimeSetListener geTimeSetListener =
+			new TimePickerDialog.OnTimeSetListener() {
+					
+		
+				@Override
+				public void onTimeSet(TimePicker view, int hourOfDay, int hour_minute) {
+					// TODO Auto-generated method stub
+					
+						gehour = hourOfDay;
+						geminute = hour_minute;
+						updateGyroEndTime();
+				}	
+					
+			};					
+
+	// Acceleromter Start Time Button		
+	private void astbutton() {
+		// TODO Auto-generated method stub
+		
+		// 1. Get a reference to the button.
+		Button astbutton = (Button) findViewById(R.id.astbutton);
+		
+		// 2. Set the click listener to run my code
+		astbutton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				setAccelStartTime();
+
+			}
+		});
+	}		
+	
+	// Acceleromter End Time Button	
+	private void aetbutton() {
+		// TODO Auto-generated method stub
+		
+		// 1. Get a reference to the button.
+		Button aetbutton = (Button) findViewById(R.id.aetbutton);
+		
+		// 2. Set the click listener to run my code
+		aetbutton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				setAccelEndTime();
+
+			}
+		});
+	}		
+	
+
+	
+	
+	// Gyroscope Start Time Button		
+	private void gstbutton() {
+		// TODO Auto-generated method stub
+		
+		// 1. Get a reference to the button.
+		Button gstbutton = (Button) findViewById(R.id.gstbutton);
+		
+		// 2. Set the click listener to run my code
+		gstbutton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				setGyroStartTime();
+
+			}
+		});
+	}		
+	
+	// Gyroscope Start Time Button		
+	private void getbutton() {
+		// TODO Auto-generated method stub
+		
+		// 1. Get a reference to the button.
+		Button getbutton = (Button) findViewById(R.id.getbutton);
+		
+		// 2. Set the click listener to run my code
+		getbutton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				setGyroEndTime();
+
+			}
+		});
+	}				
+	
+	public void setAccelStartTime()
+	{
+		new TimePickerDialog(this, asTimeSetListener, ashour, asminute, false).show();
+	}	
+	
+	public void setAccelEndTime()
+	{
+		new TimePickerDialog(this, aeTimeSetListener, aehour, aeminute, false).show();
+	}	
+    
+	public void setGyroStartTime()
+	{
+		new TimePickerDialog(this, gsTimeSetListener, gshour, gsminute, false).show();
+	}	
+
+	public void setGyroEndTime()
+	{
+		new TimePickerDialog(this, geTimeSetListener, gehour, geminute, false).show();
+	}		
+	
+	
+	
+		private void apButton() {
+			// TODO Auto-generated method stub
+			
+			// 1. Get a reference to the button.
+//			Button button1 = (Button) findViewById(R.id.button1);
+			
+			// 2. Set the click listener to run my code
+			apButton.setOnClickListener(new View.OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					
+						SensorPlot.setVisibility(View.VISIBLE);
+						backbutton.setVisibility(View.VISIBLE);
+						
+						apButton.setVisibility(View.INVISIBLE);
+						astbutton.setVisibility(View.INVISIBLE);
+						aetbutton.setVisibility(View.INVISIBLE);
+						aButton.setVisibility(View.INVISIBLE);
+						gpButton.setVisibility(View.INVISIBLE);
+						gstbutton.setVisibility(View.INVISIBLE);
+						getbutton.setVisibility(View.INVISIBLE);
+						gButton.setVisibility(View.INVISIBLE);
+						
+					
+				}
+			});
+		}
+		
+		private void aButton() {
+			// TODO Auto-generated method stub
+			
+			// 1. Get a reference to the button.
+			Button aButton = (Button) findViewById(R.id.aButton);
+			
+			// 2. Set the click listener to run my code
+			aButton.setOnClickListener(new View.OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					hPlot.setVisibility(View.VISIBLE);
+					backbutton.setVisibility(View.VISIBLE);
+
+				}
+			});
+		}	
+		
+		private void gpButton() {
+			// TODO Auto-generated method stub
+			
+			// 1. Get a reference to the button.
+//			Button button2 = (Button) findViewById(R.id.button2);
+			
+			// 2. Set the click listener to run my code
+			gpButton.setOnClickListener(new View.OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+//					button1.setVisibility(View.VISIBLE);
+
+						SensorPlot.setVisibility(View.VISIBLE);
+						backbutton.setVisibility(View.VISIBLE);
+						
+						apButton.setVisibility(View.INVISIBLE);
+						astbutton.setVisibility(View.INVISIBLE);
+						aetbutton.setVisibility(View.INVISIBLE);
+						aButton.setVisibility(View.INVISIBLE);
+						gpButton.setVisibility(View.INVISIBLE);
+						gstbutton.setVisibility(View.INVISIBLE);
+						getbutton.setVisibility(View.INVISIBLE);
+						gButton.setVisibility(View.INVISIBLE);
+
+				}
+			});
+		}
+		
+		private void gButton() {
+			// TODO Auto-generated method stub
+			
+			// 1. Get a reference to the button.
+			Button gButton = (Button) findViewById(R.id.gButton);
+			
+			// 2. Set the click listener to run my code
+			gButton.setOnClickListener(new View.OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					hPlot.setVisibility(View.VISIBLE);
+					backbutton.setVisibility(View.VISIBLE);
+
+				}
+			});
+		}	
+		
+		private void backbutton() {
+			// TODO Auto-generated method stub
+			
+
+			// 2. Set the click listener to run my code
+			backbutton.setOnClickListener(new View.OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+//					button1.setVisibility(View.VISIBLE);
+
+						SensorPlot.setVisibility(View.INVISIBLE);
+						backbutton.setVisibility(View.INVISIBLE);
+						hPlot.setVisibility(View.INVISIBLE);
+						
+						apButton.setVisibility(View.VISIBLE);
+						astbutton.setVisibility(View.VISIBLE);
+						aetbutton.setVisibility(View.VISIBLE);
+						aButton.setVisibility(View.VISIBLE);
+						gpButton.setVisibility(View.VISIBLE);
+						gstbutton.setVisibility(View.VISIBLE);
+						getbutton.setVisibility(View.VISIBLE);
+						gButton.setVisibility(View.VISIBLE);
+
+				}
+			});
+		}
+
+	//------------------------------------------------------------------------------------------------
+	
+	
+//------------------------------------------------------------------------------------------ 
+	
+	
+	
+	
 
 	@Override
   public void onDestroy() {
@@ -656,70 +1213,7 @@ public class DeviceActivity extends Activity {
 		}
 	}
 	
-//------------------------------------------------------------------------------------------------
-	private void apButton() {
-		// TODO Auto-generated method stub
-		
-		// 1. Get a reference to the button.
-//		Button button1 = (Button) findViewById(R.id.button1);
-		
-		// 2. Set the click listener to run my code
-		apButton.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				
-					SensorPlot.setVisibility(View.VISIBLE);					
-				
-			}
-		});
-	}
-	
-	
-	private void gpButton() {
-		// TODO Auto-generated method stub
-		
-		// 1. Get a reference to the button.
-//		Button button2 = (Button) findViewById(R.id.button2);
-		
-		// 2. Set the click listener to run my code
-		gpButton.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-//				button1.setVisibility(View.VISIBLE);
 
-					SensorPlot.setVisibility(View.VISIBLE);
-				
-
-
-			}
-		});
-	}
-	
-	private void backbutton() {
-		// TODO Auto-generated method stub
-		
-
-		// 2. Set the click listener to run my code
-		backbutton.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-//				button1.setVisibility(View.VISIBLE);
-
-					SensorPlot.setVisibility(View.INVISIBLE);
-				
-
-
-			}
-		});
-	}
-
-//------------------------------------------------------------------------------------------------
 	
 	
 	// Reads a file to a byte array. NOT USED

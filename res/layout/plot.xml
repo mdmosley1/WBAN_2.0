@@ -45,7 +45,7 @@
                android:layout_alignParentStart="true"
                android:layout_below="@+id/astbutton"
                android:layout_marginStart="20dp"
-               android:text="a2:00 AM"
+               android:text=""
                android:textSize="20sp" />
            
            <TextView
@@ -54,7 +54,7 @@
                android:layout_height="wrap_content"
                android:layout_alignParentEnd="true"
                android:layout_below="@+id/aetbutton"
-               android:text="a5:00 AM"
+               android:text=""
                android:textSize="20sp" />     
                
            <Button
@@ -119,7 +119,7 @@
                android:layout_alignParentStart="true"
                android:layout_below="@+id/gstbutton"
                android:layout_marginStart="20dp"
-               android:text="g2:00 PM"
+               android:text=""
                android:textSize="20sp" />
            
            <TextView
@@ -128,7 +128,7 @@
                android:layout_height="wrap_content"
                android:layout_alignParentEnd="true"
                android:layout_below="@+id/getbutton"
-               android:text="g5:00 PM"
+               android:text=""
                android:textSize="20sp" />              
            
            
@@ -144,7 +144,7 @@
 	       <com.androidplot.xy.XYPlot
 	            android:id="@+id/SensorPlot"
 	            android:layout_width="fill_parent"
-	            android:layout_height="420dp"
+	            android:layout_height="425dp"
 	            android:layout_gravity="top"
 	            androidPlot.domainLabel="Time"
 	            androidPlot.graphWidget.gridLinePaint.color="#000000"
@@ -157,6 +157,23 @@
 	            androidPlot.rangeLabel="Acceleration"
 	            androidPlot.title="Motion Data"
 	            android:visibility="invisible" />
+	       
+	       <com.androidplot.xy.XYPlot
+	            android:id="@+id/hPlot"
+	            android:layout_width="fill_parent"
+	            android:layout_height="425dp"
+	            android:layout_gravity="top"
+	            androidPlot.domainLabel="Time"
+	            androidPlot.graphWidget.gridLinePaint.color="#000000"
+	            androidPlot.graphWidget.marginLeft="15dp"
+	            androidPlot.graphWidget.marginRight="10dp"
+	            androidPlot.legendWidget.heightMetric.value="25dp"
+	            androidPlot.legendWidget.iconSizeMetrics.heightMetric.value="15dp"
+	            androidPlot.legendWidget.iconSizeMetrics.widthMetric.value="15dp"
+	            androidPlot.legendWidget.positionMetrics.anchor="right_bottom"
+	            androidPlot.rangeLabel="Acceleration"
+	            androidPlot.title="History Data"
+	            android:visibility="invisible" />
 
            <Button
                android:id="@+id/backbutton"
@@ -164,7 +181,8 @@
                android:layout_height="wrap_content"
                android:layout_below="@+id/gButton"
                android:layout_alignParentEnd="true"
-               android:text="@string/Back" />
+               android:text="@string/Back"
+               android:visibility="invisible" />
 
 
 </RelativeLayout>

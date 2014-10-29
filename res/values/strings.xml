@@ -46,6 +46,7 @@
     <string name="PlotGyro">Plot</string>
     <string name="PlotGyroHistory">History Plot</string>
     <string name="Back">Back</string>
+    <string name="dots">&#8230;</string>
     
     
     <!-- History activity -->
