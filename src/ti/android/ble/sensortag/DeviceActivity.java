@@ -108,16 +108,22 @@ public class DeviceActivity extends Activity {
   private BluetoothGattService mConnControlService = null;
   
   //Plot Stuff
-  private XYPlot SensorPlot;
+  private XYPlot aSensorPlot;
+  private XYPlot gSensorPlot;
   private XYPlot hPlot;
-  private SimpleXYSeries xHistorySeries = null;
-  private SimpleXYSeries yHistorySeries = null;
-  private SimpleXYSeries zHistorySeries = null;
-  private SimpleXYSeries xaHistorySeries = null;
-  private SimpleXYSeries yaHistorySeries = null;
-  private SimpleXYSeries zaHistorySeries = null;
-  private SimpleXYSeries totHistorySeries = null;
+  private SimpleXYSeries gxHistorySeries = null;
+  private SimpleXYSeries gyHistorySeries = null;
+  private SimpleXYSeries gzHistorySeries = null;
+  private SimpleXYSeries gyroLevelsSeries = null;
+
+  private SimpleXYSeries axHistorySeries = null;
+  private SimpleXYSeries ayHistorySeries = null;
+  private SimpleXYSeries azHistorySeries = null;
   private SimpleXYSeries accLevelsSeries = null;
+
+  private SimpleXYSeries totHistorySeries = null;
+
+
   
   private final int SERIES_SIZE = 50;
   
@@ -212,42 +218,54 @@ public class DeviceActivity extends Activity {
   	registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
 
     // Plot variables. Creates a plot and instantiates the series for each axis of acceleration
-    SensorPlot = (XYPlot) findViewById(R.id.SensorPlot);
+    aSensorPlot = (XYPlot) findViewById(R.id.aSensorPlot);
+    gSensorPlot = (XYPlot) findViewById(R.id.gSensorPlot);
     hPlot = (XYPlot) findViewById(R.id.hPlot);
     
-    xHistorySeries = new SimpleXYSeries("X Axis");
-    xHistorySeries.useImplicitXVals();
-    xaHistorySeries = new SimpleXYSeries("Xa Axis");
-    xaHistorySeries.useImplicitXVals();
-    yHistorySeries = new SimpleXYSeries("Y Axis");
-    yHistorySeries.useImplicitXVals();
-    yaHistorySeries = new SimpleXYSeries("Ya Axis");
-    yaHistorySeries.useImplicitXVals();
-    zHistorySeries = new SimpleXYSeries("Z Axis");
-    zHistorySeries.useImplicitXVals();
-    zaHistorySeries = new SimpleXYSeries("Za Axis");
-    zaHistorySeries.useImplicitXVals();
+    axHistorySeries = new SimpleXYSeries("X Axis");
+    axHistorySeries.useImplicitXVals();
+    gxHistorySeries = new SimpleXYSeries("X Axis");
+    gxHistorySeries.useImplicitXVals();
+
+    ayHistorySeries = new SimpleXYSeries("Y Axis");
+    ayHistorySeries.useImplicitXVals();
+    gyHistorySeries = new SimpleXYSeries("Y Axis");
+    gyHistorySeries.useImplicitXVals();
+
+    azHistorySeries = new SimpleXYSeries("Z Axis");
+    azHistorySeries.useImplicitXVals();
+    gzHistorySeries = new SimpleXYSeries("Z Axis");
+    gzHistorySeries.useImplicitXVals();
+
     totHistorySeries = new SimpleXYSeries("Total Acc.");
     totHistorySeries.useImplicitXVals();
     accLevelsSeries = new SimpleXYSeries("Acc. Levels");
     accLevelsSeries.useImplicitXVals();
     
     // freeze the range boundaries:
-    SensorPlot.setRangeBoundaries(-4, 4, BoundaryMode.FIXED);
-    SensorPlot.setDomainBoundaries(0, SERIES_SIZE, BoundaryMode.FIXED);
-    SensorPlot.setRangeStep(XYStepMode.INCREMENT_BY_VAL, 1);
-    SensorPlot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 5);
-    SensorPlot.setRangeValueFormat( new DecimalFormat("#"));
+    aSensorPlot.setRangeBoundaries(-4, 4, BoundaryMode.FIXED);
+    aSensorPlot.setDomainBoundaries(0, SERIES_SIZE, BoundaryMode.FIXED);
+    aSensorPlot.setRangeStep(XYStepMode.INCREMENT_BY_VAL, 1);
+    aSensorPlot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 5);
+    aSensorPlot.setRangeValueFormat( new DecimalFormat("#"));
+
+    gSensorPlot.setRangeBoundaries(-200, 200, BoundaryMode.FIXED);
+    gSensorPlot.setDomainBoundaries(0, SERIES_SIZE, BoundaryMode.FIXED);
+    gSensorPlot.setRangeStep(XYStepMode.INCREMENT_BY_VAL, 1);
+    gSensorPlot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 5);
+    gSensorPlot.setRangeValueFormat( new DecimalFormat("#"));
     
-    // SensorPlot.getDomainLabelWidget().getLabelPaint().setTextSize(20);
+    // aSensorPlot.getDomainLabelWidget().getLabelPaint().setTextSize(20);
         
-    SensorPlot.addSeries(xHistorySeries, new LineAndPointFormatter(Color.rgb(100,100,200),Color.BLACK, null, null));
-    SensorPlot.addSeries(xaHistorySeries, new LineAndPointFormatter(Color.rgb(256,256,256),Color.BLACK, null, null));
-    SensorPlot.addSeries(yHistorySeries, new LineAndPointFormatter(Color.rgb(100,200,100),Color.BLACK, null, null));
-    SensorPlot.addSeries(yaHistorySeries, new LineAndPointFormatter(Color.rgb(200,0,200),Color.BLACK, null, null));
-    SensorPlot.addSeries(zHistorySeries, new LineAndPointFormatter(Color.rgb(200,100,100),Color.BLACK, null, null));
-    SensorPlot.addSeries(zaHistorySeries, new LineAndPointFormatter(Color.rgb(255,255,102),Color.BLACK, null, null));
-    SensorPlot.addSeries(totHistorySeries, new LineAndPointFormatter(Color.rgb(200,100,200),Color.BLACK, null, null));
+    aSensorPlot.addSeries(axHistorySeries, new LineAndPointFormatter(Color.rgb(100,100,200),Color.BLACK, null, null));
+    aSensorPlot.addSeries(ayHistorySeries, new LineAndPointFormatter(Color.rgb(256,256,256),Color.BLACK, null, null));
+    aSensorPlot.addSeries(azHistorySeries, new LineAndPointFormatter(Color.rgb(100,200,100),Color.BLACK, null, null));
+
+    gSensorPlot.addSeries(gxHistorySeries, new LineAndPointFormatter(Color.rgb(200,0,200),Color.BLACK, null, null));
+    gSensorPlot.addSeries(gyHistorySeries, new LineAndPointFormatter(Color.rgb(200,100,100),Color.BLACK, null, null));
+    gSensorPlot.addSeries(gzHistorySeries, new LineAndPointFormatter(Color.rgb(255,255,102),Color.BLACK, null, null));
+
+    aSensorPlot.addSeries(totHistorySeries, new LineAndPointFormatter(Color.rgb(200,100,200),Color.BLACK, null, null));
     
     // Reformats the axis tick labels
     String[] graph_labels = {"0","","","","","-0.5","","","","","-1",
@@ -260,12 +278,16 @@ public class DeviceActivity extends Activity {
     mif.Labels = graph_labels;
 
     // Attach index->string formatter to the plot instance
-    SensorPlot.getGraphWidget().setDomainValueFormat(mif); 
+    aSensorPlot.getGraphWidget().setDomainValueFormat(mif); 
+    gSensorPlot.getGraphWidget().setDomainValueFormat(mif); 
     
     final PlotStatistics histStats = new PlotStatistics(1000, false);
     
-    SensorPlot.addListener(histStats);
-    SensorPlot.setLayerType(View.LAYER_TYPE_NONE, null);
+    aSensorPlot.addListener(histStats);
+    aSensorPlot.setLayerType(View.LAYER_TYPE_NONE, null);
+
+    gSensorPlot.addListener(histStats);
+    gSensorPlot.setLayerType(View.LAYER_TYPE_NONE, null);
     
     // GATT database
     Resources res = getResources();
@@ -512,7 +534,6 @@ public class DeviceActivity extends Activity {
 	// Accelerometer Start Time Dialog
 	private TimePickerDialog.OnTimeSetListener asTimeSetListener =
 			new TimePickerDialog.OnTimeSetListener() {
-					
 		
 				@Override
 				public void onTimeSet(TimePicker view, int hourOfDay, int hour_minute) {
@@ -553,10 +574,7 @@ public class DeviceActivity extends Activity {
 						gshour = hourOfDay;
 						gsminute = hour_minute;
 						updateGyroStartTime();
-				}
-				
-
-					
+				}			
 			};			
 	
 	// Gyroscope End Time Dialog
@@ -675,21 +693,12 @@ public class DeviceActivity extends Activity {
 	}		
 	
 	
-	
+	// toggle real time plot for acclerometer
 		private void apButton() {
-			// TODO Auto-generated method stub
-			
-			// 1. Get a reference to the button.
-//			Button button1 = (Button) findViewById(R.id.button1);
-			
-			// 2. Set the click listener to run my code
 			apButton.setOnClickListener(new View.OnClickListener() {
-				
 				@Override
 				public void onClick(View v) {
-					// TODO Auto-generated method stub
-					
-						SensorPlot.setVisibility(View.VISIBLE);
+						aSensorPlot.setVisibility(View.VISIBLE);
 						backbutton.setVisibility(View.VISIBLE);
 						
 						apButton.setVisibility(View.INVISIBLE);
@@ -700,46 +709,27 @@ public class DeviceActivity extends Activity {
 						gstbutton.setVisibility(View.INVISIBLE);
 						getbutton.setVisibility(View.INVISIBLE);
 						gButton.setVisibility(View.INVISIBLE);
-						
-					
 				}
 			});
 		}
-		
+    // This button toggles the history plot for acceleration
 		private void aButton() {
-			// TODO Auto-generated method stub
-			
-			// 1. Get a reference to the button.
 			Button aButton = (Button) findViewById(R.id.aButton);
-			
-			// 2. Set the click listener to run my code
 			aButton.setOnClickListener(new View.OnClickListener() {
-				
 				@Override
 				public void onClick(View v) {
-					// TODO Auto-generated method stub
 					hPlot.setVisibility(View.VISIBLE);
 					backbutton.setVisibility(View.VISIBLE);
-
 				}
 			});
 		}	
 		
+    // toggle real time plot for gyroscope
 		private void gpButton() {
-			// TODO Auto-generated method stub
-			
-			// 1. Get a reference to the button.
-//			Button button2 = (Button) findViewById(R.id.button2);
-			
-			// 2. Set the click listener to run my code
 			gpButton.setOnClickListener(new View.OnClickListener() {
-				
 				@Override
 				public void onClick(View v) {
-					// TODO Auto-generated method stub
-//					button1.setVisibility(View.VISIBLE);
-
-						SensorPlot.setVisibility(View.VISIBLE);
+						gSensorPlot.setVisibility(View.VISIBLE);
 						backbutton.setVisibility(View.VISIBLE);
 						
 						apButton.setVisibility(View.INVISIBLE);
@@ -754,39 +744,25 @@ public class DeviceActivity extends Activity {
 				}
 			});
 		}
-		
+    // This button toggles the history plot for gyroscope
 		private void gButton() {
-			// TODO Auto-generated method stub
-			
-			// 1. Get a reference to the button.
 			Button gButton = (Button) findViewById(R.id.gButton);
-			
-			// 2. Set the click listener to run my code
 			gButton.setOnClickListener(new View.OnClickListener() {
-				
+	
 				@Override
 				public void onClick(View v) {
-					// TODO Auto-generated method stub
 					hPlot.setVisibility(View.VISIBLE);
 					backbutton.setVisibility(View.VISIBLE);
-
 				}
 			});
 		}	
 		
 		private void backbutton() {
-			// TODO Auto-generated method stub
-			
-
-			// 2. Set the click listener to run my code
 			backbutton.setOnClickListener(new View.OnClickListener() {
-				
 				@Override
 				public void onClick(View v) {
-					// TODO Auto-generated method stub
-//					button1.setVisibility(View.VISIBLE);
-
-						SensorPlot.setVisibility(View.INVISIBLE);
+						aSensorPlot.setVisibility(View.INVISIBLE);
+                        gSensorPlot.setVisibility(View.INVISIBLE);
 						backbutton.setVisibility(View.INVISIBLE);
 						hPlot.setVisibility(View.INVISIBLE);
 						
@@ -807,10 +783,6 @@ public class DeviceActivity extends Activity {
 	
 	
 //------------------------------------------------------------------------------------------ 
-	
-	
-	
-	
 
 	@Override
   public void onDestroy() {
@@ -1332,6 +1304,7 @@ public class DeviceActivity extends Activity {
 		v = Sensor.GYROSCOPE.convert(rawValue);
 	  	byte[][] coords = new byte[3][4];
   		
+	  	
   		float x = (float) v.x;
   		float xa = x+3;
   		coords[0] = float2ByteArray(x);
@@ -1344,41 +1317,50 @@ public class DeviceActivity extends Activity {
   		float tot = FloatMath.sqrt(FloatMath.pow(x,2.0f)+FloatMath.pow(y,2.0f)+FloatMath.pow(z,2.0f));
   		
 	  	  // get rid the oldest sample in history:
-	      if (xHistorySeries.size() > HISTORY_SIZE) {
-    		  xHistorySeries.removeLast();
-    		  yHistorySeries.removeLast();
-    		  yaHistorySeries.removeLast();
-    		  zHistorySeries.removeLast();
-    		  zaHistorySeries.removeLast();
+	      if (axHistorySeries.size() > HISTORY_SIZE) {
+    		  axHistorySeries.removeLast();
+    		  ayHistorySeries.removeLast();
+    		  azHistorySeries.removeLast();
+
     		  totHistorySeries.removeLast();
-    		  xaHistorySeries.removeLast();
 	      }
+
+	      if (gxHistorySeries.size() > HISTORY_SIZE) {
+              gxHistorySeries.removeLast();
+    		  gyHistorySeries.removeLast();
+    		  gzHistorySeries.removeLast();
+          }
 	      
 	      // add the latest history sample:
-	      if (toggle_plot[0])
-	    	  xHistorySeries.addFirst(null, v.x);
-	      else
-	    	  xHistorySeries.addFirst(null, null);
+	      // if (toggle_plot[0])
+	      //     xHistorySeries.addFirst(null, v.x);
+	      // else
+	      //     xHistorySeries.addFirst(null, null);
 	      
-	      if (toggle_plot[1])
-	    	  yHistorySeries.addFirst(null, v.y);
-	      else
-	    	  yHistorySeries.addFirst(null, null);
-	      if (toggle_plot[2])
-	    	  zHistorySeries.addFirst(null, v.z);
-	      else
-	    	  zHistorySeries.addFirst(null, null);
-	      if (toggle_plot[3])
-	    	  totHistorySeries.addFirst(null, tot);
-	      else
-	    	  totHistorySeries.addFirst(null, null);
+	      // if (toggle_plot[1])
+	      //     yHistorySeries.addFirst(null, v.y);
+	      // else
+	      //     yHistorySeries.addFirst(null, null);
+	      // if (toggle_plot[2])
+	      //     zHistorySeries.addFirst(null, v.z);
+	      // else
+	      //     zHistorySeries.addFirst(null, null);
+	      // if (toggle_plot[3])
+	      //     totHistorySeries.addFirst(null, tot);
+	      // else
+	      //     totHistorySeries.addFirst(null, null);
 
-	      xaHistorySeries.addFirst(null, v.x-1);
-	      yaHistorySeries.addFirst(null, v.y+1);
-	      zaHistorySeries.addFirst(null, v.z+2);
+	      axHistorySeries.addFirst(null, v.x);
+	      ayHistorySeries.addFirst(null, v.y);
+	      azHistorySeries.addFirst(null, v.z);
+
+	      gxHistorySeries.addFirst(null, v.x+30);
+	      gyHistorySeries.addFirst(null, v.y-30);
+	      gzHistorySeries.addFirst(null, v.z+30);
 	      
 	      // redraw the Plots:
- 	      SensorPlot.redraw();
+ 	      aSensorPlot.redraw();
+ 	      gSensorPlot.redraw();
 	      Log.i(TAG, "Plot updated.");
 	      
 	      // Check for network connectivity. Write to database if it exists, save in file if not.

@@ -160,7 +160,7 @@ public class HistoryPlot extends Activity {
 	private void plotSelection() {
 	    setContentView(R.layout.plot);
 		
-		HistoryPlot = (XYPlot) findViewById(R.id.SensorPlot);
+		HistoryPlot = (XYPlot) findViewById(R.id.aSensorPlot);
 	    
 	    xHistorySeries = new SimpleXYSeries("X");
 	    xHistorySeries.useImplicitXVals();

@@ -2,8 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-
-
     
            <TextView
                android:id="@+id/aTitletextView"
@@ -142,7 +140,7 @@
                android:text="@string/PlotGyroHistory" />
            
 	       <com.androidplot.xy.XYPlot
-	            android:id="@+id/SensorPlot"
+	            android:id="@+id/aSensorPlot"
 	            android:layout_width="fill_parent"
 	            android:layout_height="425dp"
 	            android:layout_gravity="top"
@@ -155,7 +153,24 @@
 	            androidPlot.legendWidget.iconSizeMetrics.widthMetric.value="15dp"
 	            androidPlot.legendWidget.positionMetrics.anchor="right_bottom"
 	            androidPlot.rangeLabel="Acceleration"
-	            androidPlot.title="Motion Data"
+	            androidPlot.title="Accelerometer"
+	            android:visibility="invisible" />
+
+	       <com.androidplot.xy.XYPlot
+	            android:id="@+id/gSensorPlot"
+	            android:layout_width="fill_parent"
+	            android:layout_height="425dp"
+	            android:layout_gravity="top"
+	            androidPlot.domainLabel="Time"
+	            androidPlot.graphWidget.gridLinePaint.color="#000000"
+	            androidPlot.graphWidget.marginLeft="15dp"
+	            androidPlot.graphWidget.marginRight="10dp"
+	            androidPlot.legendWidget.heightMetric.value="25dp"
+	            androidPlot.legendWidget.iconSizeMetrics.heightMetric.value="15dp"
+	            androidPlot.legendWidget.iconSizeMetrics.widthMetric.value="15dp"
+	            androidPlot.legendWidget.positionMetrics.anchor="right_bottom"
+	            androidPlot.rangeLabel="Deg/s"
+	            androidPlot.title="Gyroscope"
 	            android:visibility="invisible" />
 	       
 	       <com.androidplot.xy.XYPlot
