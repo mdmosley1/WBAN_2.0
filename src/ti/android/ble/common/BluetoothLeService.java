@@ -3,6 +3,7 @@
 package ti.android.ble.common;
 
 import java.util.List;
+
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
