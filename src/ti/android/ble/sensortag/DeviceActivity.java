@@ -113,6 +113,9 @@ public class DeviceActivity extends Activity {
   private SimpleXYSeries xHistorySeries = null;
   private SimpleXYSeries yHistorySeries = null;
   private SimpleXYSeries zHistorySeries = null;
+  private SimpleXYSeries xaHistorySeries = null;
+  private SimpleXYSeries yaHistorySeries = null;
+  private SimpleXYSeries zaHistorySeries = null;
   private SimpleXYSeries totHistorySeries = null;
   private SimpleXYSeries accLevelsSeries = null;
   
@@ -214,10 +217,16 @@ public class DeviceActivity extends Activity {
     
     xHistorySeries = new SimpleXYSeries("X Axis");
     xHistorySeries.useImplicitXVals();
+    xaHistorySeries = new SimpleXYSeries("Xa Axis");
+    xaHistorySeries.useImplicitXVals();
     yHistorySeries = new SimpleXYSeries("Y Axis");
     yHistorySeries.useImplicitXVals();
+    yaHistorySeries = new SimpleXYSeries("Ya Axis");
+    yaHistorySeries.useImplicitXVals();
     zHistorySeries = new SimpleXYSeries("Z Axis");
     zHistorySeries.useImplicitXVals();
+    zaHistorySeries = new SimpleXYSeries("Za Axis");
+    zaHistorySeries.useImplicitXVals();
     totHistorySeries = new SimpleXYSeries("Total Acc.");
     totHistorySeries.useImplicitXVals();
     accLevelsSeries = new SimpleXYSeries("Acc. Levels");
@@ -233,8 +242,11 @@ public class DeviceActivity extends Activity {
     // SensorPlot.getDomainLabelWidget().getLabelPaint().setTextSize(20);
         
     SensorPlot.addSeries(xHistorySeries, new LineAndPointFormatter(Color.rgb(100,100,200),Color.BLACK, null, null));
+    SensorPlot.addSeries(xaHistorySeries, new LineAndPointFormatter(Color.rgb(256,256,256),Color.BLACK, null, null));
     SensorPlot.addSeries(yHistorySeries, new LineAndPointFormatter(Color.rgb(100,200,100),Color.BLACK, null, null));
+    SensorPlot.addSeries(yaHistorySeries, new LineAndPointFormatter(Color.rgb(200,0,200),Color.BLACK, null, null));
     SensorPlot.addSeries(zHistorySeries, new LineAndPointFormatter(Color.rgb(200,100,100),Color.BLACK, null, null));
+    SensorPlot.addSeries(zaHistorySeries, new LineAndPointFormatter(Color.rgb(255,255,102),Color.BLACK, null, null));
     SensorPlot.addSeries(totHistorySeries, new LineAndPointFormatter(Color.rgb(200,100,200),Color.BLACK, null, null));
     
     // Reformats the axis tick labels
@@ -1321,10 +1333,13 @@ public class DeviceActivity extends Activity {
 	  	byte[][] coords = new byte[3][4];
   		
   		float x = (float) v.x;
+  		float xa = x+3;
   		coords[0] = float2ByteArray(x);
   		float y = (float) v.y;
+  		float ya = y+3;
   		coords[1] = float2ByteArray(y);
   		float z = (float) v.z;
+  		float za = z+3;
   		coords[2] = float2ByteArray(z);
   		float tot = FloatMath.sqrt(FloatMath.pow(x,2.0f)+FloatMath.pow(y,2.0f)+FloatMath.pow(z,2.0f));
   		
@@ -1332,8 +1347,11 @@ public class DeviceActivity extends Activity {
 	      if (xHistorySeries.size() > HISTORY_SIZE) {
     		  xHistorySeries.removeLast();
     		  yHistorySeries.removeLast();
+    		  yaHistorySeries.removeLast();
     		  zHistorySeries.removeLast();
+    		  zaHistorySeries.removeLast();
     		  totHistorySeries.removeLast();
+    		  xaHistorySeries.removeLast();
 	      }
 	      
 	      // add the latest history sample:
@@ -1341,6 +1359,7 @@ public class DeviceActivity extends Activity {
 	    	  xHistorySeries.addFirst(null, v.x);
 	      else
 	    	  xHistorySeries.addFirst(null, null);
+	      
 	      if (toggle_plot[1])
 	    	  yHistorySeries.addFirst(null, v.y);
 	      else
@@ -1354,6 +1373,10 @@ public class DeviceActivity extends Activity {
 	      else
 	    	  totHistorySeries.addFirst(null, null);
 
+	      xaHistorySeries.addFirst(null, v.x-1);
+	      yaHistorySeries.addFirst(null, v.y+1);
+	      zaHistorySeries.addFirst(null, v.z+2);
+	      
 	      // redraw the Plots:
  	      SensorPlot.redraw();
 	      Log.i(TAG, "Plot updated.");
