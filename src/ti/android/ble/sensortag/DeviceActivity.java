@@ -121,7 +121,7 @@ public class DeviceActivity extends Activity {
   private SimpleXYSeries azHistorySeries = null;
   private SimpleXYSeries accLevelsSeries = null;
 
-  private SimpleXYSeries totHistorySeries = null;
+  //private SimpleXYSeries totHistorySeries = null;
 
 
   
@@ -237,8 +237,8 @@ public class DeviceActivity extends Activity {
     gzHistorySeries = new SimpleXYSeries("Z Axis");
     gzHistorySeries.useImplicitXVals();
 
-    totHistorySeries = new SimpleXYSeries("Total Acc.");
-    totHistorySeries.useImplicitXVals();
+    //totHistorySeries = new SimpleXYSeries("Total Acc.");
+    //totHistorySeries.useImplicitXVals();
     accLevelsSeries = new SimpleXYSeries("Acc. Levels");
     accLevelsSeries.useImplicitXVals();
     
@@ -265,7 +265,7 @@ public class DeviceActivity extends Activity {
     gSensorPlot.addSeries(gyHistorySeries, new LineAndPointFormatter(Color.rgb(200,100,100),Color.BLACK, null, null));
     gSensorPlot.addSeries(gzHistorySeries, new LineAndPointFormatter(Color.rgb(255,255,102),Color.BLACK, null, null));
 
-    aSensorPlot.addSeries(totHistorySeries, new LineAndPointFormatter(Color.rgb(200,100,200),Color.BLACK, null, null));
+    //aSensorPlot.addSeries(totHistorySeries, new LineAndPointFormatter(Color.rgb(200,100,200),Color.BLACK, null, null));
     
     // Reformats the axis tick labels
     String[] graph_labels = {"0","","","","","-0.5","","","","","-1",
@@ -1322,7 +1322,7 @@ public class DeviceActivity extends Activity {
     		  ayHistorySeries.removeLast();
     		  azHistorySeries.removeLast();
 
-    		  totHistorySeries.removeLast();
+    		  //totHistorySeries.removeLast();
 	      }
 
 	      if (gxHistorySeries.size() > HISTORY_SIZE) {
