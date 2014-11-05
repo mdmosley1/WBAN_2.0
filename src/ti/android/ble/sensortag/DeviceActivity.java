@@ -23,16 +23,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-
 import ti.android.ble.common.BluetoothLeService;
 import ti.android.ble.common.GattInfo;
 import ti.android.util.Point3D;
@@ -50,11 +40,9 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.util.FloatMath;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -1261,4 +1249,22 @@ public class DeviceActivity extends Activity {
 	      coords[2] = float2ByteArray(gZ);
 	      saveData(coords, t);
 	  }
+	
+	public class dataPoint{
+		public byte[] data;
+		public String tStamp;
+		
+		public byte[] getData() {
+			return data;
+		}
+		public void setData(byte[] data) {
+			this.data = data;
+		}
+		public String gettStamp() {
+			return tStamp;
+		}
+		public void settStamp(String tStamp) {
+			this.tStamp = tStamp;
+		}
+	}
 }
