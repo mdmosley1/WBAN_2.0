@@ -9,6 +9,4 @@
     <item
         android:id="@+id/opt_exit"
         android:title="@string/exit"/>
-
-
 </menu>

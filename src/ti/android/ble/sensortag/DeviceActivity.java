@@ -122,16 +122,12 @@ public class DeviceActivity extends Activity {
   private SimpleXYSeries accLevelsSeries = null;
 
   //private SimpleXYSeries totHistorySeries = null;
-
-
   
   private final int SERIES_SIZE = 50;
   
   private boolean[] toggle_plot = {true, true, true, true};
   
-  // Menu Items
-  private MenuItem plotItem;
-  
+      
   // Number of data points to keep in history
   private static final int HISTORY_SIZE = 50;
   
@@ -787,7 +783,6 @@ public class DeviceActivity extends Activity {
     // Inflate the menu items for use in the action bar
     MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.device_activity_actions, menu);
-    plotItem = menu.findItem(R.id.opt_conn); 
     return super.onCreateOptionsMenu(menu);
   }
 
@@ -795,12 +790,6 @@ public class DeviceActivity extends Activity {
   public boolean onOptionsItemSelected(MenuItem item) {
     // Handle presses on the action bar items
     switch (item.getItemId()) {
-    case R.id.opt_conn:
-    	startPrefrenceActivity();
-      break;
-    case R.id.opt_hist:
-    	startHistoryActivity();
-    	break;
     case R.id.opt_x:
     	toggle_plot[0] = !toggle_plot[0];
     	break;
@@ -833,7 +822,6 @@ public class DeviceActivity extends Activity {
     return true;
   }
   
-
   @Override 
   protected void onResume()
   {
@@ -944,12 +932,6 @@ public class DeviceActivity extends Activity {
 	  startActivityForResult(i,HIST_ACT_REQ);
   }
   
-  private void startPrefrenceActivity() {
-  	// Enable Sensors and Start Plotting 
-    enableSensors(true);
-    enableNotifications(true);
-  }
-  
   private void discoverServices() {
     if (mBtGatt.discoverServices()) {
       Log.i(TAG, "START SERVICE DISCOVERY");
@@ -1032,7 +1014,9 @@ public class DeviceActivity extends Activity {
   		if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
   			if (status == BluetoothGatt.GATT_SUCCESS) {
   				displayServices();
-  				plotItem.setEnabled(true);
+  			  	// Enable Sensors and Start Plotting 
+  			    enableSensors(true);
+  			    enableNotifications(true);
   			} else {
   				Toast.makeText(getApplication(), "Service discovery failed", Toast.LENGTH_LONG).show();
   				return;
