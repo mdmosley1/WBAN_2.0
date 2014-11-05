@@ -297,14 +297,9 @@ public class DeviceActivity extends Activity {
     mBtGatt = BluetoothLeService.getBtGatt();    
     
     // Initialize save file for use if there is a network outage.
-    
-    /****** DM Hansen - Changed file type from hidden storage to public external */
-        // curr_file = new File(getFilesDir(), FILENAME);
-        // Make sure the Documents directory exists.
-        PATH.mkdirs();
-        // Now create a file in that location
-        curr_file = new File(PATH, FILENAME);
-    /******/
+    PATH.mkdirs();
+    // Now create a file in that location
+    curr_file = new File(PATH, FILENAME);
 
     curr_file.setWritable(true);
     buff_count = 0;
@@ -316,9 +311,6 @@ public class DeviceActivity extends Activity {
       else
         displayServices();
     }
-    
-    // Initialize sensor list
-    // updateSensorList();
   }
   
   
@@ -1081,12 +1073,12 @@ public class DeviceActivity extends Activity {
 		byte[][] toWrite = {rawValues[0],rawValues[1],rawValues[2],null,null,null,null,null,null,null};
 		
 		if(!curr_file.exists()) {
-         /****** DM Hansen - Changed file type from hidden storage to public external */
-			    // curr_file = new File(getFilesDir(), FILENAME);
-             PATH.mkdirs();
-             // Now create a file in that location
-             curr_file = new File(PATH, FILENAME);
-         /*******/
+         
+			// curr_file = new File(getFilesDir(), FILENAME);
+			PATH.mkdirs();
+			// Now create a file in that location
+			curr_file = new File(PATH, FILENAME);
+         
 			Log.i(TAG, "New File Created");
 		}
 		
@@ -1098,7 +1090,9 @@ public class DeviceActivity extends Activity {
 		// If the file gets too big (ie exceeds the amount of data recorded over 8 hours) delete it and start over again.
 		if(len>FILE_SIZE) {
 			Log.i(TAG,"File Size Exceeded");
-			FlushandDeleteData();
+			curr_file.delete();
+			isBeginning = true;
+			updateFileSize();
 		}
 		else
 			isBeginning=false;
@@ -1109,7 +1103,6 @@ public class DeviceActivity extends Activity {
 		
 		// Write all three axes to the file using an outputstream
 		FileOutputStream outputStream;
-		
 		try {
 			  outputStream = new FileOutputStream(curr_file, !isBeginning);
 			  for (int i = 0; i < toWrite.length; i++) {
@@ -1128,68 +1121,6 @@ public class DeviceActivity extends Activity {
 	private void updateFileSize() {
 		len = curr_file.length();
 	}
-	
-/****** RK Hansen - Hardcoded response to check network to 'false' so data will automatically write to file */
-	
-// Check network connectivity
-	private boolean checkNet() {
-		/*
-		ConnectivityManager conMgr =  (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
-		if (activeNetwork != null && activeNetwork.isConnected()) {
-		    //notify user you are online
-			return true;
-		} else {
-		    //notify user you are not online
-			return false;
-		} 
-		*/
-		return false;
-    }
-	/******/
-	
-	// Called when network connection is restored. Flush the data to the database and delete the file.
-	void FlushandDeleteData() {
-		// Read file in to byte array
-
-		if(checkNet()) {
-			try {
-				byte[] fileBytes = IOUtil.readFile(curr_file); //readFileToByteArray(curr_file);
-				Log.i(TAG,Integer.toString(fileBytes.length));
-				int newSize = fileBytes.length/40;
-				byte[][][] toWriteBytes = new byte[newSize][10][4];
-				String[][] toWriteString = new String[newSize][10];
-				
-				int count = 0;
-				for(int i=0; i<newSize; i++) {
-					for(int j=0; j<10; j++) {
-						for(int k=0; k<4; k++) {
-							toWriteBytes[i][j][k] = fileBytes[count];
-							count++;
-						}
-						toWriteString[i][j] = Float.toString(ByteArray2float(toWriteBytes[i][j]));
-					}
-					float tot = FloatMath.sqrt(FloatMath.pow(Float.parseFloat(toWriteString[i][0]),2)+FloatMath.pow(Float.parseFloat(toWriteString[i][1]),2)+FloatMath.pow(Float.parseFloat(toWriteString[i][2]),2));
-			      	new SendTask().execute(toWriteString[i][0],toWriteString[i][1],toWriteString[i][2],Float.toString(tot),
-			      							toWriteString[i][3],toWriteString[i][4],toWriteString[i][5],
-			      			  				toWriteString[i][6],toWriteString[i][7],toWriteString[i][8],
-			      			  				toWriteString[i][9]);
-				}
-				Log.i(TAG,toWriteString[0][3]);
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-			}
-			curr_file.delete();
-		}
-		else {
-			isBeginning = true;
-			updateFileSize();
-		}
-	}
-	
-
-	
 	
 	// Reads a file to a byte array. NOT USED
 	public static byte[] readFileToByteArray(File file) throws IOException {
@@ -1306,26 +1237,19 @@ public class DeviceActivity extends Activity {
   		
 	  	
   		float x = (float) v.x;
-  		float xa = x+3;
-  		coords[0] = float2ByteArray(x);
   		float y = (float) v.y;
-  		float ya = y+3;
-  		coords[1] = float2ByteArray(y);
   		float z = (float) v.z;
-  		float za = z+3;
-  		coords[2] = float2ByteArray(z);
-  		float tot = FloatMath.sqrt(FloatMath.pow(x,2.0f)+FloatMath.pow(y,2.0f)+FloatMath.pow(z,2.0f));
+  		
+  		
+  		
+  		//float tot = FloatMath.sqrt(FloatMath.pow(x,2.0f)+FloatMath.pow(y,2.0f)+FloatMath.pow(z,2.0f));
   		
 	  	  // get rid the oldest sample in history:
 	      if (axHistorySeries.size() > HISTORY_SIZE) {
     		  axHistorySeries.removeLast();
     		  ayHistorySeries.removeLast();
     		  azHistorySeries.removeLast();
-
     		  //totHistorySeries.removeLast();
-	      }
-
-	      if (gxHistorySeries.size() > HISTORY_SIZE) {
               gxHistorySeries.removeLast();
     		  gyHistorySeries.removeLast();
     		  gzHistorySeries.removeLast();
@@ -1363,71 +1287,9 @@ public class DeviceActivity extends Activity {
  	      gSensorPlot.redraw();
 	      Log.i(TAG, "Plot updated.");
 	      
-	      // Check for network connectivity. Write to database if it exists, save in file if not.
-	      if (checkNet()) {
-	    	  Log.i(NET, "Network Connected.");
-	    	  if (curr_file.exists()) {
-	    		  FlushandDeleteData();
-	    	  }
-	      	  new SendTask().execute(Float.toString(x),Float.toString(y),Float.toString(z),Float.toString(tot),t[0],t[1],t[2],t[3],t[4],t[5],t[6]);
-	      }
-	      else {
-	      	  Log.i(NET, "Network Disconnected.");
-	      	  saveData(coords, t);
-	      }
+	      coords[0] = float2ByteArray(x);	
+	      coords[1] = float2ByteArray(y);
+	      coords[2] = float2ByteArray(z);
+	      saveData(coords, t);
 	  }
-	
-	// Asynchronous task that handles database writes. It uses an HTTP post to call a php function from
-	// the webserver that then writes the data.
-	public class SendTask extends AsyncTask<String, Void, Boolean> {
-
-	    String responseString;
-
-	    @Override
-	    protected Boolean doInBackground(String... v) {
-	        try {
-	            HttpClient http = new DefaultHttpClient();
-	            HttpPost post = new HttpPost("http://24.162.106.233/insert.php");
-	            
-	            List<NameValuePair> data = new ArrayList<NameValuePair>();
-            
-	            data.add(new BasicNameValuePair("y", v[4]));
-	            data.add(new BasicNameValuePair("m", v[5]));
-	            data.add(new BasicNameValuePair("d", v[6]));
-	            data.add(new BasicNameValuePair("h", v[7]));
-	            data.add(new BasicNameValuePair("min", v[8]));
-	            data.add(new BasicNameValuePair("s", v[9]));
-	            data.add(new BasicNameValuePair("count", (v[10])));
-	            data.add(new BasicNameValuePair("accelx", (v[0])));
-	            data.add(new BasicNameValuePair("accely", (v[1])));
-	            data.add(new BasicNameValuePair("accelz", (v[2])));
-	            data.add(new BasicNameValuePair("total", (v[3])));
-	            
-	            post.setEntity(new UrlEncodedFormEntity(data));
-
-	            HttpResponse response = http.execute(post);
-	            responseString = new BasicResponseHandler().handleResponse(response); // Basic handler
-	            Log.i(TAG,"Data transferred.");
-	            return true;
-	        }
-	        catch (ClientProtocolException e) {
-	            e.printStackTrace();
-	        }
-	        catch (IOException e) {
-	            e.printStackTrace();
-	        }           
-	        return false;
-	    }
-	    @Override
-	    protected void onPostExecute(Boolean success) {
-	        if (success) {
-	            // Toast.makeText(DeviceActivity.this, "Success: " + responseString, Toast.LENGTH_LONG).show();
-	            Log.i(TAG, responseString);
-	        } else {
-	        	if(checkNet())
-	        		Toast.makeText(DeviceActivity.this, "Database Write Failed", Toast.LENGTH_LONG).show();
-	            // Log.d(TAG,responseString);
-	        }
-	    }
-	}
 }
