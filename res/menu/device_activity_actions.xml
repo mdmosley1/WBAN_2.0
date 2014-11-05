@@ -1,15 +1,5 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" 
       xmlns:BleSensorTag="http://schemas.android.com/apk/res-auto" >
-
-    <item
-        android:id="@+id/opt_conn"
-        android:title="@string/conn"
-        android:showAsAction="ifRoom"
-        android:enabled="false"/>
-    <item
-        android:id="@+id/opt_hist"
-        android:title="@string/hist"
-        android:showAsAction="ifRoom"/>
     <item
         android:id="@+id/opt_about"
         android:title="@string/about"/>

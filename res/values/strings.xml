@@ -24,8 +24,6 @@
     <string name="debug">true</string>
 
     <!-- Options menu -->
-    <string name="conn">Plot</string>
-    <string name="hist">History</string>
     <string name="x_axis">Toggle X</string>
     <string name="y_axis">Toggle Y</string>
     <string name="z_axis">Toggle Z</string>
