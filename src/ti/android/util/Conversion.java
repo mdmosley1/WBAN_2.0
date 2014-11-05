@@ -1,4 +1,3 @@
-
 package ti.android.util;
 
 import java.util.Formatter;

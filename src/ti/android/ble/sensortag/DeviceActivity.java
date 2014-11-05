@@ -1024,7 +1024,7 @@ public class DeviceActivity extends Activity {
   		} else if (BluetoothLeService.ACTION_DATA_NOTIFY.equals(action)) {
   			// Notification - get the time that the data was received and update the plot
   			byte[] value = intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
-  			// TODO When getting gryo data, value is [70 0 0 0 0 0]. There should be more than one nonzero value for the gyro sensors 
+
   			String uuidStr = intent.getStringExtra(BluetoothLeService.EXTRA_UUID);
   			Log.i(TAG,"Data discovered.");
   			String[] time = getTimeStamp();
@@ -1213,67 +1213,52 @@ public class DeviceActivity extends Activity {
 	}
 	
 	// Updates the plot with new data obtained from the service notification
+
+    // called as updatePlot(uuidStr, value, time);
 	void updatePlot(String uuidStr, byte[] rawValue, String[] t) {
-		Point3D v; 
-//  		v = Sensor.ACCELEROMETER.convert(rawValue);
-		v = Sensor.GYROSCOPE.convert(rawValue);
-	  	byte[][] coords = new byte[3][4];
-  		
-	  	
-  		float x = (float) v.x;
-  		float y = (float) v.y;
-  		float z = (float) v.z;
-  		
-  		
-  		
-  		//float tot = FloatMath.sqrt(FloatMath.pow(x,2.0f)+FloatMath.pow(y,2.0f)+FloatMath.pow(z,2.0f));
-  		
+        
+        Point3D aV; 
+		Point3D gV; 
+
+        aV = Sensor.ACCELEROMETER.convert(rawValue);
+		gV = Sensor.GYROSCOPE.convert(rawValue);
+
+	      axHistorySeries.addFirst(null, aV.x);
+	      ayHistorySeries.addFirst(null, aV.y);
+	      azHistorySeries.addFirst(null, aV.z);
+
+	      gxHistorySeries.addFirst(null, aV.x+30);
+	      gyHistorySeries.addFirst(null, aV.y-30);
+	      gzHistorySeries.addFirst(null, aV.z+30);
+	      
 	  	  // get rid the oldest sample in history:
 	      if (axHistorySeries.size() > HISTORY_SIZE) {
     		  axHistorySeries.removeLast();
     		  ayHistorySeries.removeLast();
     		  azHistorySeries.removeLast();
-    		  //totHistorySeries.removeLast();
+
               gxHistorySeries.removeLast();
     		  gyHistorySeries.removeLast();
     		  gzHistorySeries.removeLast();
           }
-	      
-	      // add the latest history sample:
-	      // if (toggle_plot[0])
-	      //     xHistorySeries.addFirst(null, v.x);
-	      // else
-	      //     xHistorySeries.addFirst(null, null);
-	      
-	      // if (toggle_plot[1])
-	      //     yHistorySeries.addFirst(null, v.y);
-	      // else
-	      //     yHistorySeries.addFirst(null, null);
-	      // if (toggle_plot[2])
-	      //     zHistorySeries.addFirst(null, v.z);
-	      // else
-	      //     zHistorySeries.addFirst(null, null);
-	      // if (toggle_plot[3])
-	      //     totHistorySeries.addFirst(null, tot);
-	      // else
-	      //     totHistorySeries.addFirst(null, null);
-
-	      axHistorySeries.addFirst(null, v.x);
-	      ayHistorySeries.addFirst(null, v.y);
-	      azHistorySeries.addFirst(null, v.z);
-
-	      gxHistorySeries.addFirst(null, v.x+30);
-	      gyHistorySeries.addFirst(null, v.y-30);
-	      gzHistorySeries.addFirst(null, v.z+30);
-	      
 	      // redraw the Plots:
  	      aSensorPlot.redraw();
  	      gSensorPlot.redraw();
 	      Log.i(TAG, "Plot updated.");
-	      
-	      coords[0] = float2ByteArray(x);	
-	      coords[1] = float2ByteArray(y);
-	      coords[2] = float2ByteArray(z);
+
+          float gX = (float) gV.x;
+          float gY = (float) gV.y;
+          float gZ = (float) gV.z;
+
+          float aX = (float) aV.x;
+          float aY = (float) aV.y;
+          float aZ = (float) aV.z;
+
+          byte[][] coords = new byte[3][4];	      
+
+	      coords[0] = float2ByteArray(gX);	
+	      coords[1] = float2ByteArray(gY);
+	      coords[2] = float2ByteArray(gZ);
 	      saveData(coords, t);
 	  }
 }
