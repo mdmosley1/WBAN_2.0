@@ -99,16 +99,9 @@ public class DeviceActivity extends Activity {
   private XYPlot aSensorPlot;
   private XYPlot gSensorPlot;
   private XYPlot hPlot;
-  private SimpleXYSeries gxHistorySeries = null;
-  private SimpleXYSeries gyHistorySeries = null;
-  private SimpleXYSeries gzHistorySeries = null;
-  private SimpleXYSeries gyroLevelsSeries = null;
-
-  private SimpleXYSeries axHistorySeries = null;
-  private SimpleXYSeries ayHistorySeries = null;
-  private SimpleXYSeries azHistorySeries = null;
-  private SimpleXYSeries accLevelsSeries = null;
-
+  
+  private SimpleXYSeries[] historySeries = null;
+  
   //private SimpleXYSeries totHistorySeries = null;
   
   private final int SERIES_SIZE = 50;
@@ -206,50 +199,20 @@ public class DeviceActivity extends Activity {
     gSensorPlot = (XYPlot) findViewById(R.id.gSensorPlot);
     hPlot = (XYPlot) findViewById(R.id.hPlot);
     
-    axHistorySeries = new SimpleXYSeries("X Axis");
-    axHistorySeries.useImplicitXVals();
-    gxHistorySeries = new SimpleXYSeries("X Axis");
-    gxHistorySeries.useImplicitXVals();
+    // instantiate an some new historySeries and then add them to the sensor plots
+    for(int i=0; i<2;i++ )
+	{
+		historySeries[i] = new SimpleXYSeries("axis");
+		historySeries[i].useImplicitXVals();
+		aSensorPlot.addSeries(historySeries[i], new LineAndPointFormatter(Color.rgb(100,100,200),Color.BLACK, null, null));
+	}
 
-    ayHistorySeries = new SimpleXYSeries("Y Axis");
-    ayHistorySeries.useImplicitXVals();
-    gyHistorySeries = new SimpleXYSeries("Y Axis");
-    gyHistorySeries.useImplicitXVals();
-
-    azHistorySeries = new SimpleXYSeries("Z Axis");
-    azHistorySeries.useImplicitXVals();
-    gzHistorySeries = new SimpleXYSeries("Z Axis");
-    gzHistorySeries.useImplicitXVals();
-
-    //totHistorySeries = new SimpleXYSeries("Total Acc.");
-    //totHistorySeries.useImplicitXVals();
-    accLevelsSeries = new SimpleXYSeries("Acc. Levels");
-    accLevelsSeries.useImplicitXVals();
-    
     // freeze the range boundaries:
     aSensorPlot.setRangeBoundaries(-4, 4, BoundaryMode.FIXED);
     aSensorPlot.setDomainBoundaries(0, SERIES_SIZE, BoundaryMode.FIXED);
     aSensorPlot.setRangeStep(XYStepMode.INCREMENT_BY_VAL, 1);
     aSensorPlot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 5);
     aSensorPlot.setRangeValueFormat( new DecimalFormat("#"));
-
-    gSensorPlot.setRangeBoundaries(-200, 200, BoundaryMode.FIXED);
-    gSensorPlot.setDomainBoundaries(0, SERIES_SIZE, BoundaryMode.FIXED);
-    gSensorPlot.setRangeStep(XYStepMode.INCREMENT_BY_VAL, 1);
-    gSensorPlot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 5);
-    gSensorPlot.setRangeValueFormat( new DecimalFormat("#"));
-    
-    // aSensorPlot.getDomainLabelWidget().getLabelPaint().setTextSize(20);
-        
-    aSensorPlot.addSeries(axHistorySeries, new LineAndPointFormatter(Color.rgb(100,100,200),Color.BLACK, null, null));
-    aSensorPlot.addSeries(ayHistorySeries, new LineAndPointFormatter(Color.rgb(256,256,256),Color.BLACK, null, null));
-    aSensorPlot.addSeries(azHistorySeries, new LineAndPointFormatter(Color.rgb(100,200,100),Color.BLACK, null, null));
-
-    gSensorPlot.addSeries(gxHistorySeries, new LineAndPointFormatter(Color.rgb(200,0,200),Color.BLACK, null, null));
-    gSensorPlot.addSeries(gyHistorySeries, new LineAndPointFormatter(Color.rgb(200,100,100),Color.BLACK, null, null));
-    gSensorPlot.addSeries(gzHistorySeries, new LineAndPointFormatter(Color.rgb(255,255,102),Color.BLACK, null, null));
-
-    //aSensorPlot.addSeries(totHistorySeries, new LineAndPointFormatter(Color.rgb(200,100,200),Color.BLACK, null, null));
     
     // Reformats the axis tick labels
     String[] graph_labels = {"0","","","","","-0.5","","","","","-1",
@@ -263,15 +226,11 @@ public class DeviceActivity extends Activity {
 
     // Attach index->string formatter to the plot instance
     aSensorPlot.getGraphWidget().setDomainValueFormat(mif); 
-    gSensorPlot.getGraphWidget().setDomainValueFormat(mif); 
-    
+        
     final PlotStatistics histStats = new PlotStatistics(1000, false);
     
     aSensorPlot.addListener(histStats);
     aSensorPlot.setLayerType(View.LAYER_TYPE_NONE, null);
-
-    gSensorPlot.addListener(histStats);
-    gSensorPlot.setLayerType(View.LAYER_TYPE_NONE, null);
     
     // GATT database
     Resources res = getResources();
@@ -1011,13 +970,17 @@ public class DeviceActivity extends Activity {
   			}
   		} else if (BluetoothLeService.ACTION_DATA_NOTIFY.equals(action)) {
   			// Notification - get the time that the data was received and update the plot
-  			byte[] value = intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
 
   			String uuidStr = intent.getStringExtra(BluetoothLeService.EXTRA_UUID);
   			Log.i(TAG,"Data discovered.");
-  			String[] time = getTimeStamp();
   			
-  			updatePlot(uuidStr, value, time);
+  			byte[] value = intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
+  			String[] time = getTimeStamp();
+  			dataPoint myPoint = new dataPoint(value, time);
+
+  			updatePlots(uuidStr, myPoint);
+  			saveData(myPoint);
+  			
   		} else if (BluetoothLeService.ACTION_DATA_WRITE.equals(action)) {
   			// Data written to device
   			String uuidStr = intent.getStringExtra(BluetoothLeService.EXTRA_UUID);
@@ -1039,55 +1002,7 @@ public class DeviceActivity extends Activity {
 	  Log.d(TAG,"onCharacteristicWrite: " + uuidStr);
   }
 	
-	// Saves data to a file in internal memory when data connection is not present
-	void saveData(byte[][] rawValues, String[] t) {
-		
-		byte[][] toWrite = {rawValues[0],rawValues[1],rawValues[2],null,null,null,null,null,null,null};
-		
-		if(!curr_file.exists()) {
-         
-			// curr_file = new File(getFilesDir(), FILENAME);
-			PATH.mkdirs();
-			// Now create a file in that location
-			curr_file = new File(PATH, FILENAME);
-         
-			Log.i(TAG, "New File Created");
-		}
-		
-		// Define the file size limit (11.52 MB corresponds approximately to 8 hours of data)
-		final long FILE_SIZE = 11520000;
-		updateFileSize();
-		Log.i(TAG, Long.toString(len));
-		
-		// If the file gets too big (ie exceeds the amount of data recorded over 8 hours) delete it and start over again.
-		if(len>FILE_SIZE) {
-			Log.i(TAG,"File Size Exceeded");
-			curr_file.delete();
-			isBeginning = true;
-			updateFileSize();
-		}
-		else
-			isBeginning=false;
-		
-		for(int i=0; i<t.length; i++) {
-			toWrite[i+3] = float2ByteArray(Float.parseFloat(t[i])); // t.getBytes("UTF-8");
-		}
-		
-		// Write all three axes to the file using an outputstream
-		FileOutputStream outputStream;
-		try {
-			  outputStream = new FileOutputStream(curr_file, !isBeginning);
-			  for (int i = 0; i < toWrite.length; i++) {
-				  outputStream.write(toWrite[i],0,toWrite[i].length);
-				  float justwrote = ByteArray2float(toWrite[i]);
-				  Log.i(TAG, "WRITE:" + Float.toString(justwrote));
-			  }
-			  outputStream.close();
-			  
-			} catch (Exception e) {
-			  e.printStackTrace();
-			}
-	}
+
 	
 	// Make sure the file size is accurate
 	private void updateFileSize() {
@@ -1200,60 +1115,89 @@ public class DeviceActivity extends Activity {
 		return ByteBuffer.wrap(array).getFloat();
 	}
 	
+	
+	// Saves data to a file in internal memory when data connection is not present
+	void saveData(dataPoint point) {
+		int k = point.data.length;
+		byte[][] coords = new byte[3][4];
+		byte[][] toWrite;
+		for (int i=0;i<point.data.length;i++){
+			float x = (float) point.data[i];
+			coords[i] = float2ByteArray(x);
+			toWrite[i] = coords[i]; 
+		}
+		
+		if(!curr_file.exists()) {
+			// curr_file = new File(getFilesDir(), FILENAME);
+			PATH.mkdirs();
+			// Now create a file in that location
+			curr_file = new File(PATH, FILENAME);
+			Log.i(TAG, "New File Created");
+		}
+		// Define the file size limit (11.52 MB corresponds approximately to 8 hours of data)
+		final long FILE_SIZE = 11520000;
+		updateFileSize();
+		Log.i(TAG, Long.toString(len));
+		// If the file gets too big (ie exceeds the amount of data recorded over 8 hours) delete it and start over again.
+		if(len>FILE_SIZE) {
+			Log.i(TAG,"File Size Exceeded");
+			curr_file.delete();
+			isBeginning = true;
+			updateFileSize();
+		}
+		else
+			isBeginning=false;
+		
+		for(int i=0; i<point.tStamp.length; i++) {
+			toWrite[i+k] = float2ByteArray(Float.parseFloat(point.tStamp[i])); // t.getBytes("UTF-8");
+		}
+		
+		// Write all three axes to the file using an outputstream
+		FileOutputStream outputStream;
+		try {
+			  outputStream = new FileOutputStream(curr_file, !isBeginning);
+			  for (int i = 0; i < toWrite.length; i++) {
+				  outputStream.write(toWrite[i],0,toWrite[i].length);
+				  float justwrote = ByteArray2float(toWrite[i]);
+				  Log.i(TAG, "WRITE:" + Float.toString(justwrote));
+			  }
+			  outputStream.close();
+			  
+			} catch (Exception e) {
+			  e.printStackTrace();
+			}
+	}
+	
 	// Updates the plot with new data obtained from the service notification
+	void updatePlots(String uuidStr, dataPoint point) {
+		int k = point.data.length;
 
-    // called as updatePlot(uuidStr, value, time);
-	void updatePlot(String uuidStr, byte[] rawValue, String[] t) {
-        
-        Point3D aV; 
-		Point3D gV; 
-
-        aV = Sensor.ACCELEROMETER.convert(rawValue);
-		gV = Sensor.GYROSCOPE.convert(rawValue);
-
-	      axHistorySeries.addFirst(null, aV.x);
-	      ayHistorySeries.addFirst(null, aV.y);
-	      azHistorySeries.addFirst(null, aV.z);
-
-	      gxHistorySeries.addFirst(null, aV.x+30);
-	      gyHistorySeries.addFirst(null, aV.y-30);
-	      gzHistorySeries.addFirst(null, aV.z+30);
-	      
+		
+		// use accelerometer conversion (1/64) and add data to history series
+		for (int i=0; i<k; i++) {
+			point.data[i] /= 64;
+			historySeries[i].addFirst(null, point.data[i]);
+			
+		}
 	  	  // get rid the oldest sample in history:
-	      if (axHistorySeries.size() > HISTORY_SIZE) {
-    		  axHistorySeries.removeLast();
-    		  ayHistorySeries.removeLast();
-    		  azHistorySeries.removeLast();
-
-              gxHistorySeries.removeLast();
-    		  gyHistorySeries.removeLast();
-    		  gzHistorySeries.removeLast();
+	      if (historySeries[1].size() > HISTORY_SIZE) {
+	    	  for(int i=0;i<k;i++) historySeries[i].removeLast();
           }
+	      
 	      // redraw the Plots:
  	      aSensorPlot.redraw();
- 	      gSensorPlot.redraw();
-	      Log.i(TAG, "Plot updated.");
-
-          float gX = (float) gV.x;
-          float gY = (float) gV.y;
-          float gZ = (float) gV.z;
-
-          float aX = (float) aV.x;
-          float aY = (float) aV.y;
-          float aZ = (float) aV.z;
-
-          byte[][] coords = new byte[3][4];	      
-
-	      coords[0] = float2ByteArray(gX);	
-	      coords[1] = float2ByteArray(gY);
-	      coords[2] = float2ByteArray(gZ);
-	      saveData(coords, t);
+ 	      Log.i(TAG, "Plot updated.");
 	  }
 	
 	public class dataPoint{
 		public byte[] data;
-		public String tStamp;
-		
+		public String[] tStamp;
+
+		public dataPoint(byte[] data, String[] tStamp) {
+			super();
+			this.data = data;
+			this.tStamp = tStamp;
+		}
 		public byte[] getData() {
 			return data;
 		}
@@ -1263,7 +1207,7 @@ public class DeviceActivity extends Activity {
 		public String gettStamp() {
 			return tStamp;
 		}
-		public void settStamp(String tStamp) {
+		public void settStamp(String[] tStamp) {
 			this.tStamp = tStamp;
 		}
 	}
