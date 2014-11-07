@@ -1202,3 +1202,6 @@ public class DeviceActivity extends Activity {
 		}
 	}
 }
+
+
+// comment
