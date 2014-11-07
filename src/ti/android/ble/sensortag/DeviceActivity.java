@@ -25,7 +25,6 @@ import java.util.UUID;
 
 import ti.android.ble.common.BluetoothLeService;
 import ti.android.ble.common.GattInfo;
-import ti.android.util.Point3D;
 import android.app.Activity;
 import android.app.TimePickerDialog;
 import android.bluetooth.BluetoothDevice;
@@ -72,15 +71,11 @@ public class DeviceActivity extends Activity {
 
 	public static final byte ENABLE_SENSOR_CODE = 7;
 	public static final byte ACC_PERIOD = 10;		// [ACC_PERIOD]*10ms = Accelerometer's period
-//	private UUID servUuid = SensorTag.UUID_ACC_SERV;
-//	private UUID dataUuid = SensorTag.UUID_ACC_DATA;
-//	private UUID confUuid = SensorTag.UUID_ACC_CONF;
-//	private UUID perUUID = SensorTag.UUID_ACC_PERI; 
+	private UUID servUuid = SensorTag.UUID_ACC_SERV;
+	private UUID dataUuid = SensorTag.UUID_ACC_DATA;
+	private UUID confUuid = SensorTag.UUID_ACC_CONF;
+	private UUID perUUID = SensorTag.UUID_ACC_PERI; 
 	
-	private UUID servUuid = SensorTag.UUID_GYR_SERV;
-	private UUID dataUuid = SensorTag.UUID_GYR_DATA;
-	private UUID confUuid = SensorTag.UUID_GYR_CONF;
-	private UUID perUUID = SensorTag.UUID_GYR_PERI; 
 
   // BLE
   private BluetoothLeService mBtLeService = null;
@@ -99,11 +94,8 @@ public class DeviceActivity extends Activity {
   private XYPlot aSensorPlot;
   private XYPlot gSensorPlot;
   private XYPlot hPlot;
-  
-  private SimpleXYSeries[] historySeries = null;
-  
-  //private SimpleXYSeries totHistorySeries = null;
-  
+  private final int ns= 3;
+  private SimpleXYSeries[] historySeries = new SimpleXYSeries[ns];
   private final int SERIES_SIZE = 50;
   
   private boolean[] toggle_plot = {true, true, true, true};
@@ -199,12 +191,12 @@ public class DeviceActivity extends Activity {
     gSensorPlot = (XYPlot) findViewById(R.id.gSensorPlot);
     hPlot = (XYPlot) findViewById(R.id.hPlot);
     
-    // instantiate an some new historySeries and then add them to the sensor plots
-    for(int i=0; i<2;i++ )
+    // instantiate some new historySeries and then add them to the sensor plots
+    for(int i=0; i<ns;i++ )
 	{
 		historySeries[i] = new SimpleXYSeries("axis");
 		historySeries[i].useImplicitXVals();
-		aSensorPlot.addSeries(historySeries[i], new LineAndPointFormatter(Color.rgb(100,100,200),Color.BLACK, null, null));
+		aSensorPlot.addSeries(historySeries[i], new LineAndPointFormatter(Color.rgb(80*i,100,200),Color.BLACK, null, null));
 	}
 
     // freeze the range boundaries:
@@ -975,6 +967,7 @@ public class DeviceActivity extends Activity {
   			Log.i(TAG,"Data discovered.");
   			
   			byte[] value = intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
+
   			String[] time = getTimeStamp();
   			dataPoint myPoint = new dataPoint(value, time);
 
@@ -1114,24 +1107,11 @@ public class DeviceActivity extends Activity {
 	public static float ByteArray2float (byte[] array) {
 		return ByteBuffer.wrap(array).getFloat();
 	}
-	
-	
 	// Saves data to a file in internal memory when data connection is not present
 	void saveData(dataPoint point) {
-		int k = point.data.length;
-		byte[][] coords = new byte[3][4];
-		byte[][] toWrite;
-		for (int i=0;i<point.data.length;i++){
-			float x = (float) point.data[i];
-			coords[i] = float2ByteArray(x);
-			toWrite[i] = coords[i]; 
-		}
-		
 		if(!curr_file.exists()) {
-			// curr_file = new File(getFilesDir(), FILENAME);
 			PATH.mkdirs();
-			// Now create a file in that location
-			curr_file = new File(PATH, FILENAME);
+			curr_file = new File(PATH, FILENAME); // create a new file called curr_file
 			Log.i(TAG, "New File Created");
 		}
 		// Define the file size limit (11.52 MB corresponds approximately to 8 hours of data)
@@ -1148,8 +1128,20 @@ public class DeviceActivity extends Activity {
 		else
 			isBeginning=false;
 		
-		for(int i=0; i<point.tStamp.length; i++) {
-			toWrite[i+k] = float2ByteArray(Float.parseFloat(point.tStamp[i])); // t.getBytes("UTF-8");
+		byte[] data = point.getData();
+		String[] stamp = point.gettStamp();
+		int d = data.length;
+		int s = stamp.length;
+		
+
+		// the timestamp is 7 strings
+		byte[][] toWrite = new byte[d+s][4];
+		for (int i=0;i<d;i++){
+			float f = (float) data[i];
+			toWrite[i] = float2ByteArray(f); 
+		}
+		for(int i=0; i<s; i++) {
+			toWrite[i+d] = float2ByteArray(Float.parseFloat(stamp[i])); // t.getBytes("UTF-8");
 		}
 		
 		// Write all three axes to the file using an outputstream
@@ -1170,20 +1162,18 @@ public class DeviceActivity extends Activity {
 	
 	// Updates the plot with new data obtained from the service notification
 	void updatePlots(String uuidStr, dataPoint point) {
-		int k = point.data.length;
-
-		
+		byte[] data = point.getData();
+		int d = data.length;
+		double[] datac = new double[d]; // initialize new double array to plot data
 		// use accelerometer conversion (1/64) and add data to history series
-		for (int i=0; i<k; i++) {
-			point.data[i] /= 64;
-			historySeries[i].addFirst(null, point.data[i]);
-			
+		for (int i=0; i<d; i++) {
+			datac[i] = data[i] / 64.0; // convert to g's for accelerometer
+			historySeries[i].addFirst(null, datac[i]);
 		}
 	  	  // get rid the oldest sample in history:
 	      if (historySeries[1].size() > HISTORY_SIZE) {
-	    	  for(int i=0;i<k;i++) historySeries[i].removeLast();
+	    	  for(int j=0;j<ns;j++) historySeries[j].removeLast();
           }
-	      
 	      // redraw the Plots:
  	      aSensorPlot.redraw();
  	      Log.i(TAG, "Plot updated.");
@@ -1204,7 +1194,7 @@ public class DeviceActivity extends Activity {
 		public void setData(byte[] data) {
 			this.data = data;
 		}
-		public String gettStamp() {
+		public String[] gettStamp() {
 			return tStamp;
 		}
 		public void settStamp(String[] tStamp) {
