@@ -9,7 +9,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -59,6 +59,7 @@ import com.androidplot.xy.LineAndPointFormatter;
 import com.androidplot.xy.SimpleXYSeries;
 import com.androidplot.xy.XYPlot;
 import com.androidplot.xy.XYStepMode;
+import com.opencsv.CSVWriter;
 
 public class DeviceActivity extends Activity {
   // Log
@@ -106,11 +107,11 @@ public class DeviceActivity extends Activity {
   
   // Data storage vars
   private File curr_file = null;
-  private final String FILENAME = "wbandata";
+  private final String FILENAME = "wbandata.csv";
   List<Integer> file_vec = new ArrayList<Integer>();
   private long len;
   private int buff_count;
-  private boolean isBeginning = false;
+  private boolean append = false;
  
   // DM Hansen
   private final File PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
@@ -971,6 +972,7 @@ public class DeviceActivity extends Activity {
   			String[] time = getTimeStamp();
   			dataPoint myPoint = new dataPoint(value, time);
 
+  			myPoint.convert();
   			updatePlots(uuidStr, myPoint);
   			saveData(myPoint);
   			
@@ -1082,18 +1084,8 @@ public class DeviceActivity extends Activity {
 		int mins = cal.get(Calendar.MINUTE);
 		int secs = cal.get(Calendar.SECOND);
 		
-		float f_hrs = (float)hrs;
-		float f_mins = (float)mins;
-		float f_secs = (float)secs;
-		float f_mils = (float)(cal.get(Calendar.MILLISECOND));
-		
 		String[] t = {Integer.toString(cal.get(Calendar.YEAR)), Integer.toString(cal.get(Calendar.MONTH)), 
-				Integer.toString(cal.get(Calendar.DATE)), Integer.toString(hrs), Integer.toString(mins), Integer.toString(secs), ""};
-		
-		String temp = Float.toString(3600000*f_hrs + 60000*f_mins + 1000*f_secs + f_mils);
-		
-		t[6] = temp;
-				
+				Integer.toString(cal.get(Calendar.DATE)), Integer.toString(hrs), Integer.toString(mins), Integer.toString(secs)};
 		return t;
 	}
 	
@@ -1107,6 +1099,16 @@ public class DeviceActivity extends Activity {
 	public static float ByteArray2float (byte[] array) {
 		return ByteBuffer.wrap(array).getFloat();
 	}
+	
+	public String[] concat(String[] A, String[] B) {
+		   int aLen = A.length;
+		   int bLen = B.length;
+		   String[] C= new String[aLen+bLen];
+		   System.arraycopy(A, 0, C, 0, aLen);
+		   System.arraycopy(B, 0, C, aLen, bLen);
+		   return C;
+		}
+	
 	// Saves data to a file in internal memory when data connection is not present
 	void saveData(dataPoint point) {
 		if(!curr_file.exists()) {
@@ -1122,53 +1124,36 @@ public class DeviceActivity extends Activity {
 		if(len>FILE_SIZE) {
 			Log.i(TAG,"File Size Exceeded");
 			curr_file.delete();
-			isBeginning = true;
+			append = true;
 			updateFileSize();
 		}
 		else
-			isBeginning=false;
+			append=false;
 		
-		byte[] data = point.getData();
+		double[] d = point.getDatac(); // get the converted axes data from point object
 		String[] stamp = point.gettStamp();
-		int d = data.length;
-		int s = stamp.length;
+		String[] data = new String[d.length]; // string array to store data in
+		for (int i = 0; i < d.length; i++) data[i] = String.valueOf(d[i]);
+		String[] write = concat(data, stamp); 
 		
-
-		// the timestamp is 7 strings
-		byte[][] toWrite = new byte[d+s][4];
-		for (int i=0;i<d;i++){
-			float f = (float) data[i];
-			toWrite[i] = float2ByteArray(f); 
-		}
-		for(int i=0; i<s; i++) {
-			toWrite[i+d] = float2ByteArray(Float.parseFloat(stamp[i])); // t.getBytes("UTF-8");
-		}
-		
-		// Write all three axes to the file using an outputstream
-		FileOutputStream outputStream;
+		// write the data and stamp string arrays to a csv file
 		try {
-			  outputStream = new FileOutputStream(curr_file, !isBeginning);
-			  for (int i = 0; i < toWrite.length; i++) {
-				  outputStream.write(toWrite[i],0,toWrite[i].length);
-				  float justwrote = ByteArray2float(toWrite[i]);
-				  Log.i(TAG, "WRITE:" + Float.toString(justwrote));
-			  }
-			  outputStream.close();
-			  
-			} catch (Exception e) {
-			  e.printStackTrace();
-			}
+			FileWriter fw = new FileWriter(curr_file,!append);
+			CSVWriter writer = new CSVWriter(fw);
+			writer.writeNext(write);
+			writer.flush();
+			writer.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-	
+
 	// Updates the plot with new data obtained from the service notification
 	void updatePlots(String uuidStr, dataPoint point) {
-		byte[] data = point.getData();
-		int d = data.length;
-		double[] datac = new double[d]; // initialize new double array to plot data
-		// use accelerometer conversion (1/64) and add data to history series
-		for (int i=0; i<d; i++) {
-			datac[i] = data[i] / 64.0; // convert to g's for accelerometer
-			historySeries[i].addFirst(null, datac[i]);
+		double[] d = point.getDatac();
+
+		for (int i=0; i<d.length; i++) {
+			historySeries[i].addFirst(null, d[i]);
 		}
 	  	  // get rid the oldest sample in history:
 	      if (historySeries[1].size() > HISTORY_SIZE) {
@@ -1182,11 +1167,20 @@ public class DeviceActivity extends Activity {
 	public class dataPoint{
 		public byte[] data;
 		public String[] tStamp;
+		public double[] datac;
 
 		public dataPoint(byte[] data, String[] tStamp) {
 			super();
 			this.data = data;
 			this.tStamp = tStamp;
+		}
+		
+		public void convert() {
+			datac = new double[data.length];
+			for (int i = 0; i < data.length; i++) {
+				datac[i] = data[i] / 64.0;
+			}
+			
 		}
 		public byte[] getData() {
 			return data;
@@ -1194,11 +1188,21 @@ public class DeviceActivity extends Activity {
 		public void setData(byte[] data) {
 			this.data = data;
 		}
+
+		public double[] getDatac() {
+			return datac;
+		}
+
+		public void setDatac(double[] datac) {
+			this.datac = datac;
+		}
+
 		public String[] gettStamp() {
 			return tStamp;
 		}
 		public void settStamp(String[] tStamp) {
 			this.tStamp = tStamp;
 		}
+		
 	}
 }
