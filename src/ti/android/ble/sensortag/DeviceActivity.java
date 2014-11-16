@@ -1080,12 +1080,19 @@ public class DeviceActivity extends Activity {
 	private String[] getTimeStamp() {
 		Calendar cal = Calendar.getInstance();
 		
+		int year = cal.get(Calendar.YEAR);
+		int month = cal.get(Calendar.MONTH) + 1;
+		int date = cal.get(Calendar.DATE);
 		int hrs = cal.get(Calendar.HOUR_OF_DAY);
 		int mins = cal.get(Calendar.MINUTE);
 		int secs = cal.get(Calendar.SECOND);
 		
-		String[] t = {Integer.toString(cal.get(Calendar.YEAR)), Integer.toString(cal.get(Calendar.MONTH)), 
-				Integer.toString(cal.get(Calendar.DATE)), Integer.toString(hrs), Integer.toString(mins), Integer.toString(secs)};
+		String[] t = {Integer.toString(year), 
+				Integer.toString(month), 
+				Integer.toString(date), 
+				Integer.toString(hrs), 
+				Integer.toString(mins), 
+				Integer.toString(secs)};
 		return t;
 	}
 	
@@ -1206,6 +1213,3 @@ public class DeviceActivity extends Activity {
 		
 	}
 }
-
-
-// comment
