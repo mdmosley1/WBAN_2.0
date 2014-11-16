@@ -49,6 +49,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
@@ -118,6 +119,7 @@ public class DeviceActivity extends Activity {
 	// DM Hansen
 	private final File PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
 
+	Button timeButtons[] = new Button[4];
 	Button apButton, astbutton, aetbutton, aButton;
 	Button gpButton, gstbutton, getbutton, gButton;
 	Button backbutton;
@@ -127,22 +129,19 @@ public class DeviceActivity extends Activity {
 	static final int dialog_id = 0;
 
 	// Accel Variables
-	int ashour, asminute;
-	int ashour2;
+	int hour, minute;
+	int hour2;
 	int aehour, aeminute;
 	int aehour2;
 
-	TextView astlabel;
-	TextView aetlabel;
+	TextView timeViews[] = new TextView[4];
+		
 
 	//Gyro Variables
 	int gshour, gsminute;
 	int gshour2;
 	int gehour, geminute;
 	int gehour2;	
-
-	TextView gstlabel;
-	TextView getlabel;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -152,30 +151,65 @@ public class DeviceActivity extends Activity {
 		setContentView(R.layout.plot);
 
 		apButton = (Button) findViewById(R.id.apButton);
-		astbutton = (Button) findViewById(R.id.astbutton);
-		aetbutton = (Button) findViewById(R.id.aetbutton);
+
 		aButton = (Button) findViewById(R.id.aButton);
 		gpButton = (Button) findViewById(R.id.gpButton);
-		gstbutton = (Button) findViewById(R.id.gstbutton);
-		getbutton = (Button) findViewById(R.id.getbutton);
+		
 		gButton = (Button) findViewById(R.id.gButton);
 		backbutton = (Button) findViewById(R.id.backbutton);
+		
+		timeButtons[0] = (Button) findViewById(R.id.astbutton);
+		timeButtons[1] = (Button) findViewById(R.id.aetbutton);
+		timeButtons[2] = (Button) findViewById(R.id.gstbutton);
+		timeButtons[3] = (Button) findViewById(R.id.getbutton);
+		
+		timeViews[0]=(TextView)findViewById(R.id.asttextView);
+		timeViews[1]=(TextView)findViewById(R.id.aettextView);
+		timeViews[2]=(TextView)findViewById(R.id.gsttextView);
+		timeViews[3]=(TextView)findViewById(R.id.gettextView);	
+		
+		
+		timeButtons[0].setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				setAccStartTime();
+			}
+		});
+		
+		timeButtons[1].setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				setAccEndTime();
+			}
+		});
+		
+		timeButtons[2].setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				setGyroStartTime();
+			}
+		});
+		
+		timeButtons[3].setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				setGyroEndTime();
+			}
+		});
+	
 
 		apButton();
-		astbutton();
-		aetbutton();
 		aButton();
 		gpButton();
-		gstbutton();
-		getbutton();
 		gButton();
 		backbutton();
 
 		showDialog(dialog_id);
-		astlabel=(TextView)findViewById(R.id.asttextView);
-		aetlabel=(TextView)findViewById(R.id.aettextView);
-		gstlabel=(TextView)findViewById(R.id.gsttextView);
-		getlabel=(TextView)findViewById(R.id.gettextView);	
+
 
 
 		// Used only for debugging purposes. On app start, this boolean will be used to clear the data save file.
@@ -249,336 +283,82 @@ public class DeviceActivity extends Activity {
 			else
 				displayServices();
 		}
-	}
+	} 
 	//------------------------------------------------------------------------------------------  
 	// Dialog Implementation and Storing User Input  
-
-
-	// Display user input accelerometer end time
-	public void updateAccelEndTime()
-	{
-		if (aehour == 0)
-		{
-			aehour2 = aehour+12;
-			if (aeminute < 10)
-			{
-				aetlabel.setText(aehour2+":0"+aeminute+" AM");
-			}
-			else
-			{
-				aetlabel.setText(aehour2+":"+aeminute+" AM");
-			}
-		}
-		else if (aehour-12 < 0)
-		{
-			if (aeminute < 10)
-			{
-				aetlabel.setText(aehour+":0"+aeminute+" AM");
-			}
-			else
-			{
-				aetlabel.setText(aehour+":"+aeminute+" AM");
-			}
-		}
-		else if (aehour-12 == 0)
-		{
-			if (aeminute < 10)
-			{
-				aetlabel.setText(aehour+":0"+aeminute+" PM");
-			}
-			else
-			{
-				aetlabel.setText(aehour+":"+aeminute+" PM");
-			}
-		}
-		else if (aehour > 12)
-		{
-			aehour2 = aehour-12;
-			if (aeminute < 10)
-			{
-				aetlabel.setText(aehour2+":0"+aeminute+" PM");
-			}
-			else
-			{
-				aetlabel.setText(aehour2+":"+aeminute+" PM");
-			}
-		}
-
-	}	
-
-	// Display user input gyroscope start time
-	public void updateGyroStartTime()
-	{
-		if (gshour == 0)
-		{
-			gshour2 = gshour+12;
-			if (gsminute < 10)
-			{
-				gstlabel.setText(gshour2+":0"+gsminute+" AM");
-			}
-			else
-			{
-				gstlabel.setText(gshour2+":"+gsminute+" AM");
-			}
-		}
-		else if (gshour-12 < 0)
-		{
-			if (gsminute < 10)
-			{
-				gstlabel.setText(gshour+":0"+gsminute+" AM");
-			}
-			else
-			{
-				gstlabel.setText(gshour+":"+gsminute+" AM");
-			}
-		}
-		else if (gshour-12 == 0)
-		{
-			if (gsminute < 10)
-			{
-				gstlabel.setText(gshour+":0"+gsminute+" PM");
-			}
-			else
-			{
-				gstlabel.setText(gshour+":"+gsminute+" PM");
-			}
-		}
-		else if (gshour > 12)
-		{
-			gshour2 = gshour-12;
-			if (gsminute < 10)
-			{
-				gstlabel.setText(gshour2+":0"+gsminute+" PM");
-			}
-			else
-			{
-				gstlabel.setText(gshour2+":"+gsminute+" PM");
-			}
+	public void updateTime(int i){
+		String time = Integer.toString(hour) + ":" + Integer.toString(minute);
+		final SimpleDateFormat sdf = new SimpleDateFormat("H:mm"); // define input format
+		try {
+			final Date dateObj = sdf.parse(time); // parse time into Date object
+			String s = new SimpleDateFormat("hh:mm a").format(dateObj); // format back into String
+			timeViews[i].setText(s);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
-
-	// Display user input gyroscope end time
-	public void updateGyroEndTime()
-	{
-		if (gehour == 0)
-		{
-			gehour2 = gehour+12;
-			if (geminute < 10)
-			{
-				getlabel.setText(gehour2+":0"+geminute+" AM");
-			}
-			else
-			{
-				getlabel.setText(gehour2+":"+geminute+" AM");
-			}
+	// Accelerometer Start Time Dialog
+	private TimePickerDialog.OnTimeSetListener asTimeSetListener =
+			new TimePickerDialog.OnTimeSetListener() {
+		@Override
+		public void onTimeSet(TimePicker view, int hourOfDay, int hour_minute) {
+			hour = hourOfDay;
+			minute = hour_minute;
+			updateTime(0);
 		}
-		else if (gehour-12 < 0)
-		{
-			if (geminute < 10)
-			{
-				getlabel.setText(gehour+":0"+geminute+" AM");
-			}
-			else
-			{
-				getlabel.setText(gehour+":"+geminute+" AM");
-			}
-		}
-		else if (gehour-12 == 0)
-		{
-			if (geminute < 10)
-			{
-				getlabel.setText(gehour+":0"+geminute+" PM");
-			}
-			else
-			{
-				getlabel.setText(gehour+":"+geminute+" PM");
-			}
-		}
-		else if (gehour > 12)
-		{
-			gehour2 = gehour-12;
-			if (geminute < 10)
-			{
-				getlabel.setText(gehour2+":0"+geminute+" PM");
-			}
-			else
-			{
-				getlabel.setText(gehour2+":"+geminute+" PM");
-			}
-		}
-	}
-
-
-
-
-
+	};
 	// Accelerometer End Time Dialog	
 	private TimePickerDialog.OnTimeSetListener aeTimeSetListener =
 			new TimePickerDialog.OnTimeSetListener() {
 		@Override
 		public void onTimeSet(TimePicker view, int hourOfDay, int hour_minute) {
-			aehour = hourOfDay;
-			aeminute = hour_minute;
-			updateAccelEndTime();
+			hour = hourOfDay;
+			minute = hour_minute;
+			updateTime(1);
 		}
 	};	
 
 	// Gyroscope Start Time Dialog
 	private TimePickerDialog.OnTimeSetListener gsTimeSetListener =
 			new TimePickerDialog.OnTimeSetListener() {
-
-
 		@Override
 		public void onTimeSet(TimePicker view, int hourOfDay, int hour_minute) {
-			// TODO Auto-generated method stub
-
-			gshour = hourOfDay;
-			gsminute = hour_minute;
-			updateGyroStartTime();
+			hour = hourOfDay;
+			minute = hour_minute;
+			updateTime(2);
 		}			
 	};			
 
 	// Gyroscope End Time Dialog
 	private TimePickerDialog.OnTimeSetListener geTimeSetListener =
 			new TimePickerDialog.OnTimeSetListener() {
-
-
 		@Override
 		public void onTimeSet(TimePicker view, int hourOfDay, int hour_minute) {
-			// TODO Auto-generated method stub
-
-			gehour = hourOfDay;
-			geminute = hour_minute;
-			updateGyroEndTime();
+			hour = hourOfDay;
+			minute = hour_minute;
+			updateTime(3);
 		}	
-
 	};					
 
-
-
-	// Accelerometer Start Time Button		
-	private void astbutton() {
-		Button astbutton = (Button) findViewById(R.id.astbutton);
-		astbutton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				setAccelStartTime();
-			}
-		});
-	}
-	public void setAccelStartTime()
+	public void setAccStartTime()
 	{
-		new TimePickerDialog(this, asTimeSetListener, ashour, asminute, false).show();
-	}		
-	// Accelerometer Start Time Dialog
-	private TimePickerDialog.OnTimeSetListener asTimeSetListener =
-			new TimePickerDialog.OnTimeSetListener() {
-		@Override
-		public void onTimeSet(TimePicker view, int hourOfDay, int hour_minute) {
-			ashour = hourOfDay;
-			asminute = hour_minute;
-			updateAccelStartTime();
-		}
-	};
-
-	// Display user input accelerometer start time
-	public void updateAccelStartTime(){
-		String time = Integer.toString(ashour) + ":" + Integer.toString(asminute);
-		final SimpleDateFormat sdf = new SimpleDateFormat("H:mm"); // define input format
-		try {
-			final Date dateObj = sdf.parse(time); // parse time into Date object
-			String s = new SimpleDateFormat("hh:mm a").format(dateObj); // format back into String
-			astlabel.setText(s);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-
-
-
-
-
-
-
-	// Accelerometer End Time Button	
-	private void aetbutton() {
-		// TODO Auto-generated method stub
-
-		// 1. Get a reference to the button.
-		Button aetbutton = (Button) findViewById(R.id.aetbutton);
-
-		// 2. Set the click listener to run my code
-		aetbutton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				setAccelEndTime();
-
-			}
-		});
-	}		
-
-
-
-
-	// Gyroscope Start Time Button		
-	private void gstbutton() {
-		// TODO Auto-generated method stub
-
-		// 1. Get a reference to the button.
-		Button gstbutton = (Button) findViewById(R.id.gstbutton);
-
-		// 2. Set the click listener to run my code
-		gstbutton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				setGyroStartTime();
-
-			}
-		});
-	}		
-
-	// Gyroscope Start Time Button		
-	private void getbutton() {
-		// TODO Auto-generated method stub
-
-		// 1. Get a reference to the button.
-		Button getbutton = (Button) findViewById(R.id.getbutton);
-
-		// 2. Set the click listener to run my code
-		getbutton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				setGyroEndTime();
-
-			}
-		});
-	}				
-
-
-
-	public void setAccelEndTime()
+		new TimePickerDialog(this, asTimeSetListener, hour, minute, false).show();
+	}	
+	public void setAccEndTime()
 	{
-		new TimePickerDialog(this, aeTimeSetListener, aehour, aeminute, false).show();
+		new TimePickerDialog(this, aeTimeSetListener, hour, minute, false).show();
 	}	
 
 	public void setGyroStartTime()
 	{
-		new TimePickerDialog(this, gsTimeSetListener, gshour, gsminute, false).show();
+		new TimePickerDialog(this, gsTimeSetListener, hour, minute, false).show();
 	}	
 
 	public void setGyroEndTime()
 	{
-		new TimePickerDialog(this, geTimeSetListener, gehour, geminute, false).show();
+		new TimePickerDialog(this, geTimeSetListener, hour, minute, false).show();
 	}		
-
+	//------------------------------------------------------------------------------------------  
 
 	// toggle real time plot for acclerometer
 	private void apButton() {
@@ -587,15 +367,12 @@ public class DeviceActivity extends Activity {
 			public void onClick(View v) {
 				aSensorPlot.setVisibility(View.VISIBLE);
 				backbutton.setVisibility(View.VISIBLE);
-
 				apButton.setVisibility(View.INVISIBLE);
-				astbutton.setVisibility(View.INVISIBLE);
-				aetbutton.setVisibility(View.INVISIBLE);
 				aButton.setVisibility(View.INVISIBLE);
 				gpButton.setVisibility(View.INVISIBLE);
-				gstbutton.setVisibility(View.INVISIBLE);
-				getbutton.setVisibility(View.INVISIBLE);
 				gButton.setVisibility(View.INVISIBLE);
+				for (int i = 0; i < timeButtons.length; i++) 
+					timeButtons[i].setVisibility(View.INVISIBLE);
 			}
 		});
 	}
@@ -620,13 +397,11 @@ public class DeviceActivity extends Activity {
 				backbutton.setVisibility(View.VISIBLE);
 
 				apButton.setVisibility(View.INVISIBLE);
-				astbutton.setVisibility(View.INVISIBLE);
-				aetbutton.setVisibility(View.INVISIBLE);
 				aButton.setVisibility(View.INVISIBLE);
 				gpButton.setVisibility(View.INVISIBLE);
-				gstbutton.setVisibility(View.INVISIBLE);
-				getbutton.setVisibility(View.INVISIBLE);
 				gButton.setVisibility(View.INVISIBLE);
+				for (int i = 0; i < timeButtons.length; i++) 
+					timeButtons[i].setVisibility(View.INVISIBLE);
 
 			}
 		});
@@ -654,13 +429,11 @@ public class DeviceActivity extends Activity {
 				hPlot.setVisibility(View.INVISIBLE);
 
 				apButton.setVisibility(View.VISIBLE);
-				astbutton.setVisibility(View.VISIBLE);
-				aetbutton.setVisibility(View.VISIBLE);
 				aButton.setVisibility(View.VISIBLE);
 				gpButton.setVisibility(View.VISIBLE);
-				gstbutton.setVisibility(View.VISIBLE);
-				getbutton.setVisibility(View.VISIBLE);
 				gButton.setVisibility(View.VISIBLE);
+				for (int i = 0; i < timeButtons.length; i++) 
+					timeButtons[i].setVisibility(View.VISIBLE);
 
 			}
 		});
