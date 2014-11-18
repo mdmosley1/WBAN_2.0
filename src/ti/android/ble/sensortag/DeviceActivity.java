@@ -50,7 +50,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
@@ -133,8 +132,9 @@ public class DeviceActivity extends Activity {
 	static final int dialog_id = 0;
 
 	// Accel Variables
-	int[] hour = new int[2];
-	int[] minute = new int[2];
+	int[] hour = new int[4];
+	int[] minute = new int[4];
+	Date[] dateObj = new Date[4];
 	TextView timeViews[] = new TextView[4];
 
 
@@ -149,21 +149,21 @@ public class DeviceActivity extends Activity {
 
 		aButton = (Button) findViewById(R.id.aButton);
 		gpButton = (Button) findViewById(R.id.gpButton);
-		
+
 		gButton = (Button) findViewById(R.id.gButton);
 		backbutton = (Button) findViewById(R.id.backbutton);
-		
+
 		timeButtons[0] = (Button) findViewById(R.id.astbutton);
 		timeButtons[1] = (Button) findViewById(R.id.aetbutton);
 		timeButtons[2] = (Button) findViewById(R.id.gstbutton);
 		timeButtons[3] = (Button) findViewById(R.id.getbutton);
-		
+
 		timeViews[0]=(TextView)findViewById(R.id.asttextView);
 		timeViews[1]=(TextView)findViewById(R.id.aettextView);
 		timeViews[2]=(TextView)findViewById(R.id.gsttextView);
 		timeViews[3]=(TextView)findViewById(R.id.gettextView);	
-		
-		
+
+
 		timeButtons[0].setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -172,7 +172,7 @@ public class DeviceActivity extends Activity {
 				setAccStartTime();
 			}
 		});
-		
+
 		timeButtons[1].setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -181,7 +181,7 @@ public class DeviceActivity extends Activity {
 				setAccEndTime();
 			}
 		});
-		
+
 		timeButtons[2].setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -190,7 +190,7 @@ public class DeviceActivity extends Activity {
 				setGyroStartTime();
 			}
 		});
-		
+
 		timeButtons[3].setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -226,11 +226,18 @@ public class DeviceActivity extends Activity {
 		hPlot = (XYPlot) findViewById(R.id.hPlot);
 
 		// instantiate some new historySeries and then add them to the sensor plots
-		for(int i=0; i<ns;i++ )
+		for(int i=0; i<3;i++ )
 		{
 			historySeries[i] = new SimpleXYSeries("axis");
 			historySeries[i].useImplicitXVals();
 			aSensorPlot.addSeries(historySeries[i], new LineAndPointFormatter(Color.rgb(80*i,100,200),Color.BLACK, null, null));
+		}
+		
+		for(int i=3; i<6;i++ )
+		{
+			historySeries[i] = new SimpleXYSeries("axis");
+			historySeries[i].useImplicitXVals();
+			hPlot.addSeries(historySeries[i], new LineAndPointFormatter(Color.rgb(80*i,100,200),Color.BLACK, null, null));
 		}
 
 		// freeze the range boundaries:
@@ -284,11 +291,25 @@ public class DeviceActivity extends Activity {
 	//------------------------------------------------------------------------------------------  
 	// Dialog Implementation and Storing User Input  
 	public void updateTime(int i){
-		String time = Integer.toString(hour) + ":" + Integer.toString(minute);
-		final SimpleDateFormat sdf = new SimpleDateFormat("H:mm"); // define input format
+		
+		Calendar cal = Calendar.getInstance();
+
+		int year = cal.get(Calendar.YEAR);
+		int month = cal.get(Calendar.MONTH) + 1;
+		int date = cal.get(Calendar.DATE);
+		int hrs = hour[i];
+		int mins = minute[i];
+		
+		String time = Integer.toString(year) + "-" + 
+				Integer.toString(month) + "-" +
+				Integer.toString(date) + " " +
+				Integer.toString(hrs) + ":" + 
+				Integer.toString(mins);
+		
+		final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm"); // define input format
 		try {
-			final Date dateObj = sdf.parse(time); // parse time into Date object
-			String s = new SimpleDateFormat("hh:mm a").format(dateObj); // format back into String
+			dateObj[i] = sdf.parse(time); // parse time into Date object
+			String s = new SimpleDateFormat("hh:mm a").format(dateObj[i]); // format back into String
 			timeViews[i].setText(s);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -299,8 +320,8 @@ public class DeviceActivity extends Activity {
 			new TimePickerDialog.OnTimeSetListener() {
 		@Override
 		public void onTimeSet(TimePicker view, int hourOfDay, int hour_minute) {
-			hour = hourOfDay;
-			minute = hour_minute;
+			hour[0] = hourOfDay;
+			minute[0] = hour_minute;
 			updateTime(0);
 		}
 	};
@@ -309,8 +330,8 @@ public class DeviceActivity extends Activity {
 			new TimePickerDialog.OnTimeSetListener() {
 		@Override
 		public void onTimeSet(TimePicker view, int hourOfDay, int hour_minute) {
-			hour = hourOfDay;
-			minute = hour_minute;
+			hour[1] = hourOfDay;
+			minute[1] = hour_minute;
 			updateTime(1);
 		}
 	};	
@@ -320,8 +341,8 @@ public class DeviceActivity extends Activity {
 			new TimePickerDialog.OnTimeSetListener() {
 		@Override
 		public void onTimeSet(TimePicker view, int hourOfDay, int hour_minute) {
-			hour = hourOfDay;
-			minute = hour_minute;
+			hour[2] = hourOfDay;
+			minute[2] = hour_minute;
 			updateTime(2);
 		}			
 	};			
@@ -331,31 +352,31 @@ public class DeviceActivity extends Activity {
 			new TimePickerDialog.OnTimeSetListener() {
 		@Override
 		public void onTimeSet(TimePicker view, int hourOfDay, int hour_minute) {
-			hour = hourOfDay;
-			minute = hour_minute;
+			hour[3] = hourOfDay;
+			minute[3] = hour_minute;
 			updateTime(3);
 		}	
 	};					
 
 	public void setAccStartTime()
 	{
-		new TimePickerDialog(this, asTimeSetListener, hour, minute, false).show();
+		new TimePickerDialog(this, asTimeSetListener, hour[0], minute[0], false).show();
 	}	
 
 	public void setAccEndTime()
 
 	{
-		new TimePickerDialog(this, aeTimeSetListener, hour, minute, false).show();
+		new TimePickerDialog(this, aeTimeSetListener, hour[1], minute[1], false).show();
 	}	
 
 	public void setGyroStartTime()
 	{
-		new TimePickerDialog(this, gsTimeSetListener, hour, minute, false).show();
+		new TimePickerDialog(this, gsTimeSetListener, hour[2], minute[2], false).show();
 	}	
 
 	public void setGyroEndTime()
 	{
-		new TimePickerDialog(this, geTimeSetListener, hour, minute, false).show();
+		new TimePickerDialog(this, geTimeSetListener, hour[3], minute[3], false).show();
 	}		
 
 	//------------------------------------------------------------------------------------------  
@@ -385,20 +406,26 @@ public class DeviceActivity extends Activity {
 		aButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-
 				
+//				for (int i = 3; i < 6; i++) {
+//					historySeries[i].removeLast();
+//				}
 				try {
-					CSVReader reader = new CSVReader(new FileReader("wbandata.csv"));
+					CSVReader reader = new CSVReader(new FileReader(curr_file));
 					String [] nextLine;
+					int index = 0;
 					while ((nextLine = reader.readNext()) != null) {
-						System.out.println(nextLine[0] + nextLine[1]);
 						// get the hour in the file and compare to ashour, aehour
-
-						if (Integer.valueOf(nextLine[7]) > minute && Integer.valueOf(nextLine[7]) < aeminute){
+						final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); // define input format
+						Date date = sdf.parse(nextLine[3]);
+						boolean b1 = date.after(dateObj[0]);
+						boolean b2 = date.before(dateObj[1]);
+						if (!b2) break; // if we are past the end date, then stop reading the file
+						if (b1 && b2){
 							for(int i=3; i<6;i++){
-								historySeries[i].addFirst(i, Integer.valueOf(nextLine[i-3]));
+								historySeries[i].addFirst(index, Double.valueOf(nextLine[i-3]));
 							}
-							System.out.println(nextLine[0]+nextLine[1]+nextLine[2]);
+							index++;
 						}
 					}
 					reader.close();
@@ -460,14 +487,10 @@ public class DeviceActivity extends Activity {
 				gButton.setVisibility(View.VISIBLE);
 				for (int i = 0; i < timeButtons.length; i++) 
 					timeButtons[i].setVisibility(View.VISIBLE);
-
 			}
 		});
 	}
-
 	//------------------------------------------------------------------------------------------------
-
-
 	//------------------------------------------------------------------------------------------ 
 
 	@Override
@@ -727,8 +750,8 @@ public class DeviceActivity extends Activity {
 
 				byte[] value = intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
 
-				String[] time = getTimeStamp();
-				dataPoint myPoint = new dataPoint(value, time);
+				Date date1 = getTimeStamp();
+				dataPoint myPoint = new dataPoint(value, date1);
 
 				myPoint.convert();
 				updatePlots(uuidStr, myPoint);
@@ -834,7 +857,7 @@ public class DeviceActivity extends Activity {
 	}
 
 	// Returns an array with the year, month, day, hours, minutes, seconds and millisecond count
-	private String[] getTimeStamp() {
+	private Date getTimeStamp() {
 		Calendar cal = Calendar.getInstance();
 
 		int year = cal.get(Calendar.YEAR);
@@ -845,13 +868,24 @@ public class DeviceActivity extends Activity {
 		int secs = cal.get(Calendar.SECOND);
 
 
-		String[] t = {Integer.toString(year), 
-				Integer.toString(month), 
-				Integer.toString(date), 
-				Integer.toString(hrs), 
-				Integer.toString(mins), 
-				Integer.toString(secs)};
-		return t;
+		String t = Integer.toString(year) +
+				Integer.toString(month) + 
+				Integer.toString(date) + 
+				Integer.toString(hrs) + 
+				Integer.toString(mins) + 
+				Integer.toString(secs);
+		
+		final SimpleDateFormat sdf = new SimpleDateFormat("H:mm"); // define input format
+		Date dateObj1 = new Date(); 
+		try {
+			dateObj1 = sdf.parse(t);
+			return dateObj1;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return dateObj1;
+		}
+		
 	}
 
 	// Converts a float to a byte array
@@ -871,6 +905,15 @@ public class DeviceActivity extends Activity {
 		String[] C= new String[aLen+bLen];
 		System.arraycopy(A, 0, C, 0, aLen);
 		System.arraycopy(B, 0, C, aLen, bLen);
+		return C;
+	}
+	
+	public String[] concat(String[] A, String B) {
+		int aLen = A.length;
+		
+		String[] C= new String[aLen+1];
+		System.arraycopy(A, 0, C, 0, aLen);
+		C[aLen] = B;
 		return C;
 	}
 
@@ -896,10 +939,13 @@ public class DeviceActivity extends Activity {
 			append=false;
 
 		double[] d = point.getDatac(); // get the converted axes data from point object
-		String[] stamp = point.gettStamp();
+		Date date = point.gettStamp();
 		String[] data = new String[d.length]; // string array to store data in
-		for (int i = 0; i < d.length; i++) data[i] = String.valueOf(d[i]);
-		String[] write = concat(data, stamp); 
+		for (int i = 0; i < d.length; i++) {
+			data[i] = String.valueOf(d[i]);
+		}
+		String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date); // format date into String
+		String[] write = concat(data, time); 
 
 		// write the data and stamp string arrays to a csv file
 		try {
@@ -924,7 +970,7 @@ public class DeviceActivity extends Activity {
 		if (historySeries[1].size() > HISTORY_SIZE) {
 
 			for(int j=0;j<3;j++) historySeries[j].removeLast();
-// TODO change 3 back to ns
+			// TODO change 3 back to ns
 		}
 		// redraw the Plots:
 		aSensorPlot.redraw();
@@ -933,10 +979,10 @@ public class DeviceActivity extends Activity {
 
 	public class dataPoint{
 		public byte[] data;
-		public String[] tStamp;
+		public Date tStamp;
 		public double[] datac;
 
-		public dataPoint(byte[] data, String[] tStamp) {
+		public dataPoint(byte[] data, Date tStamp) {
 			super();
 			this.data = data;
 			this.tStamp = tStamp;
@@ -964,10 +1010,10 @@ public class DeviceActivity extends Activity {
 			this.datac = datac;
 		}
 
-		public String[] gettStamp() {
+		public Date gettStamp() {
 			return tStamp;
 		}
-		public void settStamp(String[] tStamp) {
+		public void settStamp(Date tStamp) {
 			this.tStamp = tStamp;
 		}
 
