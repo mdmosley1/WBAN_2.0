@@ -18,8 +18,10 @@ import java.text.DecimalFormat;
 import java.text.FieldPosition;
 import java.text.Format;
 import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -48,6 +50,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
@@ -98,6 +101,7 @@ public class DeviceActivity extends Activity {
 	private XYPlot gSensorPlot;
 	private XYPlot hPlot;
 	private final int ns= 6;
+
 	private SimpleXYSeries[] historySeries = new SimpleXYSeries[ns];
 	private final int SERIES_SIZE = 50;
 
@@ -118,6 +122,8 @@ public class DeviceActivity extends Activity {
 	// DM Hansen
 	private final File PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
 
+	Button timeButtons[] = new Button[4];
+
 	Button apButton, astbutton, aetbutton, aButton;
 	Button gpButton, gstbutton, getbutton, gButton;
 	Button backbutton;
@@ -127,22 +133,10 @@ public class DeviceActivity extends Activity {
 	static final int dialog_id = 0;
 
 	// Accel Variables
-	int ashour, asminute;
-	int ashour2;
-	int aehour, aeminute;
-	int aehour2;
+	int[] hour = new int[2];
+	int[] minute = new int[2];
+	TextView timeViews[] = new TextView[4];
 
-	TextView astlabel;
-	TextView aetlabel;
-
-	//Gyro Variables
-	int gshour, gsminute;
-	int gshour2;
-	int gehour, geminute;
-	int gehour2;	
-
-	TextView gstlabel;
-	TextView getlabel;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -152,30 +146,68 @@ public class DeviceActivity extends Activity {
 		setContentView(R.layout.plot);
 
 		apButton = (Button) findViewById(R.id.apButton);
-		astbutton = (Button) findViewById(R.id.astbutton);
-		aetbutton = (Button) findViewById(R.id.aetbutton);
+
 		aButton = (Button) findViewById(R.id.aButton);
 		gpButton = (Button) findViewById(R.id.gpButton);
-		gstbutton = (Button) findViewById(R.id.gstbutton);
-		getbutton = (Button) findViewById(R.id.getbutton);
+		
 		gButton = (Button) findViewById(R.id.gButton);
 		backbutton = (Button) findViewById(R.id.backbutton);
+		
+		timeButtons[0] = (Button) findViewById(R.id.astbutton);
+		timeButtons[1] = (Button) findViewById(R.id.aetbutton);
+		timeButtons[2] = (Button) findViewById(R.id.gstbutton);
+		timeButtons[3] = (Button) findViewById(R.id.getbutton);
+		
+		timeViews[0]=(TextView)findViewById(R.id.asttextView);
+		timeViews[1]=(TextView)findViewById(R.id.aettextView);
+		timeViews[2]=(TextView)findViewById(R.id.gsttextView);
+		timeViews[3]=(TextView)findViewById(R.id.gettextView);	
+		
+		
+		timeButtons[0].setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				setAccStartTime();
+			}
+		});
+		
+		timeButtons[1].setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				setAccEndTime();
+			}
+		});
+		
+		timeButtons[2].setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				setGyroStartTime();
+			}
+		});
+		
+		timeButtons[3].setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				setGyroEndTime();
+			}
+		});
 
 		apButton();
-		astbutton();
-		aetbutton();
 		aButton();
 		gpButton();
-		gstbutton();
-		getbutton();
 		gButton();
 		backbutton();
 
 		showDialog(dialog_id);
-		astlabel=(TextView)findViewById(R.id.asttextView);
-		aetlabel=(TextView)findViewById(R.id.aettextView);
-		gstlabel=(TextView)findViewById(R.id.gsttextView);
-		getlabel=(TextView)findViewById(R.id.gettextView);
+
+
 
 		// Used only for debugging purposes. On app start, this boolean will be used to clear the data save file.
 		// isBeginning = true;
@@ -194,18 +226,11 @@ public class DeviceActivity extends Activity {
 		hPlot = (XYPlot) findViewById(R.id.hPlot);
 
 		// instantiate some new historySeries and then add them to the sensor plots
-		for(int i=0; i<3;i++ )
+		for(int i=0; i<ns;i++ )
 		{
 			historySeries[i] = new SimpleXYSeries("axis");
 			historySeries[i].useImplicitXVals();
 			aSensorPlot.addSeries(historySeries[i], new LineAndPointFormatter(Color.rgb(80*i,100,200),Color.BLACK, null, null));
-		}
-
-		for(int i=3; i<6;i++)
-		{
-			historySeries[i] = new SimpleXYSeries("axis");
-			historySeries[i].useImplicitXVals();
-			hPlot.addSeries(historySeries[i], new LineAndPointFormatter(Color.rgb(80*i,100,200),Color.BLACK, null, null));
 		}
 
 		// freeze the range boundaries:
@@ -214,12 +239,6 @@ public class DeviceActivity extends Activity {
 		aSensorPlot.setRangeStep(XYStepMode.INCREMENT_BY_VAL, 1);
 		aSensorPlot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 5);
 		aSensorPlot.setRangeValueFormat( new DecimalFormat("#"));
-
-		hPlot.setRangeBoundaries(-4, 4, BoundaryMode.FIXED);
-		hPlot.setDomainBoundaries(0, SERIES_SIZE, BoundaryMode.FIXED);
-		hPlot.setRangeStep(XYStepMode.INCREMENT_BY_VAL, 1);
-		hPlot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 5);
-		hPlot.setRangeValueFormat( new DecimalFormat("#"));
 
 		// Reformats the axis tick labels
 		String[] graph_labels = {"0","","","","","-0.5","","","","","-1",
@@ -233,15 +252,11 @@ public class DeviceActivity extends Activity {
 
 		// Attach index->string formatter to the plot instance
 		aSensorPlot.getGraphWidget().setDomainValueFormat(mif); 
-		hPlot.getGraphWidget().setDomainValueFormat(mif); 
 
 		final PlotStatistics histStats = new PlotStatistics(1000, false);
 
 		aSensorPlot.addListener(histStats);
 		aSensorPlot.setLayerType(View.LAYER_TYPE_NONE, null);
-
-		hPlot.addListener(histStats);
-		hPlot.setLayerType(View.LAYER_TYPE_NONE, null);
 
 		// GATT database
 		Resources res = getResources();
@@ -265,378 +280,85 @@ public class DeviceActivity extends Activity {
 			else
 				displayServices();
 		}
-	}
-
-
+	} 
 	//------------------------------------------------------------------------------------------  
 	// Dialog Implementation and Storing User Input  
-
-
-	// Display user input accelerometer start time
-	public void updateAccelStartTime()
-	{
-		if (ashour == 0)
-		{
-			ashour2 = ashour+12;
-			if (asminute < 10)
-			{
-				astlabel.setText(ashour2+":0"+asminute+" AM");
-			}
-			else
-			{
-				astlabel.setText(ashour2+":"+asminute+" AM");
-			}
-		}
-		else if (ashour-12 < 0)
-		{
-			if (asminute < 10)
-			{
-				astlabel.setText(ashour+":0"+asminute+" AM");
-			}
-			else
-			{
-				astlabel.setText(ashour+":"+asminute+" AM");
-			}
-		}
-		else if (ashour-12 == 0)
-		{
-			if (asminute < 10)
-			{
-				astlabel.setText(ashour+":0"+asminute+" PM");
-			}
-			else
-			{
-				astlabel.setText(ashour+":"+asminute+" PM");
-			}
-		}
-		else if (ashour > 12)
-		{
-			ashour2 = ashour-12;
-			if (asminute < 10)
-			{
-				astlabel.setText(ashour2+":0"+asminute+" PM");
-			}
-			else
-			{
-				astlabel.setText(ashour2+":"+asminute+" PM");
-			}
+	public void updateTime(int i){
+		String time = Integer.toString(hour) + ":" + Integer.toString(minute);
+		final SimpleDateFormat sdf = new SimpleDateFormat("H:mm"); // define input format
+		try {
+			final Date dateObj = sdf.parse(time); // parse time into Date object
+			String s = new SimpleDateFormat("hh:mm a").format(dateObj); // format back into String
+			timeViews[i].setText(s);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
-
-	// Display user input accelerometer end time
-	public void updateAccelEndTime()
-	{
-		if (aehour == 0)
-		{
-			aehour2 = aehour+12;
-			if (aeminute < 10)
-			{
-				aetlabel.setText(aehour2+":0"+aeminute+" AM");
-			}
-			else
-			{
-				aetlabel.setText(aehour2+":"+aeminute+" AM");
-			}
-		}
-		else if (aehour-12 < 0)
-		{
-			if (aeminute < 10)
-			{
-				aetlabel.setText(aehour+":0"+aeminute+" AM");
-			}
-			else
-			{
-				aetlabel.setText(aehour+":"+aeminute+" AM");
-			}
-		}
-		else if (aehour-12 == 0)
-		{
-			if (aeminute < 10)
-			{
-				aetlabel.setText(aehour+":0"+aeminute+" PM");
-			}
-			else
-			{
-				aetlabel.setText(aehour+":"+aeminute+" PM");
-			}
-		}
-		else if (aehour > 12)
-		{
-			aehour2 = aehour-12;
-			if (aeminute < 10)
-			{
-				aetlabel.setText(aehour2+":0"+aeminute+" PM");
-			}
-			else
-			{
-				aetlabel.setText(aehour2+":"+aeminute+" PM");
-			}
-		}
-
-	}	
-
-	// Display user input gyroscope start time
-	public void updateGyroStartTime()
-	{
-		if (gshour == 0)
-		{
-			gshour2 = gshour+12;
-			if (gsminute < 10)
-			{
-				gstlabel.setText(gshour2+":0"+gsminute+" AM");
-			}
-			else
-			{
-				gstlabel.setText(gshour2+":"+gsminute+" AM");
-			}
-		}
-		else if (gshour-12 < 0)
-		{
-			if (gsminute < 10)
-			{
-				gstlabel.setText(gshour+":0"+gsminute+" AM");
-			}
-			else
-			{
-				gstlabel.setText(gshour+":"+gsminute+" AM");
-			}
-		}
-		else if (gshour-12 == 0)
-		{
-			if (gsminute < 10)
-			{
-				gstlabel.setText(gshour+":0"+gsminute+" PM");
-			}
-			else
-			{
-				gstlabel.setText(gshour+":"+gsminute+" PM");
-			}
-		}
-		else if (gshour > 12)
-		{
-			gshour2 = gshour-12;
-			if (gsminute < 10)
-			{
-				gstlabel.setText(gshour2+":0"+gsminute+" PM");
-			}
-			else
-			{
-				gstlabel.setText(gshour2+":"+gsminute+" PM");
-			}
-		}
-	}
-
-	// Display user input gyroscope end time
-	public void updateGyroEndTime()
-	{
-		if (gehour == 0)
-		{
-			gehour2 = gehour+12;
-			if (geminute < 10)
-			{
-				getlabel.setText(gehour2+":0"+geminute+" AM");
-			}
-			else
-			{
-				getlabel.setText(gehour2+":"+geminute+" AM");
-			}
-		}
-		else if (gehour-12 < 0)
-		{
-			if (geminute < 10)
-			{
-				getlabel.setText(gehour+":0"+geminute+" AM");
-			}
-			else
-			{
-				getlabel.setText(gehour+":"+geminute+" AM");
-			}
-		}
-		else if (gehour-12 == 0)
-		{
-			if (geminute < 10)
-			{
-				getlabel.setText(gehour+":0"+geminute+" PM");
-			}
-			else
-			{
-				getlabel.setText(gehour+":"+geminute+" PM");
-			}
-		}
-		else if (gehour > 12)
-		{
-			gehour2 = gehour-12;
-			if (geminute < 10)
-			{
-				getlabel.setText(gehour2+":0"+geminute+" PM");
-			}
-			else
-			{
-				getlabel.setText(gehour2+":"+geminute+" PM");
-			}
-		}
-	}
-
 	// Accelerometer Start Time Dialog
 	private TimePickerDialog.OnTimeSetListener asTimeSetListener =
 			new TimePickerDialog.OnTimeSetListener() {
-
 		@Override
 		public void onTimeSet(TimePicker view, int hourOfDay, int hour_minute) {
-			// TODO Auto-generated method stub
-
-			ashour = hourOfDay;
-			asminute = hour_minute;
-			updateAccelStartTime();
+			hour = hourOfDay;
+			minute = hour_minute;
+			updateTime(0);
 		}
-
 	};
-
 	// Accelerometer End Time Dialog	
 	private TimePickerDialog.OnTimeSetListener aeTimeSetListener =
 			new TimePickerDialog.OnTimeSetListener() {
-
 		@Override
 		public void onTimeSet(TimePicker view, int hourOfDay, int hour_minute) {
-			// TODO Auto-generated method stub		
-
-			aehour = hourOfDay;
-			aeminute = hour_minute;
-			updateAccelEndTime();
-
+			hour = hourOfDay;
+			minute = hour_minute;
+			updateTime(1);
 		}
-
 	};	
 
 	// Gyroscope Start Time Dialog
 	private TimePickerDialog.OnTimeSetListener gsTimeSetListener =
 			new TimePickerDialog.OnTimeSetListener() {
-
-
 		@Override
 		public void onTimeSet(TimePicker view, int hourOfDay, int hour_minute) {
-			// TODO Auto-generated method stub
-
-			gshour = hourOfDay;
-			gsminute = hour_minute;
-			updateGyroStartTime();
+			hour = hourOfDay;
+			minute = hour_minute;
+			updateTime(2);
 		}			
 	};			
 
 	// Gyroscope End Time Dialog
 	private TimePickerDialog.OnTimeSetListener geTimeSetListener =
 			new TimePickerDialog.OnTimeSetListener() {
-
-
 		@Override
 		public void onTimeSet(TimePicker view, int hourOfDay, int hour_minute) {
-			// TODO Auto-generated method stub
-
-			gehour = hourOfDay;
-			geminute = hour_minute;
-			updateGyroEndTime();
+			hour = hourOfDay;
+			minute = hour_minute;
+			updateTime(3);
 		}	
-
 	};					
 
-	// Acceleromter Start Time Button		
-	private void astbutton() {
-		// TODO Auto-generated method stub
-
-		// 1. Get a reference to the button.
-		Button astbutton = (Button) findViewById(R.id.astbutton);
-
-		// 2. Set the click listener to run my code
-		astbutton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				setAccelStartTime();
-
-			}
-		});
-	}		
-
-	// Acceleromter End Time Button	
-	private void aetbutton() {
-		// TODO Auto-generated method stub
-
-		// 1. Get a reference to the button.
-		Button aetbutton = (Button) findViewById(R.id.aetbutton);
-
-		// 2. Set the click listener to run my code
-		aetbutton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				setAccelEndTime();
-
-			}
-		});
-	}		
-
-
-
-
-	// Gyroscope Start Time Button		
-	private void gstbutton() {
-		// TODO Auto-generated method stub
-
-		// 1. Get a reference to the button.
-		Button gstbutton = (Button) findViewById(R.id.gstbutton);
-
-		// 2. Set the click listener to run my code
-		gstbutton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				setGyroStartTime();
-
-			}
-		});
-	}		
-
-	// Gyroscope Start Time Button		
-	private void getbutton() {
-		// TODO Auto-generated method stub
-
-		// 1. Get a reference to the button.
-		Button getbutton = (Button) findViewById(R.id.getbutton);
-
-		// 2. Set the click listener to run my code
-		getbutton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				setGyroEndTime();
-
-			}
-		});
-	}				
-
-	public void setAccelStartTime()
+	public void setAccStartTime()
 	{
-		new TimePickerDialog(this, asTimeSetListener, ashour, asminute, false).show();
+		new TimePickerDialog(this, asTimeSetListener, hour, minute, false).show();
 	}	
 
-	public void setAccelEndTime()
+	public void setAccEndTime()
+
 	{
-		new TimePickerDialog(this, aeTimeSetListener, aehour, aeminute, false).show();
+		new TimePickerDialog(this, aeTimeSetListener, hour, minute, false).show();
 	}	
 
 	public void setGyroStartTime()
 	{
-		new TimePickerDialog(this, gsTimeSetListener, gshour, gsminute, false).show();
+		new TimePickerDialog(this, gsTimeSetListener, hour, minute, false).show();
 	}	
 
 	public void setGyroEndTime()
 	{
-		new TimePickerDialog(this, geTimeSetListener, gehour, geminute, false).show();
+		new TimePickerDialog(this, geTimeSetListener, hour, minute, false).show();
 	}		
+
+	//------------------------------------------------------------------------------------------  
 
 
 	// toggle real time plot for acclerometer
@@ -648,13 +370,12 @@ public class DeviceActivity extends Activity {
 				backbutton.setVisibility(View.VISIBLE);
 
 				apButton.setVisibility(View.INVISIBLE);
-				astbutton.setVisibility(View.INVISIBLE);
-				aetbutton.setVisibility(View.INVISIBLE);
 				aButton.setVisibility(View.INVISIBLE);
 				gpButton.setVisibility(View.INVISIBLE);
-				gstbutton.setVisibility(View.INVISIBLE);
-				getbutton.setVisibility(View.INVISIBLE);
 				gButton.setVisibility(View.INVISIBLE);
+				for (int i = 0; i < timeButtons.length; i++) 
+					timeButtons[i].setVisibility(View.INVISIBLE);
+
 			}
 		});
 	}
@@ -664,6 +385,7 @@ public class DeviceActivity extends Activity {
 		aButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+
 				
 				try {
 					CSVReader reader = new CSVReader(new FileReader("wbandata.csv"));
@@ -672,7 +394,7 @@ public class DeviceActivity extends Activity {
 						System.out.println(nextLine[0] + nextLine[1]);
 						// get the hour in the file and compare to ashour, aehour
 
-						if (Integer.valueOf(nextLine[7]) > asminute && Integer.valueOf(nextLine[7]) < aeminute){
+						if (Integer.valueOf(nextLine[7]) > minute && Integer.valueOf(nextLine[7]) < aeminute){
 							for(int i=3; i<6;i++){
 								historySeries[i].addFirst(i, Integer.valueOf(nextLine[i-3]));
 							}
@@ -684,6 +406,8 @@ public class DeviceActivity extends Activity {
 					e.printStackTrace();
 				}
 				hPlot.redraw();
+
+
 				hPlot.setVisibility(View.VISIBLE);
 				backbutton.setVisibility(View.VISIBLE);
 			}
@@ -699,13 +423,11 @@ public class DeviceActivity extends Activity {
 				backbutton.setVisibility(View.VISIBLE);
 
 				apButton.setVisibility(View.INVISIBLE);
-				astbutton.setVisibility(View.INVISIBLE);
-				aetbutton.setVisibility(View.INVISIBLE);
 				aButton.setVisibility(View.INVISIBLE);
 				gpButton.setVisibility(View.INVISIBLE);
-				gstbutton.setVisibility(View.INVISIBLE);
-				getbutton.setVisibility(View.INVISIBLE);
 				gButton.setVisibility(View.INVISIBLE);
+				for (int i = 0; i < timeButtons.length; i++) 
+					timeButtons[i].setVisibility(View.INVISIBLE);
 
 			}
 		});
@@ -733,13 +455,11 @@ public class DeviceActivity extends Activity {
 				hPlot.setVisibility(View.INVISIBLE);
 
 				apButton.setVisibility(View.VISIBLE);
-				astbutton.setVisibility(View.VISIBLE);
-				aetbutton.setVisibility(View.VISIBLE);
 				aButton.setVisibility(View.VISIBLE);
 				gpButton.setVisibility(View.VISIBLE);
-				gstbutton.setVisibility(View.VISIBLE);
-				getbutton.setVisibility(View.VISIBLE);
 				gButton.setVisibility(View.VISIBLE);
+				for (int i = 0; i < timeButtons.length; i++) 
+					timeButtons[i].setVisibility(View.VISIBLE);
 
 			}
 		});
@@ -1035,6 +755,7 @@ public class DeviceActivity extends Activity {
 		Log.d(TAG,"onCharacteristicWrite: " + uuidStr);
 	}
 
+
 	// Make sure the file size is accurate
 	private void updateFileSize() {
 		len = curr_file.length();
@@ -1116,12 +837,20 @@ public class DeviceActivity extends Activity {
 	private String[] getTimeStamp() {
 		Calendar cal = Calendar.getInstance();
 
+		int year = cal.get(Calendar.YEAR);
+		int month = cal.get(Calendar.MONTH) + 1;
+		int date = cal.get(Calendar.DATE);
 		int hrs = cal.get(Calendar.HOUR_OF_DAY);
 		int mins = cal.get(Calendar.MINUTE);
 		int secs = cal.get(Calendar.SECOND);
 
-		String[] t = {Integer.toString(cal.get(Calendar.YEAR)), Integer.toString(cal.get(Calendar.MONTH)), 
-				Integer.toString(cal.get(Calendar.DATE)), Integer.toString(hrs), Integer.toString(mins), Integer.toString(secs)};
+
+		String[] t = {Integer.toString(year), 
+				Integer.toString(month), 
+				Integer.toString(date), 
+				Integer.toString(hrs), 
+				Integer.toString(mins), 
+				Integer.toString(secs)};
 		return t;
 	}
 
@@ -1193,7 +922,9 @@ public class DeviceActivity extends Activity {
 		}
 		// get rid the oldest sample in history:
 		if (historySeries[1].size() > HISTORY_SIZE) {
+
 			for(int j=0;j<3;j++) historySeries[j].removeLast();
+// TODO change 3 back to ns
 		}
 		// redraw the Plots:
 		aSensorPlot.redraw();
