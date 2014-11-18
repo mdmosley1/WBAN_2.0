@@ -4,7 +4,6 @@
 
 package ti.android.ble.sensortag;
 
-import java.io.BufferedInputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,7 +19,6 @@ import java.text.Format;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -63,7 +61,6 @@ import com.androidplot.xy.BoundaryMode;
 import com.androidplot.xy.LineAndPointFormatter;
 import com.androidplot.xy.SimpleXYSeries;
 import com.androidplot.xy.XYPlot;
-import com.androidplot.xy.XYSeries;
 import com.androidplot.xy.XYStepMode;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
@@ -126,19 +123,18 @@ public class DeviceActivity extends Activity {
 
 	Button timeButtons[] = new Button[4];
 
-	Button apButton, astbutton, aetbutton, aButton;
-	Button gpButton, gstbutton, getbutton, gButton;
-	Button backbutton;
+	Button apButton, aButton;
+	Button gpButton, gButton;
+	Button backbutton, emailButton;
 
 	// Time Picker Dialog and display
-
 	TimePicker time_picker;
 	static final int dialog_id = 0;
 
 	// Accel Variables
 
-    emailButton = (Button) findViewById(R.id.emailButton);
-    emailButton();
+    
+    
 
 	int[] hour = new int[4];
 	int[] minute = new int[4];
@@ -159,6 +155,7 @@ public class DeviceActivity extends Activity {
 
 		gButton = (Button) findViewById(R.id.gButton);
 		backbutton = (Button) findViewById(R.id.backbutton);
+		
 
 		timeButtons[0] = (Button) findViewById(R.id.astbutton);
 		timeButtons[1] = (Button) findViewById(R.id.aetbutton);
@@ -169,7 +166,14 @@ public class DeviceActivity extends Activity {
 		timeViews[1]=(TextView)findViewById(R.id.aettextView);
 		timeViews[2]=(TextView)findViewById(R.id.gsttextView);
 		timeViews[3]=(TextView)findViewById(R.id.gettextView);	
-
+		emailButton = (Button) findViewById(R.id.emailButton);
+		
+		apButton();
+		aButton();
+		gpButton();
+		gButton();
+		backbutton();
+		emailButton();
 
 		timeButtons[0].setOnClickListener(new View.OnClickListener() {
 
@@ -206,13 +210,9 @@ public class DeviceActivity extends Activity {
 			}
 		});
 
-		apButton();
-		aButton();
-		gpButton();
-		gButton();
-		backbutton();
+		
 
-		showDialog(dialog_id);
+		//showDialog(dialog_id);
 
 
 
@@ -854,32 +854,6 @@ public class DeviceActivity extends Activity {
 		}
 
 		return toByteArray(input, (int) size);
-	}
-
-	// Logs the data written to the file in logcat for debugging purposes. Only used to verify that
-	// data was saved properly.
-	void logData(File f) {
-		InputStream in = null;
-
-		try {
-			byte[] bytes = new byte[4];
-			in = new BufferedInputStream(new FileInputStream(f));
-			file_vec.add(in.read(bytes,0,4));
-			String temp = Integer.toString(file_vec.get(buff_count));
-			float coord = ByteArray2float(bytes);
-			Log.i(TAG,"READ:" + Float.toString(coord));
-			buff_count++;
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		try {
-			if (in!=null) {
-				in.close();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	// Returns an array with the year, month, day, hours, minutes, seconds and millisecond count
