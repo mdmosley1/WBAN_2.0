@@ -5,10 +5,13 @@
 package ti.android.ble.sensortag;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -236,7 +239,6 @@ public class DeviceActivity extends Activity {
     PATH.mkdirs();
     // Now create a file in that location
     curr_file = new File(PATH, FILENAME);
-
     curr_file.setWritable(true);
     buff_count = 0;
     
@@ -1084,7 +1086,7 @@ public class DeviceActivity extends Activity {
 		int mins = cal.get(Calendar.MINUTE);
 		int secs = cal.get(Calendar.SECOND);
 		
-		String[] t = {Integer.toString(cal.get(Calendar.YEAR)), Integer.toString(cal.get(Calendar.MONTH)), 
+		String[] t = {Integer.toString(cal.get(Calendar.YEAR)), Integer.toString(cal.get(Calendar.MONTH)+1), 
 				Integer.toString(cal.get(Calendar.DATE)), Integer.toString(hrs), Integer.toString(mins), Integer.toString(secs)};
 		return t;
 	}
@@ -1109,6 +1111,32 @@ public class DeviceActivity extends Activity {
 		   return C;
 		}
 	
+	void deleteData(File curr_file){
+		File temp_file = new File(PATH, "temp.csv");
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(curr_file));
+			BufferedWriter writer = new BufferedWriter(new FileWriter(temp_file));
+
+			String currentLine;
+			int count = 0;
+			int n = 6000; // 6000 is 10 min worth of data
+			// read in currentLine from the curr_file. Skip first 'n' lines, then start writing them to temp_file 
+			while((currentLine = reader.readLine()) != null) {
+				if (count < n){ 
+					count++;
+					continue;
+				}
+			    writer.write(currentLine + System.getProperty("line.separator"));
+			}
+			writer.close(); 
+			reader.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		curr_file.delete();
+		temp_file.renameTo(curr_file);
+	}
+	
 	// Saves data to a file in internal memory when data connection is not present
 	void saveData(dataPoint point) {
 		if(!curr_file.exists()) {
@@ -1123,9 +1151,10 @@ public class DeviceActivity extends Activity {
 		// If the file gets too big (ie exceeds the amount of data recorded over 8 hours) delete it and start over again.
 		if(len>FILE_SIZE) {
 			Log.i(TAG,"File Size Exceeded");
-			curr_file.delete();
-			append = true;
+			
+			deleteData(curr_file);
 			updateFileSize();
+			append = true;
 		}
 		else
 			append=false;
