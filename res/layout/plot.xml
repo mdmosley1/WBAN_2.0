@@ -136,6 +136,8 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/gsttextView"
         android:text="@string/PlotGyroHistory" />
+    
+ 
 
     <com.androidplot.xy.XYPlot
         android:id="@+id/aSensorPlot"
@@ -194,6 +196,15 @@
         androidPlot.rangeLabel="Acceleration"
         androidPlot.title="History Data"
         android:visibility="invisible" />
+    
+    <Button
+        android:id="@+id/emailButton"
+        style="@android:attr/buttonBarButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/aSensorPlot"
+        android:text="@string/email" />       
 
     <Button
         android:id="@+id/backbutton"

@@ -18,6 +18,7 @@ import java.text.FieldPosition;
 import java.text.Format;
 import java.text.ParsePosition;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -39,6 +40,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -58,8 +60,10 @@ import com.androidplot.xy.BoundaryMode;
 import com.androidplot.xy.LineAndPointFormatter;
 import com.androidplot.xy.SimpleXYSeries;
 import com.androidplot.xy.XYPlot;
+import com.androidplot.xy.XYSeries;
 import com.androidplot.xy.XYStepMode;
 import com.opencsv.CSVWriter;
+
 
 public class DeviceActivity extends Activity {
   // Log
@@ -118,7 +122,7 @@ public class DeviceActivity extends Activity {
   
   Button apButton, astbutton, aetbutton, aButton;
   Button gpButton, gstbutton, getbutton, gButton;
-  Button backbutton;
+  Button backbutton, emailButton;
   
   // Time Picker Dialog and display
 	TimePicker time_picker;
@@ -158,6 +162,7 @@ public class DeviceActivity extends Activity {
     getbutton = (Button) findViewById(R.id.getbutton);
     gButton = (Button) findViewById(R.id.gButton);
     backbutton = (Button) findViewById(R.id.backbutton);
+    emailButton = (Button) findViewById(R.id.emailButton);
     
     apButton();
 	astbutton();
@@ -168,6 +173,7 @@ public class DeviceActivity extends Activity {
 	getbutton();
 	gButton();
     backbutton();
+    emailButton();
     
 	showDialog(dialog_id);
 	astlabel=(TextView)findViewById(R.id.asttextView);
@@ -648,6 +654,7 @@ public class DeviceActivity extends Activity {
 				public void onClick(View v) {
 					hPlot.setVisibility(View.VISIBLE);
 					backbutton.setVisibility(View.VISIBLE);
+				        
 				}
 			});
 		}	
@@ -681,9 +688,30 @@ public class DeviceActivity extends Activity {
 				public void onClick(View v) {
 					hPlot.setVisibility(View.VISIBLE);
 					backbutton.setVisibility(View.VISIBLE);
+								
 				}
 			});
 		}	
+		
+		private void emailButton() {
+			emailButton.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+
+					Uri u1  =   null;
+					File file = curr_file;
+					u1  =   Uri.fromFile(file );
+
+					Intent sendIntent = new Intent(Intent.ACTION_SEND);
+					sendIntent.putExtra(Intent.EXTRA_SUBJECT, "wbandata");
+					sendIntent.putExtra(Intent.EXTRA_STREAM, u1);
+					sendIntent.setType("text/html");
+					startActivity(sendIntent);
+					
+
+				}
+			});
+		}
 		
 		private void backbutton() {
 			backbutton.setOnClickListener(new View.OnClickListener() {
@@ -706,6 +734,78 @@ public class DeviceActivity extends Activity {
 				}
 			});
 		}
+		
+
+		
+		
+//		
+//		public void plotAccelHistory();
+//		{
+//			getAccelHistoryArray();
+//			
+//		}
+//		
+//		public void plotGyroHistory();
+//		{
+//			getGyroHistoryArray();
+//			
+//		}
+//		
+//		public void getAccelHistoryArray()
+//		{
+//			int i;
+//			
+//			for (i=0; i>-1; i++)
+//			{
+//
+//				if (read[i][j] < ashour)
+//				{
+//
+//				}
+//
+//				else if (ashour <= read[i] <= aehour)
+//				{
+//
+//					Array[i] = read[i];			// store into a new array
+//
+//				}
+//
+//				else if (read[i] > aehour)
+//				{
+//
+//					i = -1;
+//
+//				}
+//			}	
+//		}
+//		
+//		public void getGyroHistoryArray()
+//		{
+//			int i;
+//			
+//			for (i=0; i>-1; i++)
+//			{
+//
+//				if (read[i][j] < gshour)
+//				{
+//
+//				}
+//
+//				else if (gshour <= read[i] <= gehour)
+//				{
+//
+//					Array[i] = read[i];			// store into a new array
+//
+//				}
+//
+//				else if (read[i] > gehour)
+//				{
+//
+//					i = -1;
+//
+//				}
+//			}	
+//		}
 
 	//------------------------------------------------------------------------------------------------
 	

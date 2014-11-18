@@ -47,7 +47,7 @@
     <string name="PlotGyro">Plot</string>
     <string name="PlotGyroHistory">History Plot</string>
     <string name="Back">Back</string>
-    <string name="dots">&#8230;</string>
+ 	<string name="email">Email Data</string>
 
     <!-- History activity -->
     <string name="hist_instr">Enter the start and end dates of the plot you would like to view.</string>
