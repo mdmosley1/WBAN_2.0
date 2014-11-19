@@ -240,12 +240,7 @@ public class DeviceActivity extends Activity {
 			aSensorPlot.addSeries(historySeries[i], new LineAndPointFormatter(Color.rgb(80*i,100,200),Color.BLACK, null, null));
 		}
 		
-		for(int i=3; i<6;i++ )
-		{
-			historySeries[i] = new SimpleXYSeries("axis");
-			historySeries[i].useImplicitXVals();
-			hPlot.addSeries(historySeries[i], new LineAndPointFormatter(Color.rgb(80*i,100,200),Color.BLACK, null, null));
-		}
+		
 
 		// freeze the range boundaries:
 		aSensorPlot.setRangeBoundaries(-4, 4, BoundaryMode.FIXED);
@@ -413,10 +408,15 @@ public class DeviceActivity extends Activity {
 		aButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				
-//				for (int i = 3; i < 6; i++) {
-//					historySeries[i].removeLast();
-//				}
+
+				hPlot.clear();
+				for(int i=3; i<6;i++ )
+				{
+					historySeries[i] = new SimpleXYSeries("axis");
+					historySeries[i].useImplicitXVals();
+					hPlot.addSeries(historySeries[i], new LineAndPointFormatter(Color.rgb(80*i,100,200),Color.BLACK, null, null));
+				}
+
 				try {
 					CSVReader reader = new CSVReader(new FileReader(curr_file));
 					String [] nextLine;
