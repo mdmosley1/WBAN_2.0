@@ -51,7 +51,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -66,7 +70,7 @@ import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
 
-public class DeviceActivity extends Activity {
+public class DeviceActivity extends Activity implements OnItemSelectedListener{
 	// Log
 	private static String TAG = "DeviceActivity";
 	private static String NET = "NetworkConnectivity";
@@ -121,20 +125,16 @@ public class DeviceActivity extends Activity {
 	// DM Hansen
 	private final File PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
 
-	Button timeButtons[] = new Button[4];
+	Button timeButtons[] = new Button[2];
 
 	Button apButton, aButton;
-	Button gpButton, gButton;
 	Button backbutton, emailButton;
 
 	// Time Picker Dialog and display
 	TimePicker time_picker;
 	static final int dialog_id = 0;
 
-	// Accel Variables
-
-    
-    
+	private String selected = new String();
 
 	int[] hour = new int[4];
 	int[] minute = new int[4];
@@ -147,31 +147,39 @@ public class DeviceActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		Intent intent = getIntent();
 		setContentView(R.layout.plot);
+		
+		Spinner spinner = (Spinner) findViewById(R.id.spinner);
+		spinner.setOnItemSelectedListener(this);
+		// Create an ArrayAdapter using the string array and a default spinner layout
+		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+		        R.array.planets_array, android.R.layout.simple_spinner_item);
+		// Specify the layout to use when the list of choices appears
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		// Apply the adapter to the spinner
+		spinner.setAdapter(adapter);
 
 		apButton = (Button) findViewById(R.id.apButton);
 
 		aButton = (Button) findViewById(R.id.aButton);
-		gpButton = (Button) findViewById(R.id.gpButton);
+		
 
-		gButton = (Button) findViewById(R.id.gButton);
+		
 		backbutton = (Button) findViewById(R.id.backbutton);
 		
 
 		timeButtons[0] = (Button) findViewById(R.id.astbutton);
 		timeButtons[1] = (Button) findViewById(R.id.aetbutton);
-		timeButtons[2] = (Button) findViewById(R.id.gstbutton);
-		timeButtons[3] = (Button) findViewById(R.id.getbutton);
+		
+		
 
 		timeViews[0]=(TextView)findViewById(R.id.asttextView);
 		timeViews[1]=(TextView)findViewById(R.id.aettextView);
-		timeViews[2]=(TextView)findViewById(R.id.gsttextView);
-		timeViews[3]=(TextView)findViewById(R.id.gettextView);	
+				
 		emailButton = (Button) findViewById(R.id.emailButton);
 		
 		apButton();
 		aButton();
-		gpButton();
-		gButton();
+		
 		backbutton();
 		emailButton();
 
@@ -193,22 +201,7 @@ public class DeviceActivity extends Activity {
 			}
 		});
 
-		timeButtons[2].setOnClickListener(new View.OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				setGyroStartTime();
-			}
-		});
-
-		timeButtons[3].setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				setGyroEndTime();
-			}
-		});
 
 		
 
@@ -229,7 +222,6 @@ public class DeviceActivity extends Activity {
 
 		// Plot variables. Creates a plot and instantiates the series for each axis of acceleration
 		aSensorPlot = (XYPlot) findViewById(R.id.aSensorPlot);
-		gSensorPlot = (XYPlot) findViewById(R.id.gSensorPlot);
 		hPlot = (XYPlot) findViewById(R.id.hPlot);
 
 		// instantiate some new historySeries and then add them to the sensor plots
@@ -292,6 +284,23 @@ public class DeviceActivity extends Activity {
 	} 
 	//------------------------------------------------------------------------------------------  
 	// Dialog Implementation and Storing User Input  
+	
+	public void onItemSelected(AdapterView<?> parent, View view, 
+            int pos, long id) {
+        // An item was selected. You can retrieve the selected item using
+        // parent.getItemAtPosition(pos)
+		selected = parent.getItemAtPosition(pos).toString();
+		
+		if (selected.equals("Accelerometer")){
+			for (int i = 0; i < 3; i++) {
+				aSensorPlot.addSeries(historySeries[i], new LineAndPointFormatter(Color.rgb(80*i,100,200),Color.BLACK, null, null));
+			}
+		}
+    }
+
+    public void onNothingSelected(AdapterView<?> parent) {
+        // Another interface callback
+    }
 	public void updateTime(int i){
 		
 		Calendar cal = Calendar.getInstance();
@@ -394,8 +403,7 @@ public class DeviceActivity extends Activity {
 
 				apButton.setVisibility(View.INVISIBLE);
 				aButton.setVisibility(View.INVISIBLE);
-				gpButton.setVisibility(View.INVISIBLE);
-				gButton.setVisibility(View.INVISIBLE);
+
 				for (int i = 0; i < timeButtons.length; i++) 
 					timeButtons[i].setVisibility(View.INVISIBLE);
 
@@ -448,41 +456,12 @@ public class DeviceActivity extends Activity {
 		});
 	}	
 
-	// toggle real time plot for gyroscope
-	private void gpButton() {
-		gpButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				gSensorPlot.setVisibility(View.VISIBLE);
-				backbutton.setVisibility(View.VISIBLE);
-
-				apButton.setVisibility(View.INVISIBLE);
-				aButton.setVisibility(View.INVISIBLE);
-				gpButton.setVisibility(View.INVISIBLE);
-				gButton.setVisibility(View.INVISIBLE);
-				for (int i = 0; i < timeButtons.length; i++) 
-					timeButtons[i].setVisibility(View.INVISIBLE);
-
-			}
-		});
-	}
-	// This button toggles the history plot for gyroscope
-	private void gButton() {
-		Button gButton = (Button) findViewById(R.id.gButton);
-		gButton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				hPlot.setVisibility(View.VISIBLE);
-				backbutton.setVisibility(View.VISIBLE);
-			}
-		});
-	}	
 
 	private void backbutton() {
 		backbutton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				aSensorPlot.clear();
 				aSensorPlot.setVisibility(View.INVISIBLE);
 				gSensorPlot.setVisibility(View.INVISIBLE);
 				backbutton.setVisibility(View.INVISIBLE);
@@ -490,8 +469,7 @@ public class DeviceActivity extends Activity {
 
 				apButton.setVisibility(View.VISIBLE);
 				aButton.setVisibility(View.VISIBLE);
-				gpButton.setVisibility(View.VISIBLE);
-				gButton.setVisibility(View.VISIBLE);
+				
 				for (int i = 0; i < timeButtons.length; i++) 
 					timeButtons[i].setVisibility(View.VISIBLE);
 			}
@@ -780,7 +758,7 @@ public class DeviceActivity extends Activity {
 				dataPoint myPoint = new dataPoint(value, date1);
 
 				myPoint.convert();
-				updatePlots(uuidStr, myPoint);
+				updatePlot(uuidStr, myPoint);
 				saveData(myPoint);
 
 			} else if (BluetoothLeService.ACTION_DATA_WRITE.equals(action)) {
@@ -960,12 +938,21 @@ public class DeviceActivity extends Activity {
 	}
 
 	// Updates the plot with new data obtained from the service notification
-	void updatePlots(String uuidStr, dataPoint point) {
+	void updatePlot(String uuidStr, dataPoint point) {
 		double[] d = point.getDatac();
-
-		for (int i=0; i<d.length; i++) {
-			historySeries[i].addFirst(null, d[i]);
+		
+		if (selected.equals("Accelerometer")){
+			for (int i=0; i<3; i++) {
+				historySeries[i].addFirst(null, d[i]);
+			}
 		}
+		
+		if (selected.equals("Gyroscope")){
+			for (int i=0; i<3; i++) {
+				historySeries[i].addFirst(null, d[i+3]);
+			}
+		}
+		
 		// get rid the oldest sample in history:
 		if (historySeries[1].size() > HISTORY_SIZE) {
 

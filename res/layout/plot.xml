@@ -64,81 +64,6 @@
         android:layout_below="@+id/asttextView"
         android:text="@string/PlotAccelHistory" />
 
-    <TextView
-        android:id="@+id/dividetextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/aButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="-20dp"
-        android:text="@string/divider"
-        android:textSize="30sp" />
-
-    <TextView
-        android:id="@+id/gTitletextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/dividetextView"
-        android:layout_marginStart="5dp"
-        android:text="@string/GyroTitle"
-        android:textSize="25sp" />
-
-    <Button
-        android:id="@+id/gpButton"
-        style="@android:attr/buttonBarButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/gTitletextView"
-        android:text="@string/PlotGyro" />
-
-    <Button
-        android:id="@+id/gstbutton"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/getbutton"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/gpButton"
-        android:text="@string/StartTime" />
-
-    <Button
-        android:id="@+id/getbutton"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/gpButton"
-        android:text="@string/EndTime" />
-
-    <TextView
-        android:id="@+id/gsttextView"
-        android:layout_width="130dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/gstbutton"
-        android:layout_marginStart="20dp"
-        android:text=""
-        android:textSize="20sp" />
-
-    <TextView
-        android:id="@+id/gettextView"
-        android:layout_width="130dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/getbutton"
-        android:text=""
-        android:textSize="20sp" />
-
-    <Button
-        android:id="@+id/gButton"
-        style="@android:attr/buttonBarButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/gsttextView"
-        android:text="@string/PlotGyroHistory" />
-    
- 
-
     <com.androidplot.xy.XYPlot
         android:id="@+id/aSensorPlot"
         android:layout_width="fill_parent"
@@ -160,25 +85,7 @@
         androidPlot.titleWidget.labelPaint.textSize="@dimen/title_font_size"
         android:visibility="invisible" />
 
-    <com.androidplot.xy.XYPlot
-        android:id="@+id/gSensorPlot"
-        android:layout_width="fill_parent"
-        android:layout_height="@dimen/plot_height"
-        android:layout_gravity="top"
-        androidPlot.domainLabel="Time"
-        androidPlot.domainLabelWidget.labelPaint.textSize="@dimen/domain_label_font_size"
-        androidPlot.graphWidget.gridLinePaint.color="#000000"
-        androidPlot.graphWidget.marginLeft="15dp"
-        androidPlot.graphWidget.marginRight="10dp"
-        androidPlot.legendWidget.heightMetric.value="25dp"
-        androidPlot.legendWidget.iconSizeMetrics.heightMetric.value="15dp"
-        androidPlot.legendWidget.iconSizeMetrics.widthMetric.value="15dp"
-        androidPlot.legendWidget.positionMetrics.anchor="right_bottom"
-        androidPlot.rangeLabel="Deg/s"
-        androidPlot.rangeLabelWidget.labelPaint.textSize="@dimen/range_label_font_size"
-        androidPlot.title="Gyroscope"
-        androidPlot.titleWidget.labelPaint.textSize="@dimen/title_font_size"
-        android:visibility="invisible" />
+   
 
     <com.androidplot.xy.XYPlot
         android:id="@+id/hPlot"
@@ -214,5 +121,11 @@
         android:layout_below="@+id/aSensorPlot"
         android:text="@string/Back"
         android:visibility="invisible" />
+    
+    <Spinner
+    android:id="@+id/spinner"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/aButton" />
 
 </RelativeLayout>
