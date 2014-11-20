@@ -100,12 +100,12 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 	private BluetoothGattService mConnControlService = null;
 
 	//Plot Stuff
-	private XYPlot aSensorPlot;
-	private XYPlot gSensorPlot;
-	private XYPlot hPlot;
-	private final int ns= 6;
+	private XYPlot RTPlot; // a dynamic plot for real time data
+	private XYPlot hPlot; // a static plot for showing data history
 
-	private SimpleXYSeries[] historySeries = new SimpleXYSeries[ns];
+	private SimpleXYSeries[] RTSeries = new SimpleXYSeries[3]; // real time data
+	private SimpleXYSeries[] hSeries = new SimpleXYSeries[3]; // data history
+	
 	private final int SERIES_SIZE = 50;
 
 	private boolean[] toggle_plot = {true, true, true, true};
@@ -127,7 +127,7 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 
 	Button timeButtons[] = new Button[2];
 
-	Button apButton, aButton;
+	Button plotButton, histButton;
 	Button backbutton, emailButton;
 
 	// Time Picker Dialog and display
@@ -136,10 +136,10 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 
 	private String selected = new String();
 
-	int[] hour = new int[4];
-	int[] minute = new int[4];
-	Date[] dateObj = new Date[4];
-	TextView timeViews[] = new TextView[4];
+	int[] hour = new int[2];
+	int[] minute = new int[2];
+	Date[] dateObj = new Date[2];
+	TextView timeViews[] = new TextView[2];
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -152,65 +152,46 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 		spinner.setOnItemSelectedListener(this);
 		// Create an ArrayAdapter using the string array and a default spinner layout
 		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-		        R.array.planets_array, android.R.layout.simple_spinner_item);
+		        R.array.sensor_array, android.R.layout.simple_spinner_item);
 		// Specify the layout to use when the list of choices appears
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		// Apply the adapter to the spinner
-		spinner.setAdapter(adapter);
-
-		apButton = (Button) findViewById(R.id.apButton);
-
-		aButton = (Button) findViewById(R.id.aButton);
-		
-
-		
+		//spinner.setAdapter(adapter);
+		spinner.setAdapter(new ArrayAdapter<Sensor>(this,
+			      android.R.layout.simple_list_item_1, Sensor.values()));
+		 
+		plotButton = (Button) findViewById(R.id.plotButton); // real time plot
+		histButton = (Button) findViewById(R.id.histButton); // history plot
 		backbutton = (Button) findViewById(R.id.backbutton);
-		
-
-		timeButtons[0] = (Button) findViewById(R.id.astbutton);
-		timeButtons[1] = (Button) findViewById(R.id.aetbutton);
-		
-		
-
-		timeViews[0]=(TextView)findViewById(R.id.asttextView);
-		timeViews[1]=(TextView)findViewById(R.id.aettextView);
-				
+		timeButtons[0] = (Button) findViewById(R.id.astbutton); // start time
+		timeButtons[1] = (Button) findViewById(R.id.aetbutton); // end time
+		timeViews[0]=(TextView)findViewById(R.id.asttextView); // view that holds start time
+		timeViews[1]=(TextView)findViewById(R.id.aettextView); // view that holds end time
 		emailButton = (Button) findViewById(R.id.emailButton);
 		
-		apButton();
-		aButton();
-		
+		plotButton();
+		histButton();
 		backbutton();
 		emailButton();
 
 		timeButtons[0].setOnClickListener(new View.OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				setAccStartTime();
+				setStartTime();
 			}
 		});
 
 		timeButtons[1].setOnClickListener(new View.OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				setAccEndTime();
+				setEndTime();
 			}
 		});
-
-
-
+		
+		
 		
 
 		//showDialog(dialog_id);
-
-
-
-		// Used only for debugging purposes. On app start, this boolean will be used to clear the data save file.
-		// isBeginning = true;
 
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
@@ -221,25 +202,23 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 		registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
 
 		// Plot variables. Creates a plot and instantiates the series for each axis of acceleration
-		aSensorPlot = (XYPlot) findViewById(R.id.aSensorPlot);
+		RTPlot = (XYPlot) findViewById(R.id.RTPlot);
 		hPlot = (XYPlot) findViewById(R.id.hPlot);
 
-		// instantiate some new historySeries and then add them to the sensor plots
+		// instantiate some new xy series and then add them to the sensor plots
 		for(int i=0; i<3;i++ )
 		{
-			historySeries[i] = new SimpleXYSeries("axis");
-			historySeries[i].useImplicitXVals();
-			aSensorPlot.addSeries(historySeries[i], new LineAndPointFormatter(Color.rgb(80*i,100,200),Color.BLACK, null, null));
+			RTSeries[i] = new SimpleXYSeries("axis");
+			RTSeries[i].useImplicitXVals();
+			RTPlot.addSeries(RTSeries[i], new LineAndPointFormatter(Color.rgb(80*i,100,200),Color.BLACK, null, null));
 		}
-		
-		
 
 		// freeze the range boundaries:
-		aSensorPlot.setRangeBoundaries(-4, 4, BoundaryMode.FIXED);
-		aSensorPlot.setDomainBoundaries(0, SERIES_SIZE, BoundaryMode.FIXED);
-		aSensorPlot.setRangeStep(XYStepMode.INCREMENT_BY_VAL, 1);
-		aSensorPlot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 5);
-		aSensorPlot.setRangeValueFormat( new DecimalFormat("#"));
+		RTPlot.setRangeBoundaries(-4, 4, BoundaryMode.FIXED);
+		RTPlot.setDomainBoundaries(0, SERIES_SIZE, BoundaryMode.FIXED);
+		RTPlot.setRangeStep(XYStepMode.INCREMENT_BY_VAL, 1);
+		RTPlot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 5);
+		RTPlot.setRangeValueFormat( new DecimalFormat("#"));
 
 		// Reformats the axis tick labels
 		String[] graph_labels = {"0","","","","","-0.5","","","","","-1",
@@ -252,12 +231,12 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 		mif.Labels = graph_labels;
 
 		// Attach index->string formatter to the plot instance
-		aSensorPlot.getGraphWidget().setDomainValueFormat(mif); 
+		RTPlot.getGraphWidget().setDomainValueFormat(mif); 
 
 		final PlotStatistics histStats = new PlotStatistics(1000, false);
 
-		aSensorPlot.addListener(histStats);
-		aSensorPlot.setLayerType(View.LAYER_TYPE_NONE, null);
+		RTPlot.addListener(histStats);
+		RTPlot.setLayerType(View.LAYER_TYPE_NONE, null);
 
 		// GATT database
 		Resources res = getResources();
@@ -289,13 +268,7 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
             int pos, long id) {
         // An item was selected. You can retrieve the selected item using
         // parent.getItemAtPosition(pos)
-		selected = parent.getItemAtPosition(pos).toString();
-		
-		if (selected.equals("Accelerometer")){
-			for (int i = 0; i < 3; i++) {
-				aSensorPlot.addSeries(historySeries[i], new LineAndPointFormatter(Color.rgb(80*i,100,200),Color.BLACK, null, null));
-			}
-		}
+		selected = parent.getItemAtPosition(pos).toString();		
     }
 
     public void onNothingSelected(AdapterView<?> parent) {
@@ -369,40 +342,29 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 		}	
 	};					
 
-	public void setAccStartTime()
+	public void setStartTime()
 	{
 		new TimePickerDialog(this, asTimeSetListener, hour[0], minute[0], false).show();
 	}	
 
-	public void setAccEndTime()
+	public void setEndTime()
 
 	{
 		new TimePickerDialog(this, aeTimeSetListener, hour[1], minute[1], false).show();
 	}	
-
-	public void setGyroStartTime()
-	{
-		new TimePickerDialog(this, gsTimeSetListener, hour[2], minute[2], false).show();
-	}	
-
-	public void setGyroEndTime()
-	{
-		new TimePickerDialog(this, geTimeSetListener, hour[3], minute[3], false).show();
-	}		
-
 	//------------------------------------------------------------------------------------------  
 
 
 	// toggle real time plot for acclerometer
-	private void apButton() {
-		apButton.setOnClickListener(new View.OnClickListener() {
+	private void plotButton() {
+		plotButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				aSensorPlot.setVisibility(View.VISIBLE);
+				RTPlot.setVisibility(View.VISIBLE);
 				backbutton.setVisibility(View.VISIBLE);
 
-				apButton.setVisibility(View.INVISIBLE);
-				aButton.setVisibility(View.INVISIBLE);
+				plotButton.setVisibility(View.INVISIBLE);
+				histButton.setVisibility(View.INVISIBLE);
 
 				for (int i = 0; i < timeButtons.length; i++) 
 					timeButtons[i].setVisibility(View.INVISIBLE);
@@ -411,18 +373,18 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 		});
 	}
 	// This button toggles the history plot for acceleration
-	private void aButton() {
-		Button aButton = (Button) findViewById(R.id.aButton);
-		aButton.setOnClickListener(new View.OnClickListener() {
+	private void histButton() {
+		Button histButton = (Button) findViewById(R.id.histButton);
+		histButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 
 				hPlot.clear();
 				for(int i=3; i<6;i++ )
 				{
-					historySeries[i] = new SimpleXYSeries("axis");
-					historySeries[i].useImplicitXVals();
-					hPlot.addSeries(historySeries[i], new LineAndPointFormatter(Color.rgb(80*i,100,200),Color.BLACK, null, null));
+					hSeries[i] = new SimpleXYSeries("axis");
+					hSeries[i].useImplicitXVals();
+					hPlot.addSeries(hSeries[i], new LineAndPointFormatter(Color.rgb(80*i,100,200),Color.BLACK, null, null));
 				}
 
 				try {
@@ -438,7 +400,7 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 						if (!b2) break; // if we are past the end date, then stop reading the file
 						if (b1 && b2){
 							for(int i=3; i<6;i++){
-								historySeries[i].addFirst(index, Double.valueOf(nextLine[i-3]));
+								hSeries[i].addFirst(index, Double.valueOf(nextLine[i-3]));
 							}
 							index++;
 						}
@@ -455,20 +417,17 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 			}
 		});
 	}	
-
-
 	private void backbutton() {
 		backbutton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				aSensorPlot.clear();
-				aSensorPlot.setVisibility(View.INVISIBLE);
-				gSensorPlot.setVisibility(View.INVISIBLE);
+				RTPlot.clear();
+				RTPlot.setVisibility(View.INVISIBLE);
 				backbutton.setVisibility(View.INVISIBLE);
 				hPlot.setVisibility(View.INVISIBLE);
 
-				apButton.setVisibility(View.VISIBLE);
-				aButton.setVisibility(View.VISIBLE);
+				plotButton.setVisibility(View.VISIBLE);
+				histButton.setVisibility(View.VISIBLE);
 				
 				for (int i = 0; i < timeButtons.length; i++) 
 					timeButtons[i].setVisibility(View.VISIBLE);
@@ -649,12 +608,6 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 
 	BluetoothGattService getConnControlService() {
 		return mConnControlService;
-	}
-
-	// Starts the history plot activity, which should make a static plot of historical data
-	private void startHistoryActivity() {
-		final Intent i = new Intent(this, HistoryPlot.class);
-		startActivityForResult(i,HIST_ACT_REQ);
 	}
 
 	private void discoverServices() {
@@ -941,26 +894,37 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 	void updatePlot(String uuidStr, dataPoint point) {
 		double[] d = point.getDatac();
 		
+//		switch (selected) {
+//		case "Accelerometer":
+//			
+//			break;
+//
+//		default:
+//			break;
+//		}
 		if (selected.equals("Accelerometer")){
 			for (int i=0; i<3; i++) {
-				historySeries[i].addFirst(null, d[i]);
+				RTSeries[i].addFirst(null, d[i]);
 			}
 		}
 		
 		if (selected.equals("Gyroscope")){
 			for (int i=0; i<3; i++) {
-				historySeries[i].addFirst(null, d[i+3]);
+				RTSeries[i].addFirst(null, d[i+3]);
 			}
 		}
 		
+		// additional sensors should be placed here
+		
+		
+		
+		
 		// get rid the oldest sample in history:
-		if (historySeries[1].size() > HISTORY_SIZE) {
-
-			for(int j=0;j<3;j++) historySeries[j].removeLast();
-			// TODO change 3 back to ns
+		if (RTSeries[1].size() > HISTORY_SIZE) {
+			for(int j=0;j<3;j++) RTSeries[j].removeLast();
 		}
-		// redraw the Plots:
-		aSensorPlot.redraw();
+		// redraw the Plots
+		RTPlot.redraw();
 		Log.i(TAG, "Plot updated.");
 	}
 

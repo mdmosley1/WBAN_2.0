@@ -49,14 +49,15 @@ public enum Sensor {
       return new Point3D(x,y,z);      
     }
   };
-
-
+  
   /**
    * Gyroscope, Magnetometer, Barometer, IR temperature all store 16 bit two's complement values in the awkward format LSB MSB, which cannot be directly parsed
    * as getIntValue(FORMAT_SINT16, offset) because the bytes are stored in the "wrong" direction.
    * 
    * This function extracts these 16 bit two's complement values.
    * */
+  
+  
   private static Integer shortSignedAtOffset(byte[] c, int offset) {
     Integer lowerByte = (int) c[offset] & 0xFF; 
     Integer upperByte = (int) c[offset+1]; // // Interpret MSB as signed
@@ -76,6 +77,9 @@ public enum Sensor {
 	public static final byte DISABLE_SENSOR_CODE = 0;
 	public static final byte ENABLE_SENSOR_CODE = 1;
 	public static final byte CALIBRATE_SENSOR_CODE = 2;
+	
+	private String asensor;
+	private String theSensor;
 
 	/**
 	 * Constructor called by the Gyroscope because he needs a different enable
@@ -96,6 +100,12 @@ public enum Sensor {
     this.data = data;
     this.config = config;
     this.enableCode = ENABLE_SENSOR_CODE; // This is the sensor enable code for all sensors except the gyroscope
+    this.theSensor = asensor;
+  }
+  
+  @Override
+  public String toString() {
+	  return theSensor;
   }
 
   public byte getEnableSensorCode() {

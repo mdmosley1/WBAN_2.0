@@ -12,7 +12,7 @@
         android:textSize="25sp" />
 
     <Button
-        android:id="@+id/apButton"
+        android:id="@+id/plotButton"
         style="@android:attr/buttonBarButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/aetbutton"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/apButton"
+        android:layout_below="@+id/plotButton"
         android:text="@string/StartTime" />
 
     <Button
@@ -33,7 +33,7 @@
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_below="@+id/apButton"
+        android:layout_below="@+id/plotButton"
         android:text="@string/EndTime" />
 
     <TextView
@@ -56,7 +56,7 @@
         android:textSize="20sp" />
 
     <Button
-        android:id="@+id/aButton"
+        android:id="@+id/histButton"
         style="@android:attr/buttonBarButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -65,7 +65,7 @@
         android:text="@string/PlotAccelHistory" />
 
     <com.androidplot.xy.XYPlot
-        android:id="@+id/aSensorPlot"
+        android:id="@+id/RTPlot"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/plot_height"
         android:layout_gravity="top"
@@ -110,7 +110,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/aSensorPlot"
+        android:layout_below="@+id/RTPlot"
         android:text="@string/email" />       
 
     <Button
@@ -118,7 +118,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_below="@+id/aSensorPlot"
+        android:layout_below="@+id/RTPlot"
         android:text="@string/Back"
         android:visibility="invisible" />
     
@@ -126,6 +126,6 @@
     android:id="@+id/spinner"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:layout_below="@+id/aButton" />
+    android:layout_below="@+id/histButton" />
 
 </RelativeLayout>

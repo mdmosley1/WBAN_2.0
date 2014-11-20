@@ -127,7 +127,7 @@
     <dimen name="range_label_font_size">13dp</dimen>
     <dimen name="legend_text_font_size">20dp</dimen>
     
-    <string-array name="planets_array">
+    <string-array name="sensor_array">
         <item>Accelerometer</item>
         <item>Gyroscope</item>
     </string-array>
