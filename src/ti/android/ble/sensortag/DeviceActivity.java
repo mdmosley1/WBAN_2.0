@@ -156,9 +156,9 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 		// Specify the layout to use when the list of choices appears
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		// Apply the adapter to the spinner
-		//spinner.setAdapter(adapter);
-		spinner.setAdapter(new ArrayAdapter<Sensor>(this,
-			      android.R.layout.simple_list_item_1, Sensor.values()));
+		spinner.setAdapter(adapter);
+//		spinner.setAdapter(new ArrayAdapter<Sensor>(this,
+//			      android.R.layout.simple_list_item_1, Sensor.values()));
 		 
 		plotButton = (Button) findViewById(R.id.plotButton); // real time plot
 		histButton = (Button) findViewById(R.id.histButton); // history plot
@@ -893,31 +893,25 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 	// Updates the plot with new data obtained from the service notification
 	void updatePlot(String uuidStr, dataPoint point) {
 		double[] d = point.getDatac();
-		
-//		switch (selected) {
-//		case "Accelerometer":
-//			
-//			break;
-//
-//		default:
-//			break;
-//		}
-		if (selected.equals("Accelerometer")){
+		Sensor s = Sensor.values()[0];
+		switch (s) {
+		case ACCELEROMETER:
 			for (int i=0; i<3; i++) {
 				RTSeries[i].addFirst(null, d[i]);
 			}
-		}
-		
-		if (selected.equals("Gyroscope")){
+			break;
+
+		case GYROSCOPE:
 			for (int i=0; i<3; i++) {
 				RTSeries[i].addFirst(null, d[i+3]);
 			}
+			break;
+
+			// additional sensors should be placed here 
+
+		default:
+			break;
 		}
-		
-		// additional sensors should be placed here
-		
-		
-		
 		
 		// get rid the oldest sample in history:
 		if (RTSeries[1].size() > HISTORY_SIZE) {
