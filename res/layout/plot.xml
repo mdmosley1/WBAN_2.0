@@ -13,7 +13,7 @@
 
     <Button
         android:id="@+id/apButton"
-        style="@android:attr/buttonBarButtonStyle"
+        style="@style/CustomStyleButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/aTitletextView"
@@ -21,6 +21,7 @@
 
     <Button
         android:id="@+id/astbutton"
+        style="@style/CustomStyleButton"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/aetbutton"
@@ -30,6 +31,7 @@
 
     <Button
         android:id="@+id/aetbutton"
+        style="@style/CustomStyleButton"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -57,7 +59,7 @@
 
     <Button
         android:id="@+id/aButton"
-        style="@android:attr/buttonBarButtonStyle"
+        style="@style/CustomStyleButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
@@ -85,7 +87,7 @@
 
     <Button
         android:id="@+id/gpButton"
-        style="@android:attr/buttonBarButtonStyle"
+        style="@style/CustomStyleButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
@@ -94,6 +96,7 @@
 
     <Button
         android:id="@+id/gstbutton"
+        style="@style/CustomStyleButton"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/getbutton"
@@ -103,6 +106,7 @@
 
     <Button
         android:id="@+id/getbutton"
+        style="@style/CustomStyleButton"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -130,14 +134,13 @@
 
     <Button
         android:id="@+id/gButton"
-        style="@android:attr/buttonBarButtonStyle"
+        
+        style="@style/CustomStyleButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/gsttextView"
         android:text="@string/PlotGyroHistory" />
-    
- 
 
     <com.androidplot.xy.XYPlot
         android:id="@+id/aSensorPlot"
@@ -196,18 +199,19 @@
         androidPlot.rangeLabel="Acceleration"
         androidPlot.title="History Data"
         android:visibility="invisible" />
-    
+
     <Button
         android:id="@+id/emailButton"
-        style="@android:attr/buttonBarButtonStyle"
+        style="@style/CustomStyleButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/aSensorPlot"
-        android:text="@string/email" />       
+        android:text="@string/email" />
 
     <Button
         android:id="@+id/backbutton"
+        style="@style/CustomStyleButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
