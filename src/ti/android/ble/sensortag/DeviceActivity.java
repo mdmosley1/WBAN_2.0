@@ -8,6 +8,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -24,6 +25,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import ti.android.ble.common.BluetoothLeService;
 import ti.android.ble.common.GattInfo;
@@ -576,16 +579,39 @@ public class DeviceActivity extends Activity {
 			emailButton.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
+					byte[] buffer = new byte[1024];
+					
+					try {
+						File zip_file = new File(PATH, "wbandata.zip");
+						FileOutputStream fos = new FileOutputStream(zip_file);
+			    		ZipOutputStream zos = new ZipOutputStream(fos);
+			    		ZipEntry ze= new ZipEntry("wbandata.csv");
+			    		zos.putNextEntry(ze);
+			    		
+			    		FileInputStream in = new FileInputStream(curr_file);
+			    		
+			    		int len;
+			    		while ((len = in.read(buffer)) > 0) {
+			    			zos.write(buffer, 0, len);
+			    		}
+			 
+			    		in.close();
+			    		zos.closeEntry();
+			    		zos.close();
+			    		
+			    		Uri u1  =   null;
+						File file = zip_file;
+						u1  =   Uri.fromFile(file );
 
-					Uri u1  =   null;
-					File file = curr_file;
-					u1  =   Uri.fromFile(file );
-
-					Intent sendIntent = new Intent(Intent.ACTION_SEND);
-					sendIntent.putExtra(Intent.EXTRA_SUBJECT, "wbandata");
-					sendIntent.putExtra(Intent.EXTRA_STREAM, u1);
-					sendIntent.setType("text/html");
-					startActivity(sendIntent);
+						Intent sendIntent = new Intent(Intent.ACTION_SEND);
+						sendIntent.putExtra(Intent.EXTRA_SUBJECT, "wbandata");
+						sendIntent.putExtra(Intent.EXTRA_STREAM, u1);
+						sendIntent.setType("text/html");
+						startActivity(sendIntent);
+			    		
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
 			});
 		}
