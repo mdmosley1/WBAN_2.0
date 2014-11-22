@@ -1,222 +1,121 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="@color/blue" >
 
-    <TextView
-        android:id="@+id/aTitletextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:text="@string/AccelTitle"
-        android:textSize="25sp" />
-
-    <Button
-        android:id="@+id/apButton"
-        style="@style/CustomStyleButton"
+    <RelativeLayout
+        android:id="@+id/relativeLayout1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/aTitletextView"
-        android:text="@string/PlotAccel" />
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true" >
 
-    <Button
-        android:id="@+id/astbutton"
-        style="@style/CustomStyleButton"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/aetbutton"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/apButton"
-        android:text="@string/StartTime" />
+        <Button
+            android:id="@+id/apButton"
+            style="@style/CustomStyleButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:background="?android:attr/selectableItemBackground"
+            android:text="@string/Plot" />
 
-    <Button
-        android:id="@+id/aetbutton"
-        style="@style/CustomStyleButton"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/apButton"
-        android:text="@string/EndTime" />
+        <View
+            android:id="@+id/divider1"
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:layout_below="@+id/apButton"
+            android:layout_marginLeft="4dip"
+            android:layout_marginRight="4dip"
+            android:background="?android:attr/dividerVertical" />
 
-    <TextView
-        android:id="@+id/asttextView"
-        android:layout_width="130dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/astbutton"
-        android:layout_marginStart="20dp"
-        android:text=""
-        android:textSize="20sp" />
+        <Button
+            android:id="@+id/aButton"
+            style="@style/CustomStyleButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/divider1"
+            android:text="@string/PlotAccelHistory" />
 
-    <TextView
-        android:id="@+id/aettextView"
-        android:layout_width="130dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/aetbutton"
-        android:text=""
-        android:textSize="20sp" />
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:layout_below="@+id/aButton"
+            android:layout_marginLeft="4dip"
+            android:layout_marginRight="4dip"
+            android:background="?android:attr/dividerVertical" />
+    </RelativeLayout>
 
-    <Button
-        android:id="@+id/aButton"
-        style="@style/CustomStyleButton"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/asttextView"
-        android:text="@string/PlotAccelHistory" />
+        android:layout_height="48dp"
+        android:layout_alignParentBottom="true" >
 
-    <TextView
-        android:id="@+id/dividetextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/aButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="-20dp"
-        android:text="@string/divider"
-        android:textSize="30sp" />
+        <TextView
+            android:id="@+id/asttextView"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/astbutton"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="20dp"
+            android:textSize="20sp" />
 
-    <TextView
-        android:id="@+id/gTitletextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/dividetextView"
-        android:layout_marginStart="5dp"
-        android:text="@string/GyroTitle"
-        android:textSize="25sp" />
+        <TextView
+            android:id="@+id/aettextView"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/aetbutton"
+            android:layout_alignParentEnd="true"
+            android:textSize="20sp" />
 
-    <Button
-        android:id="@+id/gpButton"
-        style="@style/CustomStyleButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/gTitletextView"
-        android:text="@string/PlotGyro" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="4dip"
+            android:layout_marginRight="4dip"
+            android:background="?android:attr/dividerVertical" />
 
-    <Button
-        android:id="@+id/gstbutton"
-        style="@style/CustomStyleButton"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/getbutton"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/gpButton"
-        android:text="@string/StartTime" />
+        <View
+            android:id="@+id/ViewColorPickerHelper"
+            android:layout_width="1dip"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="4dip"
+            android:layout_marginTop="4dip"
+            android:background="?android:attr/dividerVertical" />
 
-    <Button
-        android:id="@+id/getbutton"
-        style="@style/CustomStyleButton"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/gpButton"
-        android:text="@string/EndTime" />
+        <Button
+            android:id="@+id/astbutton"
+            style="@style/CustomStyleButton"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/aetbutton"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@id/ViewColorPickerHelper"
+            android:text="@string/StartTime" />
 
-    <TextView
-        android:id="@+id/gsttextView"
-        android:layout_width="130dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/gstbutton"
-        android:layout_marginStart="20dp"
-        android:text=""
-        android:textSize="20sp" />
+        <Button
+            android:id="@+id/aetbutton"
+            style="@style/CustomStyleButton"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_toEndOf="@id/ViewColorPickerHelper"
+            android:text="@string/EndTime" />
 
-    <TextView
-        android:id="@+id/gettextView"
-        android:layout_width="130dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/getbutton"
-        android:text=""
-        android:textSize="20sp" />
-
-    <Button
-        android:id="@+id/gButton"
-        
-        style="@style/CustomStyleButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/gsttextView"
-        android:text="@string/PlotGyroHistory" />
-
-    <com.androidplot.xy.XYPlot
-        android:id="@+id/aSensorPlot"
-        android:layout_width="fill_parent"
-        android:layout_height="@dimen/plot_height"
-        android:layout_gravity="top"
-        androidPlot.domainLabel="Time"
-        androidPlot.domainLabelWidget.labelPaint.textSize="@dimen/domain_label_font_size"
-        androidPlot.graphWidget.gridLinePaint.color="#000000"
-        androidPlot.graphWidget.marginLeft="15dp"
-        androidPlot.graphWidget.marginRight="10dp"
-        androidPlot.legendWidget.heightMetric.value="25dp"
-        androidPlot.legendWidget.iconSizeMetrics.heightMetric.value="15dp"
-        androidPlot.legendWidget.iconSizeMetrics.widthMetric.value="15dp"
-        androidPlot.legendWidget.positionMetrics.anchor="right_bottom"
-        androidPlot.legendWidget.textPaint.textSize="@dimen/legend_text_font_size"
-        androidPlot.rangeLabel="Acceleration (G)"
-        androidPlot.rangeLabelWidget.labelPaint.textSize="@dimen/range_label_font_size"
-        androidPlot.title="Accelerometer"
-        androidPlot.titleWidget.labelPaint.textSize="@dimen/title_font_size"
-        android:visibility="invisible" />
-
-    <com.androidplot.xy.XYPlot
-        android:id="@+id/gSensorPlot"
-        android:layout_width="fill_parent"
-        android:layout_height="@dimen/plot_height"
-        android:layout_gravity="top"
-        androidPlot.domainLabel="Time"
-        androidPlot.domainLabelWidget.labelPaint.textSize="@dimen/domain_label_font_size"
-        androidPlot.graphWidget.gridLinePaint.color="#000000"
-        androidPlot.graphWidget.marginLeft="15dp"
-        androidPlot.graphWidget.marginRight="10dp"
-        androidPlot.legendWidget.heightMetric.value="25dp"
-        androidPlot.legendWidget.iconSizeMetrics.heightMetric.value="15dp"
-        androidPlot.legendWidget.iconSizeMetrics.widthMetric.value="15dp"
-        androidPlot.legendWidget.positionMetrics.anchor="right_bottom"
-        androidPlot.rangeLabel="Deg/s"
-        androidPlot.rangeLabelWidget.labelPaint.textSize="@dimen/range_label_font_size"
-        androidPlot.title="Gyroscope"
-        androidPlot.titleWidget.labelPaint.textSize="@dimen/title_font_size"
-        android:visibility="invisible" />
-
-    <com.androidplot.xy.XYPlot
-        android:id="@+id/hPlot"
-        android:layout_width="fill_parent"
-        android:layout_height="@dimen/plot_height"
-        android:layout_gravity="top"
-        androidPlot.domainLabel="Time"
-        androidPlot.graphWidget.gridLinePaint.color="#000000"
-        androidPlot.graphWidget.marginLeft="15dp"
-        androidPlot.graphWidget.marginRight="10dp"
-        androidPlot.legendWidget.heightMetric.value="25dp"
-        androidPlot.legendWidget.iconSizeMetrics.heightMetric.value="15dp"
-        androidPlot.legendWidget.iconSizeMetrics.widthMetric.value="15dp"
-        androidPlot.legendWidget.positionMetrics.anchor="right_bottom"
-        androidPlot.rangeLabel="Acceleration"
-        androidPlot.title="History Data"
-        android:visibility="invisible" />
-
-    <Button
-        android:id="@+id/emailButton"
-        style="@style/CustomStyleButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/aSensorPlot"
-        android:text="@string/email" />
-
-    <Button
-        android:id="@+id/backbutton"
-        style="@style/CustomStyleButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/aSensorPlot"
-        android:text="@string/Back"
-        android:visibility="invisible" />
+        <Button
+            android:id="@+id/backbutton"
+            style="@style/CustomStyleButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="@string/Back"
+            android:visibility="invisible" />
+    </RelativeLayout>
 
 </RelativeLayout>

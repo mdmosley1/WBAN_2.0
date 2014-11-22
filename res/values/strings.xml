@@ -38,7 +38,7 @@
     <string name="dev_addr">Device address</string>
     <string name="image">Image</string>
     <string name="AccelTitle">Accelerometer</string>
-    <string name="PlotAccel">Plot</string>
+    <string name="Plot">Real Time Display</string>
     <string name="StartTime">Set Start Time</string>
     <string name="EndTime">Set End Time</string>
     <string name="PlotAccelHistory">History Plot</string>
@@ -126,5 +126,10 @@
     <dimen name="domain_label_font_size">13dp</dimen>
     <dimen name="range_label_font_size">13dp</dimen>
     <dimen name="legend_text_font_size">20dp</dimen>
+    
+    <!-- colors -->
+    <color name="blue">#0099CC</color>
+    <color name="orange">#FFBB33</color>
+    
 
 </resources>

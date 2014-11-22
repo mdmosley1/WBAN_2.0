@@ -2,12 +2,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="10dp"
+    android:background="@color/blue"
     android:clickable="false"
     android:gravity="bottom"
     android:longClickable="false"
     android:orientation="vertical"
-    android:padding="0dp"
     tools:context=".MainActivity" >
 
     <ListView
@@ -17,8 +16,7 @@
         android:layout_height="0dp"
         android:layout_margin="10dp"
         android:layout_weight="2"
-        android:choiceMode="singleChoice"
-        android:padding="3dp" />
+        android:choiceMode="singleChoice" />
 
     <ProgressBar
         android:id="@+id/pb_busy"
@@ -28,7 +26,7 @@
         android:layout_margin="10dp"
         android:gravity="center_horizontal"
         android:visibility="invisible" />
-    
+
     <TextView
         android:id="@+id/no_device"
         android:layout_width="wrap_content"
@@ -37,8 +35,9 @@
         android:layout_margin="50dp"
         android:gravity="center"
         android:text="@string/nodevice"
-        android:textSize="20sp" />
-
+        android:textColor="#dedfdc"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/status"
@@ -47,15 +46,23 @@
         android:gravity="center"
         android:textSize="12sp" />
 
+    <View
+        android:id="@+id/divider3"
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:layout_marginLeft="4dip"
+        android:layout_marginRight="4dip"
+        android:background="?android:attr/dividerVertical" />
+
     <Button
         android:id="@+id/btn_scan"
+        style="@style/CustomStyleButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fadingEdge="vertical"
         android:gravity="center_horizontal|center"
         android:linksClickable="false"
         android:onClick="onBtnScan"
-        android:padding="10dp"
         android:text="@string/button_scan" />
 
 </LinearLayout>

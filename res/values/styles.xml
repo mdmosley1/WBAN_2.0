@@ -165,7 +165,7 @@
     </style>
 
     <style name="CustomStyleButton" parent="@android:style/Widget.Button">
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">20sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">#dedfdc</item>
         <item name="android:gravity">center</item>
@@ -173,8 +173,8 @@
         <item name="android:shadowDx">1</item>
         <item name="android:shadowDy">1</item>
         <item name="android:shadowRadius">0.6</item>
-        <item name="android:background">@drawable/custom_button</item>
-        <item name="android:padding">10dip</item>
+        <item name="android:background">"?android:attr/selectableItemBackground"</item>
+        <item name="android:padding">1dip</item>
     </style>
 
 </resources>
