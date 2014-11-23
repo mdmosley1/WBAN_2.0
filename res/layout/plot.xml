@@ -1,68 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-
-    <TextView
-        android:id="@+id/aTitletextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:text="@string/AccelTitle"
-        android:textSize="25sp" />
-
-    <Button
-        android:id="@+id/plotButton"
-        style="@android:attr/buttonBarButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/aTitletextView"
-        android:text="@string/PlotAccel" />
-
-    <Button
-        android:id="@+id/astbutton"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/aetbutton"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/plotButton"
-        android:text="@string/StartTime" />
-
-    <Button
-        android:id="@+id/aetbutton"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/plotButton"
-        android:text="@string/EndTime" />
-
-    <TextView
-        android:id="@+id/asttextView"
-        android:layout_width="130dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/astbutton"
-        android:layout_marginStart="20dp"
-        android:text=""
-        android:textSize="20sp" />
-
-    <TextView
-        android:id="@+id/aettextView"
-        android:layout_width="130dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/aetbutton"
-        android:text=""
-        android:textSize="20sp" />
-
-    <Button
-        android:id="@+id/histButton"
-        style="@android:attr/buttonBarButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/asttextView"
-        android:text="@string/PlotAccelHistory" />
+    android:layout_height="match_parent"
+    android:background="@color/blue" >
 
     <com.androidplot.xy.XYPlot
         android:id="@+id/RTPlot"
@@ -85,8 +25,6 @@
         androidPlot.titleWidget.labelPaint.textSize="@dimen/title_font_size"
         android:visibility="invisible" />
 
-   
-
     <com.androidplot.xy.XYPlot
         android:id="@+id/hPlot"
         android:layout_width="fill_parent"
@@ -103,29 +41,143 @@
         androidPlot.rangeLabel="Acceleration"
         androidPlot.title="History Data"
         android:visibility="invisible" />
-    
-    <Button
-        android:id="@+id/emailButton"
-        style="@android:attr/buttonBarButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/RTPlot"
-        android:text="@string/email" />       
 
-    <Button
-        android:id="@+id/backbutton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/RTPlot"
-        android:text="@string/Back"
-        android:visibility="invisible" />
-    
-    <Spinner
-    android:id="@+id/spinner"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:layout_below="@+id/histButton" />
+    <RelativeLayout
+        android:id="@+id/relativeLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true" >
+
+        <Button
+            android:id="@+id/plotButton"
+            style="@style/CustomStyleButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:background="?android:attr/selectableItemBackground"
+            android:text="@string/Plot" />
+
+        <View
+            android:id="@+id/divider1"
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:layout_below="@+id/plotButton"
+            android:layout_marginLeft="4dip"
+            android:layout_marginRight="4dip"
+            android:background="?android:attr/dividerVertical" />
+
+        <Button
+            android:id="@+id/histButton"
+            style="@style/CustomStyleButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/divider1"
+            android:text="@string/PlotAccelHistory" />
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:layout_below="@+id/histButton"
+            android:layout_marginLeft="4dip"
+            android:layout_marginRight="4dip"
+            android:background="?android:attr/dividerVertical" />
+
+        <Button
+            android:id="@+id/emailButton"
+            style="@style/CustomStyleButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/divider2"
+            android:text="@string/email" />
+
+        <View
+            android:id="@+id/divider3"
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:layout_below="@+id/emailButton"
+            android:layout_marginLeft="4dip"
+            android:layout_marginRight="4dip"
+            android:background="?android:attr/dividerVertical" />
+
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/divider3" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_alignParentBottom="true" >
+
+        <TextView
+            android:id="@+id/asttextView"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/astbutton"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="20dp"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/aettextView"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/aetbutton"
+            android:layout_alignParentEnd="true"
+            android:textSize="20sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="4dip"
+            android:layout_marginRight="4dip"
+            android:background="?android:attr/dividerVertical" />
+
+        <View
+            android:id="@+id/ViewColorPickerHelper"
+            android:layout_width="1dip"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="4dip"
+            android:layout_marginTop="4dip"
+            android:background="?android:attr/dividerVertical" />
+
+        <Button
+            android:id="@+id/astbutton"
+            style="@style/CustomStyleButton"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/aetbutton"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@id/ViewColorPickerHelper"
+            android:text="@string/StartTime" />
+
+        <Button
+            android:id="@+id/aetbutton"
+            style="@style/CustomStyleButton"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_toEndOf="@id/ViewColorPickerHelper"
+            android:text="@string/EndTime" />
+
+        <Button
+            android:id="@+id/backbutton"
+            style="@style/CustomStyleButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="@string/Back"
+            android:visibility="invisible" />
+    </RelativeLayout>
 
 </RelativeLayout>
