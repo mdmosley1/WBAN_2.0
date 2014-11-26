@@ -188,9 +188,6 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 			}
 		});
 		
-		
-		
-
 		//showDialog(dialog_id);
 
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
@@ -320,27 +317,7 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 		}
 	};	
 
-	// Gyroscope Start Time Dialog
-	private TimePickerDialog.OnTimeSetListener gsTimeSetListener =
-			new TimePickerDialog.OnTimeSetListener() {
-		@Override
-		public void onTimeSet(TimePicker view, int hourOfDay, int hour_minute) {
-			hour[2] = hourOfDay;
-			minute[2] = hour_minute;
-			updateTime(2);
-		}			
-	};			
-
-	// Gyroscope End Time Dialog
-	private TimePickerDialog.OnTimeSetListener geTimeSetListener =
-			new TimePickerDialog.OnTimeSetListener() {
-		@Override
-		public void onTimeSet(TimePicker view, int hourOfDay, int hour_minute) {
-			hour[3] = hourOfDay;
-			minute[3] = hour_minute;
-			updateTime(3);
-		}	
-	};					
+				
 
 	public void setStartTime()
 	{
