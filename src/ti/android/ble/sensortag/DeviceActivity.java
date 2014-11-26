@@ -109,6 +109,8 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 	private final int SERIES_SIZE = 50;
 
 	private boolean[] toggle_plot = {true, true, true, true};
+	
+	
 
 
 	// Number of data points to keep in history
@@ -140,6 +142,8 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 	int[] minute = new int[2];
 	Date[] dateObj = new Date[2];
 	TextView timeViews[] = new TextView[2];
+	
+	Spinner spinner;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -148,7 +152,7 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 		Intent intent = getIntent();
 		setContentView(R.layout.plot);
 		
-		Spinner spinner = (Spinner) findViewById(R.id.spinner);
+		spinner = (Spinner) findViewById(R.id.spinner);
 		spinner.setOnItemSelectedListener(this);
 		// Create an ArrayAdapter using the string array and a default spinner layout
 		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -168,6 +172,7 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 		timeViews[0]=(TextView)findViewById(R.id.asttextView); // view that holds start time
 		timeViews[1]=(TextView)findViewById(R.id.aettextView); // view that holds end time
 		emailButton = (Button) findViewById(R.id.emailButton);
+		histButton = (Button) findViewById(R.id.histButton);
 		
 		plotButton();
 		histButton();
@@ -332,7 +337,7 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 	//------------------------------------------------------------------------------------------  
 
 
-	// toggle real time plot for acclerometer
+	// toggle real time plot
 	private void plotButton() {
 		plotButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -342,16 +347,20 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 
 				plotButton.setVisibility(View.INVISIBLE);
 				histButton.setVisibility(View.INVISIBLE);
-
-				for (int i = 0; i < timeButtons.length; i++) 
+				emailButton.setVisibility(View.INVISIBLE);
+				spinner.setVisibility(View.INVISIBLE);
+				
+				for (int i = 0; i < timeButtons.length; i++) {
 					timeButtons[i].setVisibility(View.INVISIBLE);
+					timeViews[i].setVisibility(View.INVISIBLE);
+				}
 
 			}
 		});
 	}
 	// This button toggles the history plot for acceleration
 	private void histButton() {
-		Button histButton = (Button) findViewById(R.id.histButton);
+		
 		histButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -386,10 +395,19 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 					e.printStackTrace();
 				}
 				hPlot.redraw();
-
-
+				
 				hPlot.setVisibility(View.VISIBLE);
 				backbutton.setVisibility(View.VISIBLE);
+				
+				plotButton.setVisibility(View.INVISIBLE);
+				histButton.setVisibility(View.INVISIBLE);
+				emailButton.setVisibility(View.INVISIBLE);
+				spinner.setVisibility(View.GONE);
+				
+				for (int i = 0; i < timeButtons.length; i++) {
+					timeButtons[i].setVisibility(View.INVISIBLE);
+					timeViews[i].setVisibility(View.INVISIBLE);
+				}
 			}
 		});
 	}	
@@ -404,6 +422,10 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 
 				plotButton.setVisibility(View.VISIBLE);
 				histButton.setVisibility(View.VISIBLE);
+				
+				emailButton.setVisibility(View.VISIBLE);
+				spinner.setVisibility(View.VISIBLE);
+				
 				
 				for (int i = 0; i < timeButtons.length; i++) 
 					timeButtons[i].setVisibility(View.VISIBLE);
