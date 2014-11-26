@@ -380,8 +380,7 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 			public void onClick(View v) {
 
 				hPlot.clear();
-				for(int i=3; i<6;i++ )
-				{
+				for(int i=0; i<3;i++ ){
 					hSeries[i] = new SimpleXYSeries("axis");
 					hSeries[i].useImplicitXVals();
 					hPlot.addSeries(hSeries[i], new LineAndPointFormatter(Color.rgb(80*i,100,200),Color.BLACK, null, null));

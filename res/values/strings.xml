@@ -134,5 +134,7 @@
     <!-- colors -->
     <color name="blue">#0099CC</color>
     <color name="orange">#FFBB33</color>
+    <color name="grey">#696969</color>
+    
 
 </resources>
