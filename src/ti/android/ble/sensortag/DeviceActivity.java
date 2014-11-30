@@ -8,7 +8,6 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -66,7 +66,6 @@ import com.androidplot.xy.LineAndPointFormatter;
 import com.androidplot.xy.SimpleXYSeries;
 import com.androidplot.xy.XYPlot;
 import com.androidplot.xy.XYStepMode;
-import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
 
@@ -105,12 +104,12 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 
 	private SimpleXYSeries[] RTSeries = new SimpleXYSeries[3]; // real time data
 	private SimpleXYSeries[] hSeries = new SimpleXYSeries[3]; // data history
-	
+
 	private final int SERIES_SIZE = 50;
 
 	private boolean[] toggle_plot = {true, true, true, true};
-	
-	
+
+
 
 
 	// Number of data points to keep in history
@@ -142,8 +141,11 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 	int[] minute = new int[2];
 	Date[] dateObj = new Date[2];
 	TextView timeViews[] = new TextView[2];
-	
+
 	Spinner spinner;
+
+	List<String[]> list = new ArrayList<String[]>();
+
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -151,19 +153,19 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 		super.onCreate(savedInstanceState);
 		Intent intent = getIntent();
 		setContentView(R.layout.plot);
-		
+
 		spinner = (Spinner) findViewById(R.id.spinner);
 		spinner.setOnItemSelectedListener(this);
 		// Create an ArrayAdapter using the string array and a default spinner layout
 		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-		        R.array.sensor_array, android.R.layout.simple_spinner_item);
+				R.array.sensor_array, android.R.layout.simple_spinner_item);
 		// Specify the layout to use when the list of choices appears
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		// Apply the adapter to the spinner
 		spinner.setAdapter(adapter);
-//		spinner.setAdapter(new ArrayAdapter<Sensor>(this,
-//			      android.R.layout.simple_list_item_1, Sensor.values()));
-		 
+		//		spinner.setAdapter(new ArrayAdapter<Sensor>(this,
+		//			      android.R.layout.simple_list_item_1, Sensor.values()));
+
 		plotButton = (Button) findViewById(R.id.plotButton); // real time plot
 		histButton = (Button) findViewById(R.id.histButton); // history plot
 		backbutton = (Button) findViewById(R.id.backbutton);
@@ -173,7 +175,7 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 		timeViews[1]=(TextView)findViewById(R.id.aettextView); // view that holds end time
 		emailButton = (Button) findViewById(R.id.emailButton);
 		histButton = (Button) findViewById(R.id.histButton);
-		
+
 		plotButton();
 		histButton();
 		backbutton();
@@ -192,7 +194,7 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 				setEndTime();
 			}
 		});
-		
+
 		//showDialog(dialog_id);
 
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
@@ -265,19 +267,19 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 	} 
 	//------------------------------------------------------------------------------------------  
 	// Dialog Implementation and Storing User Input  
-	
-	public void onItemSelected(AdapterView<?> parent, View view, 
-            int pos, long id) {
-        // An item was selected. You can retrieve the selected item using
-        // parent.getItemAtPosition(pos)
-		selected = parent.getItemAtPosition(pos).toString();		
-    }
 
-    public void onNothingSelected(AdapterView<?> parent) {
-        // Another interface callback
-    }
+	public void onItemSelected(AdapterView<?> parent, View view, 
+			int pos, long id) {
+		// An item was selected. You can retrieve the selected item using
+		// parent.getItemAtPosition(pos)
+		selected = parent.getItemAtPosition(pos).toString();		
+	}
+
+	public void onNothingSelected(AdapterView<?> parent) {
+		// Another interface callback
+	}
 	public void updateTime(int i){
-		
+
 		Calendar cal = Calendar.getInstance();
 
 		int year = cal.get(Calendar.YEAR);
@@ -285,13 +287,13 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 		int date = cal.get(Calendar.DATE);
 		int hrs = hour[i];
 		int mins = minute[i];
-		
+
 		String time = Integer.toString(year) + "-" + 
 				Integer.toString(month) + "-" +
 				Integer.toString(date) + " " +
 				Integer.toString(hrs) + ":" + 
 				Integer.toString(mins);
-		
+
 		final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm"); // define input format
 		try {
 			dateObj[i] = sdf.parse(time); // parse time into Date object
@@ -322,7 +324,7 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 		}
 	};	
 
-				
+
 
 	public void setStartTime()
 	{
@@ -349,7 +351,7 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 				histButton.setVisibility(View.INVISIBLE);
 				emailButton.setVisibility(View.INVISIBLE);
 				spinner.setVisibility(View.INVISIBLE);
-				
+
 				for (int i = 0; i < timeButtons.length; i++) {
 					timeButtons[i].setVisibility(View.INVISIBLE);
 					timeViews[i].setVisibility(View.INVISIBLE);
@@ -360,7 +362,7 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 	}
 	// This button toggles the history plot for acceleration
 	private void histButton() {
-		
+
 		histButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -371,39 +373,36 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 					hSeries[i].useImplicitXVals();
 					hPlot.addSeries(hSeries[i], new LineAndPointFormatter(Color.rgb(80*i,100,200),Color.BLACK, null, null));
 				}
-
+				int index = 0;
 				try {
-					CSVReader reader = new CSVReader(new FileReader(curr_file));
-					String [] nextLine;
-					int index = 0;
-					while ((nextLine = reader.readNext()) != null) {
-						// get the hour in the file and compare to ashour, aehour
+					for (String[] nextLine : list) {
+						// get the hour in the file and compare to dateObj[0] and dateObj[1]
 						final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); // define input format
 						Date date = sdf.parse(nextLine[3]);
-						boolean b1 = date.after(dateObj[0]);
-						boolean b2 = date.before(dateObj[1]);
-						if (!b2) break; // if we are past the end date, then stop reading the file
-						if (b1 && b2){
-							for(int i=3; i<6;i++){
-								hSeries[i].addFirst(index, Double.valueOf(nextLine[i-3]));
+						boolean after = date.after(dateObj[0]);
+						boolean before = date.before(dateObj[1]);
+						if (!before) break; // if we are past the end date, then stop reading the file
+						if (after && before){
+							for(int i=0; i<3;i++){
+								hSeries[i].addFirst(index, Double.valueOf(nextLine[i]));
 							}
 							index++;
 						}
 					}
-					reader.close();
-				} catch (Exception e) {
+				} 
+				catch (Exception e) {
 					e.printStackTrace();
 				}
+
 				hPlot.redraw();
-				
 				hPlot.setVisibility(View.VISIBLE);
 				backbutton.setVisibility(View.VISIBLE);
-				
+
 				plotButton.setVisibility(View.INVISIBLE);
 				histButton.setVisibility(View.INVISIBLE);
 				emailButton.setVisibility(View.INVISIBLE);
 				spinner.setVisibility(View.GONE);
-				
+
 				for (int i = 0; i < timeButtons.length; i++) {
 					timeButtons[i].setVisibility(View.INVISIBLE);
 					timeViews[i].setVisibility(View.INVISIBLE);
@@ -422,11 +421,11 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 
 				plotButton.setVisibility(View.VISIBLE);
 				histButton.setVisibility(View.VISIBLE);
-				
+
 				emailButton.setVisibility(View.VISIBLE);
 				spinner.setVisibility(View.VISIBLE);
-				
-				
+
+
 				for (int i = 0; i < timeButtons.length; i++) 
 					timeButtons[i].setVisibility(View.VISIBLE);
 			}
@@ -505,25 +504,25 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 			unregisterReceiver(mGattUpdateReceiver);
 			mIsReceiving = false;
 		}
-    }
+	}
 
-		private void emailButton() {
-			emailButton.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
+	private void emailButton() {
+		emailButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
 
-					Uri u1  =   null;
-					File file = curr_file;
-					u1  =   Uri.fromFile(file );
+				Uri u1  =   null;
+				File file = curr_file;
+				u1  =   Uri.fromFile(file );
 
-					Intent sendIntent = new Intent(Intent.ACTION_SEND);
-					sendIntent.putExtra(Intent.EXTRA_SUBJECT, "wbandata");
-					sendIntent.putExtra(Intent.EXTRA_STREAM, u1);
-					sendIntent.setType("text/html");
-					startActivity(sendIntent);
-				}
-			});
-		}
+				Intent sendIntent = new Intent(Intent.ACTION_SEND);
+				sendIntent.putExtra(Intent.EXTRA_SUBJECT, "wbandata");
+				sendIntent.putExtra(Intent.EXTRA_STREAM, u1);
+				sendIntent.setType("text/html");
+				startActivity(sendIntent);
+			}
+		});
+	}
 
 	// Creates an intent filter which notifies the activity when the device is trying to do something
 	private static IntentFilter makeGattUpdateIntentFilter() {
@@ -803,18 +802,18 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 				Integer.toString(hrs) + 
 				Integer.toString(mins) + 
 				Integer.toString(secs);
-		
+
 		final SimpleDateFormat sdf = new SimpleDateFormat("H:mm"); // define input format
 		Date dateObj1 = new Date(); 
 		try {
 			dateObj1 = sdf.parse(t);
 			return dateObj1;
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			return dateObj1;
 		}
-		
+
 	}
 
 	// Converts a float to a byte array
@@ -836,10 +835,10 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 		System.arraycopy(B, 0, C, aLen, bLen);
 		return C;
 	}
-	
+
 	public String[] concat(String[] A, String B) {
 		int aLen = A.length;
-		
+
 		String[] C= new String[aLen+1];
 		System.arraycopy(A, 0, C, 0, aLen);
 		C[aLen] = B;
@@ -876,8 +875,11 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 		String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date); // format date into String
 		String[] write = concat(data, time); 
 
-		// write the data and stamp string arrays to a csv file
+		// write the data and stamp string arrays to a csv file AND write to a list for quick access
 		try {
+			list.add(write); // add the current string array to the list
+			
+			// save to a csv file
 			FileWriter fw = new FileWriter(curr_file,!append);
 			CSVWriter writer = new CSVWriter(fw);
 			writer.writeNext(write);
@@ -910,7 +912,7 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 		default:
 			break;
 		}
-		
+
 		// get rid the oldest sample in history:
 		if (RTSeries[1].size() > HISTORY_SIZE) {
 			for(int j=0;j<3;j++) RTSeries[j].removeLast();
