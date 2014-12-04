@@ -414,7 +414,7 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 		backbutton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				RTPlot.clear();
+				//RTPlot.clear();
 				RTPlot.setVisibility(View.INVISIBLE);
 				backbutton.setVisibility(View.INVISIBLE);
 				hPlot.setVisibility(View.INVISIBLE);
@@ -426,8 +426,11 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 				spinner.setVisibility(View.VISIBLE);
 
 
-				for (int i = 0; i < timeButtons.length; i++) 
+				for (int i = 0; i < timeButtons.length; i++){
 					timeButtons[i].setVisibility(View.VISIBLE);
+					timeViews[i].setVisibility(View.VISIBLE);
+				}
+					
 			}
 		});
 	}
@@ -701,8 +704,9 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 
 				String uuidStr = intent.getStringExtra(BluetoothLeService.EXTRA_UUID);
 				Log.i(TAG,"Data discovered.");
-
-				byte[] value = intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
+				
+				byte[] tmp = intent.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
+				byte[] value = {tmp[0], tmp[1], tmp[2], 64, 0, -64}; // 64, 0, -64 are dummy data for an additional sensor
 
 				Date date1 = getTimeStamp();
 				dataPoint myPoint = new dataPoint(value, date1);
@@ -893,29 +897,45 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 	// Updates the plot with new data obtained from the service notification
 	void updatePlot(String uuidStr, dataPoint point) {
 		double[] d = point.getDatac();
-		Sensor s = Sensor.values()[0];
-		switch (s) {
-		case ACCELEROMETER:
-			for (int i=0; i<3; i++) {
+//		Sensor s = Sensor.values()[0];
+//		switch (s) {
+//		case ACCELEROMETER:
+//			for (int i=0; i<3; i++) {
+//				RTSeries[i].addFirst(null, d[i]);
+//			}
+//			break;
+//
+//		case GYROSCOPE:
+//			for (int i=0; i<3; i++) {
+//				RTSeries[i].addFirst(null, d[i+3]);
+//			}
+//			break;
+//
+//			// additional sensors should be placed here 
+//
+//		default:
+//			break;
+//		}
+		
+		
+		
+		if (selected.equals("Accelerometer")){
+			for (int i = 0; i < 3; i++) {
 				RTSeries[i].addFirst(null, d[i]);
 			}
-			break;
-
-		case GYROSCOPE:
-			for (int i=0; i<3; i++) {
+		}
+		
+		else if (selected.equals("Gyroscope")){
+			for (int i = 0; i < 3; i++) {
 				RTSeries[i].addFirst(null, d[i+3]);
 			}
-			break;
-
-			// additional sensors should be placed here 
-
-		default:
-			break;
 		}
 
 		// get rid the oldest sample in history:
 		if (RTSeries[1].size() > HISTORY_SIZE) {
-			for(int j=0;j<3;j++) RTSeries[j].removeLast();
+			for(int j=0;j<3;j++) {
+				RTSeries[j].removeLast();
+			}
 		}
 		// redraw the Plots
 		RTPlot.redraw();
@@ -933,6 +953,7 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 			this.tStamp = tStamp;
 		}
 
+		// conversion routine for acclerometer
 		public void convert() {
 			datac = new double[data.length];
 			for (int i = 0; i < data.length; i++) {
