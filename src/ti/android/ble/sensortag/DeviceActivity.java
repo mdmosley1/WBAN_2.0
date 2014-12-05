@@ -214,12 +214,17 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 		hPlot = (XYPlot) findViewById(R.id.hPlot);
 
 		// instantiate some new xy series and then add them to the sensor plots
-		for(int i=0; i<3;i++ )
-		{
-			RTSeries[i] = new SimpleXYSeries("axis");
+		
+		RTSeries[0] = new SimpleXYSeries("X");
+		RTSeries[1] = new SimpleXYSeries("Y");
+		RTSeries[2] = new SimpleXYSeries("Z");
+		RTPlot.addSeries(RTSeries[0], new LineAndPointFormatter(Color.rgb(200,0,0),Color.BLACK, null, null));
+		RTPlot.addSeries(RTSeries[1], new LineAndPointFormatter(Color.rgb(0,200,0),Color.BLACK, null, null));
+		RTPlot.addSeries(RTSeries[2], new LineAndPointFormatter(Color.rgb(0,0,200),Color.BLACK, null, null));
+		for(int i=0; i<3;i++ ){
 			RTSeries[i].useImplicitXVals();
-			RTPlot.addSeries(RTSeries[i], new LineAndPointFormatter(Color.rgb(80*i,100,200),Color.BLACK, null, null));
 		}
+		
 
 		// freeze the range boundaries:
 		RTPlot.setRangeBoundaries(-4, 4, BoundaryMode.FIXED);
@@ -371,11 +376,17 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 			@Override
 			public void onClick(View v) {
 
-				hPlot.clear();
+				//hPlot.clear();
+				
+				hSeries[0] = new SimpleXYSeries("X");
+				hSeries[1] = new SimpleXYSeries("Y");
+				hSeries[2] = new SimpleXYSeries("Z");
+				hPlot.addSeries(hSeries[0], new LineAndPointFormatter(Color.rgb(200,0,0),Color.BLACK, null, null));
+				hPlot.addSeries(hSeries[1], new LineAndPointFormatter(Color.rgb(0,200,0),Color.BLACK, null, null));
+				hPlot.addSeries(hSeries[2], new LineAndPointFormatter(Color.rgb(0,0,200),Color.BLACK, null, null));
+				
 				for(int i=0; i<3;i++ ){
-					hSeries[i] = new SimpleXYSeries("axis");
 					hSeries[i].useImplicitXVals();
-					hPlot.addSeries(hSeries[i], new LineAndPointFormatter(Color.rgb(80*i,100,200),Color.BLACK, null, null));
 				}
 				int index = 0;
 				try {
