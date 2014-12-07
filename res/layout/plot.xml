@@ -12,8 +12,14 @@
         androidPlot.domainLabel="Time"
         androidPlot.domainLabelWidget.labelPaint.textSize="@dimen/domain_label_font_size"
         androidPlot.graphWidget.gridLinePaint.color="#000000"
+        androidPlot.graphWidget.marginBottom="15dp"
         androidPlot.graphWidget.marginLeft="15dp"
         androidPlot.graphWidget.marginRight="10dp"
+        androidPlot.graphWidget.marginTop="15dp"
+        androidPlot.graphWidget.domainLabelPaint.textSize="@dimen/domain_tick_label_font_size"
+            androidPlot.graphWidget.domainOriginLabelPaint.textSize="@dimen/domain_tick_label_font_size"
+        androidPlot.graphWidget.rangeLabelPaint.textSize="@dimen/range_tick_label_font_size"
+        androidPlot.graphWidget.rangeOriginLabelPaint.textSize="@dimen/range_tick_label_font_size"
         androidPlot.legendWidget.heightMetric.value="25dp"
         androidPlot.legendWidget.iconSizeMetrics.heightMetric.value="15dp"
         androidPlot.legendWidget.iconSizeMetrics.widthMetric.value="15dp"
@@ -111,8 +117,8 @@
             android:id="@+id/asttextView"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:layout_alignLeft="@+id/divider3"
+            android:layout_alignParentBottom="true"
             android:layout_marginBottom="50dp"
             android:textSize="20sp" />
 
@@ -120,8 +126,8 @@
             android:id="@+id/aettextView"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:layout_alignRight="@+id/divider3"
             android:layout_alignParentBottom="true"
+            android:layout_alignRight="@+id/divider3"
             android:layout_marginBottom="50dp"
             android:textSize="20sp" />
     </RelativeLayout>

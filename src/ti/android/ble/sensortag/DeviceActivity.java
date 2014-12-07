@@ -134,6 +134,7 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 
 	Button plotButton, histButton;
 	Button backbutton, emailButton;
+	View divider[] = new View[3];
 
 	// Time Picker Dialog and display
 	TimePicker time_picker;
@@ -179,6 +180,9 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 		timeViews[1]=(TextView)findViewById(R.id.aettextView); // view that holds end time
 		emailButton = (Button) findViewById(R.id.emailButton);
 		histButton = (Button) findViewById(R.id.histButton);
+		divider[0] = (View) findViewById(R.id.divider1);
+		divider[1] = (View) findViewById(R.id.divider2);
+		divider[2] = (View) findViewById(R.id.divider3);
 
 		plotButton();
 		histButton();
@@ -231,13 +235,16 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 		RTPlot.setDomainBoundaries(0, SERIES_SIZE, BoundaryMode.FIXED);
 		RTPlot.setRangeStep(XYStepMode.INCREMENT_BY_VAL, 1);
 		RTPlot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 5);
-		RTPlot.setRangeValueFormat( new DecimalFormat("#"));
+		RTPlot.setRangeValueFormat( new DecimalFormat("#")); // suppress decimal for range tick labels
 
 		// Reformats the axis tick labels
-		String[] graph_labels = {"0","","","","","-0.5","","","","","-1",
-				"-1.5","","","","","-2","","","","","-2.5",
-				"-3","","","","","-3.5","","","","","-4",
-				"-4.5","","","","","-5"};
+		String[] graph_labels = new String[50];
+		for (int i = 0; i < 50; i++){
+			if(i % 10 == 0)
+				graph_labels[i] = String.valueOf(-i/10); 
+			else
+				graph_labels[i] = "";
+		}
 
 		// Uses a custom index format to change the tick labels
 		MyIndexFormat mif = new MyIndexFormat ();
@@ -365,6 +372,10 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 					timeButtons[i].setVisibility(View.INVISIBLE);
 					timeViews[i].setVisibility(View.INVISIBLE);
 				}
+				
+				for (int j = 0; j < divider.length; j++) {
+					divider[j].setVisibility(View.INVISIBLE);
+				}
 
 			}
 		});
@@ -416,11 +427,15 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 				plotButton.setVisibility(View.INVISIBLE);
 				histButton.setVisibility(View.INVISIBLE);
 				emailButton.setVisibility(View.INVISIBLE);
+				
 				spinner.setVisibility(View.GONE);
 
 				for (int i = 0; i < timeButtons.length; i++) {
 					timeButtons[i].setVisibility(View.INVISIBLE);
 					timeViews[i].setVisibility(View.INVISIBLE);
+				}
+				for (int j = 0; j < divider.length; j++) {
+					divider[j].setVisibility(View.INVISIBLE);
 				}
 			}
 		});
@@ -444,6 +459,9 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 				for (int i = 0; i < timeButtons.length; i++){
 					timeButtons[i].setVisibility(View.VISIBLE);
 					timeViews[i].setVisibility(View.VISIBLE);
+				}
+				for (int j = 0; j < divider.length; j++) {
+					divider[j].setVisibility(View.VISIBLE);
 				}
 					
 			}

@@ -125,7 +125,10 @@
     <dimen name="domain_label_font_size">13dp</dimen>
     <dimen name="range_label_font_size">13dp</dimen>
     <dimen name="legend_text_font_size">20dp</dimen>
+    <dimen name="range_tick_label_font_size">15dp</dimen>
+    <dimen name="domain_tick_label_font_size">15dp</dimen>
 
+    <!-- populate the spinner list -->
     <string-array name="sensor_array">
         <item>Accelerometer</item>
         <item>Gyroscope</item>
@@ -135,6 +138,5 @@
     <color name="blue">#0099CC</color>
     <color name="orange">#FFBB33</color>
     <color name="grey">#696969</color>
-    
 
 </resources>
