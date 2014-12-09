@@ -226,20 +226,25 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 		RTSeries[0] = new SimpleXYSeries("X");
 		RTSeries[1] = new SimpleXYSeries("Y");
 		RTSeries[2] = new SimpleXYSeries("Z");
-		RTPlot.addSeries(RTSeries[0], new LineAndPointFormatter(Color.rgb(200,0,0),Color.BLACK, null, null));
-		RTPlot.addSeries(RTSeries[1], new LineAndPointFormatter(Color.rgb(0,200,0),Color.BLACK, null, null));
-		RTPlot.addSeries(RTSeries[2], new LineAndPointFormatter(Color.rgb(0,0,200),Color.BLACK, null, null));
+		RTPlot.addSeries(RTSeries[0], new LineAndPointFormatter(Color.rgb(200,0,0),Color.rgb(100,0,0), null, null));
+		RTPlot.addSeries(RTSeries[1], new LineAndPointFormatter(Color.rgb(0,200,0),Color.rgb(0,100,0), null, null));
+		RTPlot.addSeries(RTSeries[2], new LineAndPointFormatter(Color.rgb(0,0,200),Color.rgb(0,0,100), null, null));
 		for(int i=0; i<3;i++ ){
 			RTSeries[i].useImplicitXVals();
 		}
 
 
 		// freeze the range boundaries:
-		RTPlot.setRangeBoundaries(-4, 4, BoundaryMode.FIXED);
+		RTPlot.setRangeBoundaries(-2, 2, BoundaryMode.FIXED);
 		RTPlot.setDomainBoundaries(0, SERIES_SIZE, BoundaryMode.FIXED);
 		RTPlot.setRangeStep(XYStepMode.INCREMENT_BY_VAL, 1);
 		RTPlot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 5);
 		RTPlot.setRangeValueFormat( new DecimalFormat("#")); // suppress decimal for range tick labels
+		
+		hPlot.setRangeBoundaries(-2, 2, BoundaryMode.FIXED);
+		hPlot.setRangeStep(XYStepMode.INCREMENT_BY_VAL, 1);
+		hPlot.setRangeValueFormat( new DecimalFormat("#")); // suppress decimal for range tick labels
+		
 
 		// Reformats the axis tick labels
 		String[] graph_labels = new String[50];
@@ -404,9 +409,9 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 				hSeries[0] = new SimpleXYSeries("X");
 				hSeries[1] = new SimpleXYSeries("Y");
 				hSeries[2] = new SimpleXYSeries("Z");
-				hPlot.addSeries(hSeries[0], new LineAndPointFormatter(Color.rgb(200,0,0),Color.BLACK, null, null));
-				hPlot.addSeries(hSeries[1], new LineAndPointFormatter(Color.rgb(0,200,0),Color.BLACK, null, null));
-				hPlot.addSeries(hSeries[2], new LineAndPointFormatter(Color.rgb(0,0,200),Color.BLACK, null, null));
+				hPlot.addSeries(hSeries[0], new LineAndPointFormatter(Color.rgb(200,0,0),Color.rgb(100,0,0), null, null));
+				hPlot.addSeries(hSeries[1], new LineAndPointFormatter(Color.rgb(0,200,0),Color.rgb(0,100,0), null, null));
+				hPlot.addSeries(hSeries[2], new LineAndPointFormatter(Color.rgb(0,0,200),Color.rgb(0,0,100), null, null));
 
 				for(int i=0; i<3;i++ ){
 					hSeries[i].useImplicitXVals();
