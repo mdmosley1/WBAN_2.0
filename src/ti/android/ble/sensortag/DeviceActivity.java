@@ -129,7 +129,6 @@ public class DeviceActivity extends Activity implements OnItemSelectedListener{
 	private int buff_count;
 	private boolean append = false;
 
-	// DM Hansen
 	private final File PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
 
 	Button timeButtons[] = new Button[2];
