@@ -1,7 +1,6 @@
-WBAN Application Notes Overview: The application handles communication between the sensor device and the phone. It manages connections between all Bluetooth low energy (BLE) devices in the area and plots accelerometer data from one device at a time. It then forwards that data on to the database.
+The WBAN application for Android performs the following functions:
 
-
-## Flow Chart
-
-
-![flow chart](https://github.com/mdmosley1/WBAN_2.0/blob/develop/pics/flow/old/Latex/flow_chart.jpg)
+•	plot data in real time
+•	display historical data
+•	locally store data in a comma separated file
+•	allow user to email data
